@@ -1,0 +1,11 @@
+{
+  "name": "js",
+  "version": "0.0.0",
+  "dependencies": {
+    "bootstrap_dropdowns_enhancement": "git@github.com:behigh/bootstrap_dropdowns_enhancement.git#~2.3.2"
+  },
+  "devDependencies": {
+    "angular-leaflet-directive": "~0.7.3",
+    "leaflet.fullscreen": "~1.1.3"
+  }
+}

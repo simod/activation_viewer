@@ -1,0 +1,56 @@
+{% verbatim %}
+  <article ng-repeat="item in results" resource_id="{{ item.id }}" ng-controller="ActSnippetCtrl" ng-cloak class="ng-cloak">
+    <div class="row items-list">
+      <div class="col-xs-8 item-info">
+        <h4><a href="/activations/{{ item.activation_id }}">{{ item.activation_id }}</a></h4>
+
+        <div class="btn-group">
+          <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-placeholder="false">
+          AOI <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li>
+              <input type="checkbox" value="layer_1", id="aoi_layer_1" />
+              <label for="aoi_layer_1">Layer 1</label>
+            </li>
+            <li>
+              <input type="checkbox" value="layer_2", id="aoi_layer_2" />
+              <label for="aoi_layer_2">Layer 2</label>
+            </li><li>
+              <input type="checkbox" value="layer_3", id="aoi_layer_3" />
+              <label for="aoi_layer_3">Layer 3</label>
+            </li>
+          </ul>
+        </div> <!-- End btn-group -->
+
+        <div class="btn-group">
+          <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-placeholder="false">
+          Crisis <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li>
+              <input type="checkbox" value="layer_1", id="crisis_layer_1" />
+              <label for="crisis_layer_1">Layer 1</label>
+            </li>
+            <li>
+              <input type="checkbox" value="layer_2", id="crisis_layer_2" />
+              <label for="crisis_layer_2">Layer 2</label>
+            </li><li>
+              <input type="checkbox" value="layer_3", id="crisis_layer_3" />
+              <label for="crisis_layer_3">Layer 3</label>
+            </li>
+          </ul>
+        </div> <!-- End btn-group -->
+      </div>
+      <div class="col-xs-2 item-info">
+        {% endverbatim %}{% if request.user.is_authenticated %}
+        <button class="btn btn-default btn-xs pull-right" ng-click="feature_select($event)">Select</button>
+        {% endif %}{% verbatim %}
+
+        
+
+        <!-- <button class="btn btn-default btn-xs pull-right" ng-click="toggle_layer(item.detail_url, item.id, $event)">Add to map</button> -->
+      </div>
+    </div>
+  </article>
+{% endverbatim %}

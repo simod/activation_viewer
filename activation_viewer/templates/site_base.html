@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block extra_head %}
+      <link href="{{ STATIC_URL }}css/site_base.css" rel="stylesheet"/>
+{% endblock %}
+{% block extra_tab %}
+<li id="nav_activations">
+  <a href="{% url "activation_browse" %}">Activations</a>
+</li>
+{% endblock %}
