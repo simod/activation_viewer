@@ -16,16 +16,15 @@
         if (!window.hasOwnProperty('ActiveXObject')){
           new L.control.fullscreen().addTo(map);
         }
+
         // Hook the enter/exit fullscreen behaviors
         map.on('enterFullscreen', function () {
           $('#map_products').addClass('fullscreen');
-          $('#search_filters').addClass('fullscreen');
           map.zoomIn(1);
           map.panBy(L.point(2, 2));
         });
         map.on('exitFullscreen', function () {
           $('#map_products').removeClass('fullscreen');
-          $('#search_filters').removeClass('fullscreen');
           map.zoomOut(1);
         });
       })
@@ -106,6 +105,12 @@
             article.addClass('on-map');
             $(event.target).html('Remove from map');  
           }    
+        });
+      }
+      $scope.zoom_to_mp = function(event){
+        map.then(function(map){
+          var bbox = $(event.target).attr('data-bbox').split(',');
+          map.fitBounds(L.latLngBounds(L.latLng(bbox[0], bbox[1]), L.latLng(bbox[2], bbox[3])));
         });
       }
     });

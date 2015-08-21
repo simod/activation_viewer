@@ -5,7 +5,7 @@
 
 {% block title %} {% trans "Explore Activations" %} - {{ block.super }} {% endblock %}
 
-{% block body_class %}activation explore{% endblock %}
+{% block body_class %}activations explore{% endblock %}
 
 {% block body %}
 <div class="page-header">
@@ -15,7 +15,7 @@
   {% with facet_type='activations' %}
   {% with header='Type' %}
   {% with filter='type__in' %}
-  {% include "search/_search_content.html" %}
+  {% include "search/_act_search_content.html" %}
   {% endwith %}
   {% endwith %}
   {% endwith %}
@@ -26,16 +26,17 @@
 {% endblock %}
 
 {% block extra_script %}
-  {% if GEONODE_SECURITY_ENABLED %}
-    {% include "_permissions_form_js.html" %}
-  {% endif %}
+  
   <script type="text/javascript">
     SEARCH_URL = '{% url 'api_dispatch_list' api_name='api' resource_name='activations' %}';
     FILTER_TYPE = 'activations';
   </script>
   <script src="{% static "js/app/scripts/controllers/main.js" %}"></script>
   {% with include_spatial='true' %}
-  {% include 'search/search_scripts.html' %}
+  {% include 'search/act_search_scripts.html' %}
   {% endwith %}
+  {% if GEONODE_SECURITY_ENABLED %}
+    {% include "_permissions_form_js.html" %}
+  {% endif %}
 
 {% endblock extra_script %}

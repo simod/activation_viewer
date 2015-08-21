@@ -3,10 +3,11 @@ from django.views.generic import TemplateView
 
 from geonode.urls import *
 
-from activation_viewer.activation.api import ActivationResource, MapProductResource
+from activation_viewer.activation.api import ActivationResource, MapProductResource, DisasterTypeResource
 
 api.register(ActivationResource())
 api.register(MapProductResource())
+api.register(DisasterTypeResource())
 
 urlpatterns = patterns('',
     url(r'^/?$',
