@@ -5,10 +5,10 @@ from .models import Activation, MapProduct, DisasterType
 activation_data = [
     {
         'activation_id': 'activ1',
-        'bbox_x0': 0,
-        'bbox_x1': 1,
-        'bbox_y0': 0,
-        'bbox_y1': 1,
+        'bbox_x0': 20,
+        'bbox_x1': 30,
+        'bbox_y0': 20,
+        'bbox_y1': 30,
         'date': "2015-07-17T04:23:12",
         'glide_number': "glide1",
         'disaster_type': 1,
@@ -16,10 +16,10 @@ activation_data = [
     }, 
     {
         'activation_id': 'activ2',
-        'bbox_x0': 0,
-        'bbox_x1': 1,
-        'bbox_y0': 0,
-        'bbox_y1': 1,
+        'bbox_x0': 40,
+        'bbox_x1': 40,
+        'bbox_y0': 40,
+        'bbox_y1': 40,
         'date': "2015-07-17T04:12:21",
         'glide_number': 'glide2',
         'disaster_type': 1,
@@ -32,26 +32,37 @@ map_product_data = [
         'name': 'mp1',
         'activation': 1,
         'layers': [1, 2],
-        'type': 'reference'
+        'type': 'reference',
+        'bbox_x0': 25,
+        'bbox_x1': 27,
+        'bbox_y0': 25,
+        'bbox_y1': 27,
     },
     {
         'name': 'mp2',
         'activation': 2,
         'layers': [3, 4],
-        'type': 'grading'
+        'type': 'grading',
+        'bbox_x0': 24,
+        'bbox_x1': 29,
+        'bbox_y0': 24,
+        'bbox_y1': 29,
     }
 ]
 
 def create_activation_data():
 
-    dtype = DisasterType.objects.create(name='flood', slug='flood')
+    flood = DisasterType.objects.create(name='Flood', slug='flood')
+    eq = DisasterType.objects.create(name='Earthquake', slug='eq')
 
     for activation in activation_data:
         activation.pop('disaster_type')
-        Activation.objects.create(disaster_type=dtype, **activation)
+        Activation.objects.create(disaster_type=flood, **activation)
 
     for mp_data in map_product_data:
         activation = Activation.objects.get(id=mp_data['activation'])
-        mp = MapProduct.objects.create(name=mp_data['name'], type=mp_data['type'], activation=activation)
-        for l_id in mp_data['layers']:
+        mp_data.pop('activation')
+        layers = mp_data.pop('layers')
+        mp = MapProduct.objects.create(activation=activation, **mp_data)
+        for l_id in layers:
             mp.layers.add(Layer.objects.get(id=l_id))

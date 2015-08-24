@@ -67,17 +67,20 @@
     <div id="map_products" ng-controller="ActivationController">
       {% verbatim %}
         <div ng-repeat="map_product in map_products" class="map-product panel panel-default">
-          <div class="panel-heading">
-            <div class="col-md-9">
+          <div class="panel-heading mp-heading">
+            <div class="col-md-7">
               <h3 class="panel-title">{{ map_product.name }}</h3>
               <p>Product type: {{ map_product.type }}</p>
             </div>
-            <button type="button" class="btn btn-info" id="zoom_mp" data-bbox="{{ map_product.bbox_x0 }},{{ map_product.bbox_y0 }},{{ map_product.bbox_x1 }},{{ map_product.bbox_y1 }}" ng-click="zoom_to_mp($event)">Zoom</button>
+            <div>
+              <button type="button" class="btn btn-xs btn-info" ng-click="zoom_to_mp(map_product.id)">Zoom</button>
+              <button type="button" class="btn btn-xs btn-info" ng-click="add_mp_layers(map_product.id)">Show layers</button>
+            </div>
           </div>
           <div class="panel-body">
             <ul class="list-group">
               <li class="col-md-12 list-group-item" ng-repeat="layer in map_product.layers"><a href="{{ layer.detail_url }}">{{ layer.title }}</a>
-                <button class="btn btn-default btn-xs pull-right" ng-click="toggle_layer(layer.id, layer.detail_url, [layer.bbox_x0, layer.bbox_y0, layer.bbox_x1, layer.bbox_y1], $event)">Add to map</button>
+                <button class="btn btn-default btn-xs pull-right" id="layer_{{ layer.id }}" ng-click="toggle_layer(map_product.id, layer.id, $event)">Add to map</button>
               </li>
             </ul>
           </div>
@@ -98,6 +101,7 @@
         activation_id: {{ activation.id }}
       })
       angular.bootstrap(document, ['act_map']);
+      GEOSERVER_PUBLIC_URL = "{{ GEOSERVER_BASE_URL }}";
     </script>
     
     <link rel="stylesheet" href="{% static "js/app/bower_components/leaflet.fullscreen/Control.FullScreen.css" %}">
