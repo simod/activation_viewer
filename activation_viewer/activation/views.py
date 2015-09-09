@@ -24,7 +24,6 @@ def _resolve_activation(request, activation_id, permission='activation.view_acti
 
     return activation
 
-
 def activation_detail(request, activation_id, template="activation_detail.html"):
     activation = _resolve_activation(request, activation_id)
     context_dict = {

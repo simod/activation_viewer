@@ -7,7 +7,6 @@ from django.contrib.contenttypes.models import ContentType
 from taggit.managers import TaggableManager
 from guardian.shortcuts import assign_perm, get_groups_with_perms, get_users_with_perms
 
-
 from geonode.layers.models import Layer
 from geonode.base.models import Region
 

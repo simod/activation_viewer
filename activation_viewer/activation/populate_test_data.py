@@ -2,8 +2,6 @@ from geonode.layers.models import Layer
 
 from .models import Activation, MapProduct, DisasterType
 
-
-
 def create_activation_data():
 
     activation_data = [

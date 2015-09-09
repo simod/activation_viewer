@@ -14,6 +14,7 @@ from geonode.api.api import CountJSONSerializer, RegionResource
 from .models import Activation, MapProduct, DisasterType
 
 class DtypeSerializer(CountJSONSerializer):
+    """Disaster type serializer"""
     def get_resources_counts(self, options):
 
         resources = get_objects_for_user(
@@ -27,7 +28,7 @@ class DtypeSerializer(CountJSONSerializer):
 
 
 class ActAuthorization(DjangoAuthorization):
-
+    """Activation Authorization"""
     def read_list(self, object_list, bundle):
         permitted_ids = get_objects_for_user(
             bundle.request.user,
@@ -63,6 +64,7 @@ class ActAuthorization(DjangoAuthorization):
 
 
 class MpAuthorization(DjangoAuthorization):
+    """Map Product Authorization"""
 
     def read_list(self, object_list, bundle):
         permitted_ids = get_objects_for_user(
@@ -114,6 +116,7 @@ class DisasterTypeResource(ModelResource):
         filtering = {
             'slug': ALL
         }
+
 
 class MapProductResource(ModelResource):
     """ActivationLayer api"""
