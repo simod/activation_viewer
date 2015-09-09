@@ -46,7 +46,7 @@
             $(event.target).html('Add to map');
 
           }else{
-            var layer = new L.tileLayer.wms('http://localhost:8080/geoserver/wms',{
+            var layer = new L.tileLayer.wms(GEOSERVER_PUBLIC_URL + 'wms' ,{
               layers: decodeURIComponent(url.split('/')[2]),
               format: 'image/png8',
               transparent: true
@@ -110,7 +110,7 @@
         };
         if(!layers.hasOwnProperty(layer_id)){
           if(layer_data != null){
-            layers[layer_id] = new L.tileLayer.wms(GEOSERVER_PUBLIC_URL + '/wms',{
+            layers[layer_id] = new L.tileLayer.wms(GEOSERVER_PUBLIC_URL + 'wms',{
               layers: decodeURIComponent(layer_data.detail_url.split('/')[2]),
               format: 'image/png8',
               transparent: true
