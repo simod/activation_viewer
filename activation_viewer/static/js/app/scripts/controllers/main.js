@@ -112,7 +112,7 @@
           if(layer_data != null){
             layers[layer_id] = new L.tileLayer.wms(GEOSERVER_PUBLIC_URL + 'wms',{
               layers: decodeURIComponent(layer_data.detail_url.split('/')[2]),
-              format: 'image/png8',
+              format: 'image/png',
               transparent: true
             });
           }else{
