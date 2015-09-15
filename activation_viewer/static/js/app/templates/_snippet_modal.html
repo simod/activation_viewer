@@ -16,7 +16,7 @@
           <div class="panel-body">
             <ul class="list-group">
               <li class="col-md-12 list-group-item" ng-repeat="layer in map_product.layers"><a href="{{ layer.detail_url }}">{{ layer.title }}</a>
-              <button id="{{ layer.id }}" data="item" class="btn btn-default btn-xs pull-right" ng-click="composer.addItem(layer)">Add to Composer</button>
+              <button id="{{ layer.id }}" data="item" class="btn btn-default btn-xs pull-right" ng-click="cart.addItem(layer)">Add to Composer</button>
               </li>
             </ul>
           </div>

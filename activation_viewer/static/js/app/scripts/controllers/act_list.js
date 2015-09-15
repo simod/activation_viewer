@@ -1,13 +1,13 @@
 'use strict';
 
 (function(){
-  angular.module('composer', [])
-    .controller('ActList', function($scope, composer){
-      $scope.composer = composer;
+  angular.module('cart', [])
+    .controller('CartList', function($scope, cart){
+      $scope.cart = cart;
       $scope.layers_params = '';
   
       $scope.newMap = function(){
-        var items = composer.getCart().items;
+        var items = cart.getCart().items;
         var params = '';
         for(var i=0; i<items.length; i++){
           params += 'layer=' + items[i].typename +'&';
@@ -16,15 +16,9 @@
       }
     })
 
-    .controller('ActSnippetCtrl', function($scope){
-      
-    })
-
-    .directive('composerCart', [function(){
+    .directive('resourceCart', [function(){
       return {
         restrict: 'E',
-        controller: 'ActList',
-        scope: {},
         templateUrl: "/static/js/app/templates/_composerCart.html"
       };
     }])
@@ -32,12 +26,11 @@
     .directive('snippetModal', [function(){
       return {
         restrict: 'E',
-        controller: 'ActSnippetCtrl',
         templateUrl: "/static/js/app/templates/_snippet_modal.html"
       };
     }])
 
-    .service('composer', function(){
+    .service('cart', function(){
       
       this.init = function(){
         this.$cart = {
@@ -78,7 +71,7 @@
       };
     })
 
-    .run(['composer', function(composer){
-      composer.init();
+    .run(['cart', function(cart){
+      cart.init();
     }])
 })();
