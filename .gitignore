@@ -4,3 +4,4 @@ reset_db.sh
 start.sh
 stop.sh
 activation_viewer.egg-info
+development.db

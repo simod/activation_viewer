@@ -19,8 +19,6 @@
 <script src="{% static "js/app/scripts/act_search.js" %}"></script>
 <script type="text/javascript" src="{% static "js/app/bower_components/leaflet.fullscreen/Control.FullScreen.js" %}"></script>
 <link rel="stylesheet" href="{% static "js/app/bower_components/leaflet.fullscreen/Control.FullScreen.css" %}">
-<script type="text/javascript" src="{% static "js/app/bower_components/bootstrap_dropdowns_enhancement/dist/js/dropdowns-enhancement.js" %}"></script>
-<link rel="stylesheet" href="{% static "js/app/bower_components/bootstrap_dropdowns_enhancement/dist/css/dropdowns-enhancement.min.css" %}">
 
 <script type="text/javascript">
   $("body").attr('ng-controller', 'geonode_search_controller');
@@ -31,13 +29,13 @@
   AUTOCOMPLETE_URL_RESOURCEBASE = '{% url "autocomplete_light_autocomplete" "ResourceBaseAutocomplete" %}';
   AUTOCOMPLETE_URL_REGION = '{% url "autocomplete_light_autocomplete" "RegionAutocomplete" %}';
 
-  var controllers = ['geonode_main_search', 'act_snippet_controller'];
+  var controllers = ['geonode_main_search', 'composer'];
   var module = angular.module('search', controllers);
   module.constant('Configs', {
     url: SEARCH_URL
   });
 
-  var deps = ['search'];
+  var deps = ['search','leaflet-directive'];
 
   angular.bootstrap(document, deps);
 </script>

@@ -1,20 +1,17 @@
 {% verbatim %}
-  <article ng-repeat="item in results" resource_id="{{ item.id }}" ng-controller="ActSnippetCtrl" ng-cloak class="ng-cloak">
+  <article ng-repeat="item in results" resource_id="{{ item.id }}" ng-controller="ActSnippetCtrl" ng-cloak class="ng-cloak col-md-8">
     <div class="row items-list">
-      <div class="col-xs-8 item-info">
+      <div class="col-xs-10 item-info">
         <h4><a href="/activations/{{ item.activation_id }}">{{ item.activation_id }}</a></h4>
         <div class="actions">
           <p class="col-xs-3"><i class="fa fa-warning"></i>{{ item.disaster_type.name }}</p>
-          <p class="col-xs-3"><i class="fa fa-calendar-o"></i>{{ item.date|date }}</p>
-          <p class="col-xs-3"><i>Service Level</i>{{ item.service_level }}</p>
-        </div>
-        
+          <p class="col-xs-5"><i class="fa fa-calendar-o"></i>{{ item.date|date }}</p>
+        </div> 
       </div>
       <div class="col-xs-2 item-info">
-        {% endverbatim %}{% if request.user.is_authenticated %}
-        <button class="btn btn-default btn-xs pull-right" ng-click="feature_select($event)">Select</button>
-        {% endif %}{% verbatim %}
+        <button class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#layers-list-{{ item.id }}">Layers</button>
       </div>
     </div>
+    <snippet-modal></snippet-modal>
   </article>
 {% endverbatim %}

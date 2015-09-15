@@ -30,7 +30,6 @@ class Activation(models.Model):
     bbox_y1 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
     glide_number = models.CharField(max_length=20, blank=True, null=True)
     disaster_type = models.ForeignKey(DisasterType)
-    service_level = models.IntegerField(choices=((1,1), (5,5)))
     date = models.DateTimeField('date', default=datetime.datetime.now)
     regions = models.ManyToManyField(Region, verbose_name='keywords region', blank=True, null=True)
     keywords = TaggableManager('keywords', blank=True)
@@ -108,6 +107,7 @@ class MapProduct(models.Model):
 
     name = models.CharField(max_length=128)
     activation = models.ForeignKey(Activation)
+    service_level = models.IntegerField(choices=((1,1), (5,5)))
     layers = models.ManyToManyField(Layer, blank=True, null=True)
     bbox_x0 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
     bbox_x1 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)

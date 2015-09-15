@@ -1,0 +1,12 @@
+<div id="composerCart" class="pull-right col-md-3">
+    <h4>Map composer</h4>
+    <p ng-show="!composer.getCart().items.length">
+        Add layers from the "layers" buttons on the left
+    </p>
+    <table class="table table-striped">
+        <tr ng-repeat="layer in composer.getCart().items">
+            <td>{{ layer.title }}<button class="btn btn-default btn-xs pull-right" ng-click="composer.removeItem(layer.id)">X</button></td>
+        </tr>
+    </table>
+    <button class="btn btn-default btn-xs" ng-disabled="!composer.getCart().items.length" ng-click="newMap()">Make your map!</button>
+</div>

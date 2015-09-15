@@ -178,7 +178,6 @@ class ActivationResource(ModelResource):
         authorization = ActAuthorization()
         filtering = {
             'disaster_type': ALL_WITH_RELATIONS,
-            'service_level': ALL,
             'date': ALL,
             'keywords': ALL_WITH_RELATIONS,
             'regions': ALL_WITH_RELATIONS,

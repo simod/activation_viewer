@@ -11,32 +11,20 @@
 <div class="page-header">
   <h2 class="page-title">{% trans "Explore Activations" %}</h2>
 </div>
-  {% with include_type_filter='true' %}
   {% with facet_type='activations' %}
-  {% with header='Type' %}
-  {% with filter='type__in' %}
   {% include "search/_act_search_content.html" %}
   {% endwith %}
-  {% endwith %}
-  {% endwith %}
-  {% endwith %}
-  {% with is_layer='false' %}
-  {% include "_bulk_permissions_form.html" %}
-  {% endwith %}
-{% endblock %}
 
+{% endblock %}
 {% block extra_script %}
   
   <script type="text/javascript">
     SEARCH_URL = '{% url 'api_dispatch_list' api_name='api' resource_name='activations' %}';
     FILTER_TYPE = 'activations';
   </script>
-  <script src="{% static "js/app/scripts/controllers/main.js" %}"></script>
+  <script src="{% static "js/app/scripts/controllers/act_list.js" %}"></script>
   {% with include_spatial='true' %}
   {% include 'search/act_search_scripts.html' %}
   {% endwith %}
-  {% if GEONODE_SECURITY_ENABLED %}
-    {% include "_permissions_form_js.html" %}
-  {% endif %}
 
 {% endblock extra_script %}

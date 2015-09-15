@@ -31,35 +31,6 @@
     });
 })();
 
-(function(){
-  angular.module('act_snippet_controller',['leaflet-directive'])
-    .controller('ActSnippetCtrl', function ($scope, leafletData) {
-      var map = leafletData.getMap('activation-map');
-      $scope.toggle_layer = function(url, id, event){
-        var article = $($('[resource_id='+id+']')[0]);
-        map.then(function(map){
-          
-          // Article handling
-          if(article.hasClass('on-map')){
-            map.removeLayer(map._layers[id]);
-            article.removeClass('on-map');
-            $(event.target).html('Add to map');
-
-          }else{
-            var layer = new L.tileLayer.wms(GEOSERVER_PUBLIC_URL + 'wms' ,{
-              layers: decodeURIComponent(url.split('/')[2]),
-              format: 'image/png8',
-              transparent: true
-            });
-            layer._leaflet_id = id;
-            layer.addTo(map);
-            article.addClass('on-map');
-            $(event.target).html('Remove from map');  
-          }    
-        });
-      }
-    });
-})();
 
 (function(){
   angular.module('query_activation',[])

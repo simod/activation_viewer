@@ -1,5 +1,5 @@
 {% load i18n %}
-<div class="row">
+<div class="row" ng-controller="ActList">
   <div class="col-md-3">
     <div class="selections">
       <h5>
@@ -19,7 +19,8 @@
       <span ng-bind="total_counts"></span>
     </div>
     <div class="col-md-12 grid-spacer">
-    {% include '_activation_snippet.html' %} 
+    <composer-cart></composer-cart>
+    {% include '_activation_snippet.html' %}
     {% include 'search/_pagination.html' %}
     </div>
   </div>

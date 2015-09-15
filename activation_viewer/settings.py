@@ -33,6 +33,22 @@ LOCAL_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 WSGI_APPLICATION = "activation_viewer.wsgi.application"
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join('development.db'),
+    },
+    # vector datastore for uploads
+    # 'datastore' : {
+    #    'ENGINE': 'django.contrib.gis.db.backends.postgis',
+    #    'NAME': '',
+    #    'USER' : '',
+    #    'PASSWORD' : '',
+    #    'HOST' : '',
+    #    'PORT' : '',
+    # }
+}
+
 
 # Load more settings from a file called local_settings.py if it exists
 try:
