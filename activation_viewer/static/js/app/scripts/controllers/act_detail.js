@@ -60,17 +60,40 @@
 
       var layers = {};
 
-      function toggle_layer_button(article){
-        if(article.hasClass('on-map')){
-          article.removeClass('on-map');
-          article.html('Add to map');
-        }else{
-          article.addClass('on-map');
-          article.html('Remove from map'); 
+      function add_layer_to_map(map, mp_id, layer_id, button){
+        var layer_info = get_or_create_layer(mp_id, layer_id);
+        if(!map.hasLayer(layer_info[0])){
+          layer_info[0].addTo(map);
+          button.addClass('on-map');
+          button.html('Remove from map');
+        }
+        return layer_info[1];
+      }
+
+      function remove_layer_from_map(map, mp_id, layer_id, button){
+        var layer_info = get_or_create_layer(mp_id, layer_id);
+        if(map.hasLayer(layer_info[0])){
+          map.removeLayer(layer_info[0]);
+          button.removeClass('on-map');
+          button.html('Add to map');
         }
       }
 
+      $scope.toggle_layer = function(mp_id, layer_id, event){
+        var button = $(event.target);
+        map.then(function(map){
+          if(button.hasClass('on-map')){
+            remove_layer_from_map(map, mp_id, layer_id, button);
+          }else{
+            var layer = add_layer_to_map(map, mp_id, layer_id, button);
+            var bounds = L.latLngBounds(L.latLng(layer.bbox_y0, layer.bbox_x0), L.latLng(layer.bbox_y1, layer.bbox_x1));
+            map.fitBounds(bounds);
+          }
+        });
+      }
+
       function get_or_create_layer(mp_id, layer_id){
+        // gets or creates a leaflet layer
         var layer_data = null;
         var mp = $scope.map_products[mp_id];
         for(var i=0; i<mp.layers.length; i++){
@@ -93,32 +116,6 @@
         return [layers[layer_id], layer_data];
       };
 
-      function toggle_layer_from_map(map, mp_id, layer_id){
-        var layer_info = get_or_create_layer(mp_id, layer_id)
-        if(map.hasLayer(layer_info[0])){
-          map.removeLayer(layer_info[0]);
-          return [layer_info, false]
-        }else{
-          layer_info[0].addTo(map);
-          return [layer_info, true]
-        }
-      };
-
-      $scope.toggle_layer = function(mp_id, layer_id, event){
-        map.then(function(map){
-          var article = $(event.target);
-
-          var toggled = toggle_layer_from_map(map, mp_id, layer_id);
-          if(toggled[1]){
-            var layer = toggled[0][1];
-            var bounds = L.latLngBounds(L.latLng(layer.bbox_y0, layer.bbox_x0), L.latLng(layer.bbox_y1, layer.bbox_x1));
-            map.fitBounds(bounds);
-          }
-
-          toggle_layer_button(article);
-        });
-      }
-
       $scope.zoom_to_mp = function(mp_id){
         map.then(function(map){
           var mp = $scope.map_products[mp_id];
@@ -131,10 +128,9 @@
           var mp = $scope.map_products[mp_id];
           for(var i=0; i<mp.layers.length; i++){
             var layer_id = mp.layers[i].id;
-            toggle_layer_from_map(map, mp_id, layer_id);
-            toggle_layer_button($('#layer_'+layer_id));
-            $scope.zoom_to_mp(mp_id);
+            add_layer_to_map(map, mp_id, layer_id, $('#layer_'+layer_id));
           }
+          $scope.zoom_to_mp(mp_id);
         })
       };
     });

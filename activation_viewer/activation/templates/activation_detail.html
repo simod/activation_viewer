@@ -94,7 +94,7 @@
 {% block extra_script %}
     {% include 'search/_spatial_tags.html' %}
     <script type="text/javascript" src="{% static "js/app/bower_components/leaflet.fullscreen/Control.FullScreen.js" %}"></script>
-    <script src="{% static "js/app/scripts/controllers/main.js" %}"></script>
+    <script src="{% static "js/app/scripts/controllers/act_detail.js" %}"></script>
     <script type="text/javascript">
       var module = angular.module('act_map', ['map_controller', 'activation_controller', 'query_activation']);
       module.constant('ActData', {
