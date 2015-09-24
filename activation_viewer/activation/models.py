@@ -1,6 +1,7 @@
 import datetime
 
 from django.db import models
+from django.db.models import signals
 from django.contrib.auth.models import Group, Permission
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
@@ -101,6 +102,21 @@ class Activation(models.Model):
 
         return info
 
+    def set_bbox_from_mapproducts(self):
+        x0 = x1 = y0 = y1 = 0
+        mpps = self.mapproduct_set.all()
+        for i in range(mpps.count()):
+            mpp = mpps[i]
+            if i == 0:
+                x0, x1, y0, y1 = mpp.bbox_x0, mpp.bbox_x1, mpp.bbox_y0, mpp.bbox_y1
+            else:
+                if mpp.bbox_x0 < x0: x0 = mpp.bbox_x0
+                if mpp.bbox_x1 > x1: x1 = mpp.bbox_x1
+                if mpp.bbox_y0 < y0: y0 = mpp.bbox_y0
+                if mpp.bbox_y1 > y1: y1 = mpp.bbox_y1
+        Activation.objects.filter(id=self.id).update(bbox_x0=x0, bbox_x1=x1, bbox_y0=y0, bbox_y1=y1)
+
+
 
 class MapProduct(models.Model):
     """Map Products of the activations"""
@@ -116,7 +132,22 @@ class MapProduct(models.Model):
     type = models.CharField(max_length=50, choices=[['reference', 'Reference'],['delineation',' Delineation'],['grading', 'Grading']])
 
     def __unicode__(self):
-        return '%s, %s' % (self.activation.activation_id, self.type)
+        return '%s, %s' % (self.name, self.activation.activation_id)
+
+    def set_bbox_from_layers(self):
+        x0 = x1 = y0 = y1 = 0
+        layers = self.layers.all()
+        for i in range(layers.count()):
+            layer = layers[i]
+            if i == 0:
+                x0, x1, y0, y1 = layer.bbox_x0, layer.bbox_x1, layer.bbox_y0, layer.bbox_y1
+            else:
+                if layer.bbox_x0 < x0: x0 = layer.bbox_x0
+                if layer.bbox_x1 > x1: x1 = layer.bbox_x1
+                if layer.bbox_y0 < y0: y0 = layer.bbox_y0
+                if layer.bbox_y1 > y1: y1 = layer.bbox_y1
+
+        MapProduct.objects.filter(id=self.id).update(bbox_x0=x0, bbox_x1=x1, bbox_y0=y0, bbox_y1=y1)
 
     class Meta:
         verbose_name_plural = 'Map Products'
@@ -124,3 +155,10 @@ class MapProduct(models.Model):
             ('view_mapproduct', 'Can view map product'),
             ('change_mapproduct_permissions', 'Can change map product permissions'),
         )
+
+
+def mapproduct_layers_changed(instance, *args, **kwargs):
+    instance.set_bbox_from_layers()
+    instance.activation.set_bbox_from_mapproducts()
+
+signals.m2m_changed.connect(mapproduct_layers_changed, sender=MapProduct.layers.through)
