@@ -123,7 +123,7 @@ class MapProduct(models.Model):
 
     name = models.CharField(max_length=128)
     activation = models.ForeignKey(Activation)
-    service_level = models.IntegerField(choices=((1,1), (5,5)))
+    service_level = models.IntegerField(choices=((1,1), (5,5)), blank=True, null=True)
     layers = models.ManyToManyField(Layer, blank=True, null=True)
     bbox_x0 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
     bbox_x1 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
