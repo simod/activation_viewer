@@ -4,14 +4,29 @@
       <div class="col-xs-10 item-info">
         <h4><a href="/activations/{{ item.activation_id }}">{{ item.activation_id }}</a></h4>
         <div class="actions">
-          <p class="col-xs-3"><i class="fa fa-warning"></i>{{ item.disaster_type.name }}</p>
-          <p class="col-xs-5"><i class="fa fa-calendar-o"></i>{{ item.date|date }}</p>
+          <p class="col-xs-5"><i class="fa fa-warning"></i>{{ item.disaster_type.name }}</p>
+          <p class="col-xs-5"><i class="fa fa-calendar-o"></i>{{ item.activation_time|date }}</p>
         </div> 
       </div>
       <div class="col-xs-2 item-info">
         <button class="btn btn-default btn-xs pull-right" data-toggle="modal" data-target="#layers-list-{{ item.id }}">Layers</button>
       </div>
     </div>
-    <snippet-modal></snippet-modal>
+    <div class="modal fade" id="layers-list-{{ item.id }}">
+      <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Map Sets available in {{ item.activation_id }}</h4>
+        </div>
+        <div class="modal-body">
+          <snippet-modal></snippet-modal>
+        </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
   </article>
 {% endverbatim %}

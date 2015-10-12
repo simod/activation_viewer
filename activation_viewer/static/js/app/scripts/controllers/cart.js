@@ -12,7 +12,7 @@
         for(var i=0; i<items.length; i++){
           params += 'layer=' + items[i].typename +'&';
         }
-        window.location = '/maps/new?' + params;
+        window.open('/maps/new?' + params);
       }
     })
 
@@ -26,7 +26,7 @@
     .directive('snippetModal', [function(){
       return {
         restrict: 'E',
-        templateUrl: "/static/js/app/templates/_snippet_modal.html"
+        templateUrl: "/static/js/app/templates/_act_layers_list.html"
       };
     }])
 
@@ -48,14 +48,22 @@
         }
       }
 
-      this.removeItem = function(id){
-        if(this.getItemById(id) !== null){
+      this.removeItem = function(item){
+        if(this.getItemById(item.id) !== null){
           var cart = this.getCart();
-          angular.forEach(cart.items, function(item, index){
-            if(item.id === id){
+          angular.forEach(cart.items, function(cart_item, index){
+            if(cart_item.id === item.id){
               cart.items.splice(index, 1);
             }
           });
+        }
+      }
+
+      this.toggleItem = function(item){
+        if(this.getItemById(item.id) === null){
+          this.addItem(item);
+        }else{
+          this.removeItem(item);
         }
       }
 
@@ -68,7 +76,15 @@
           }
         });
         return the_item;
-      };
+      }
+
+      this.getFaClass = function(id){
+        if(this.getItemById(id) === null){
+          return 'fa-cart-plus';
+        }else{
+          return 'fa-remove'
+        }
+      }
     })
 
     .run(['cart', function(cart){

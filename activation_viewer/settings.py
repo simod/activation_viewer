@@ -76,4 +76,4 @@ LOCALE_PATHS = (
     os.path.join(LOCAL_ROOT, 'locale'),
     ) + LOCALE_PATHS
 
-INSTALLED_APPS = INSTALLED_APPS + ('activation_viewer.activation',)
+INSTALLED_APPS = INSTALLED_APPS + ('activation_viewer.activation','south')

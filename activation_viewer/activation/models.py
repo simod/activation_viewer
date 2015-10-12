@@ -14,8 +14,18 @@ from geonode.base.models import Region
 
 class DisasterType(models.Model):
     """Disaster types"""
-    slug = models.CharField(max_length=5)
     name = models.CharField(max_length=128)
+    slug = models.SlugField()
+
+    def __unicode__(self):
+        return self.name
+
+
+class MapSet(models.Model):
+    "MapSet"
+    name = models.CharField(max_length=128)
+    activation = models.ForeignKey('Activation')
+    slug = models.SlugField()
 
     def __unicode__(self):
         return self.name
@@ -31,8 +41,10 @@ class Activation(models.Model):
     bbox_y1 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
     glide_number = models.CharField(max_length=20, blank=True, null=True)
     disaster_type = models.ForeignKey(DisasterType)
-    date = models.DateTimeField('date', default=datetime.datetime.now)
-    regions = models.ManyToManyField(Region, verbose_name='keywords region', blank=True, null=True)
+    event_time = models.DateTimeField('Event Time', blank=True, null=True)
+    event_time_utc = models.DateTimeField('Event Time UTC', blank=True, null=True)
+    activation_time = models.DateTimeField('Activation Time', blank=True, null=True)
+    regions = models.ManyToManyField(Region, verbose_name='Affected Countries', blank=True, null=True)
     keywords = TaggableManager('keywords', blank=True)
 
     def __unicode__(self):
@@ -103,17 +115,18 @@ class Activation(models.Model):
         return info
 
     def set_bbox_from_mapproducts(self):
-        x0 = x1 = y0 = y1 = 0
-        mpps = self.mapproduct_set.all()
-        for i in range(mpps.count()):
-            mpp = mpps[i]
-            if i == 0:
-                x0, x1, y0, y1 = mpp.bbox_x0, mpp.bbox_x1, mpp.bbox_y0, mpp.bbox_y1
-            else:
-                if mpp.bbox_x0 < x0: x0 = mpp.bbox_x0
-                if mpp.bbox_x1 > x1: x1 = mpp.bbox_x1
-                if mpp.bbox_y0 < y0: y0 = mpp.bbox_y0
-                if mpp.bbox_y1 > y1: y1 = mpp.bbox_y1
+        x0 = x1 = y0 = y1 = None
+        for mapset in self.mapset_set.all():
+            mapproducts = mapset.mapproduct_set.all()
+            for i in range(mapproducts.count()):
+                mpp = mapproducts[i]
+                if not x0:
+                    x0, x1, y0, y1 = mpp.bbox_x0, mpp.bbox_x1, mpp.bbox_y0, mpp.bbox_y1
+                else:
+                    if mpp.bbox_x0 < x0: x0 = mpp.bbox_x0
+                    if mpp.bbox_x1 > x1: x1 = mpp.bbox_x1
+                    if mpp.bbox_y0 < y0: y0 = mpp.bbox_y0
+                    if mpp.bbox_y1 > y1: y1 = mpp.bbox_y1
         Activation.objects.filter(id=self.id).update(bbox_x0=x0, bbox_x1=x1, bbox_y0=y0, bbox_y1=y1)
 
 
@@ -121,18 +134,17 @@ class Activation(models.Model):
 class MapProduct(models.Model):
     """Map Products of the activations"""
 
-    name = models.CharField(max_length=128)
-    activation = models.ForeignKey(Activation)
-    service_level = models.IntegerField(choices=((1,1), (5,5)), blank=True, null=True)
+    map_set = models.ForeignKey(MapSet)
+    service_level = models.IntegerField(choices=((1,1), (5,5)))
+    type = models.CharField(max_length=50, choices=[['reference', 'Reference'],['delineation',' Delineation'],['grading', 'Grading']])
     layers = models.ManyToManyField(Layer, blank=True, null=True)
     bbox_x0 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
     bbox_x1 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
     bbox_y0 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
     bbox_y1 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
-    type = models.CharField(max_length=50, choices=[['reference', 'Reference'],['delineation',' Delineation'],['grading', 'Grading']])
 
     def __unicode__(self):
-        return '%s, %s' % (self.name, self.activation.activation_id)
+        return '%s_%s' % (self.map_set.activation.activation_id, self.type)
 
     def set_bbox_from_layers(self):
         x0 = x1 = y0 = y1 = 0
@@ -159,6 +171,6 @@ class MapProduct(models.Model):
 
 def mapproduct_layers_changed(instance, *args, **kwargs):
     instance.set_bbox_from_layers()
-    instance.activation.set_bbox_from_mapproducts()
+    instance.map_set.activation.set_bbox_from_mapproducts()
 
 signals.m2m_changed.connect(mapproduct_layers_changed, sender=MapProduct.layers.through)

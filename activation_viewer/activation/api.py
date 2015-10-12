@@ -11,7 +11,7 @@ from guardian.shortcuts import get_objects_for_user
 from geonode.api.resourcebase_api import LayerResource
 from geonode.api.api import CountJSONSerializer, RegionResource
 
-from .models import Activation, MapProduct, DisasterType
+from .models import Activation, MapProduct, DisasterType, MapSet
 
 class DtypeSerializer(CountJSONSerializer):
     """Disaster type serializer"""
@@ -128,9 +128,20 @@ class MapProductResource(ModelResource):
         authorization = MpAuthorization()
 
 
+class MapSetResource(ModelResource):
+    """MapSet api"""
+
+    map_products = fields.ToManyField(MapProductResource, 'mapproduct_set', full=True)
+
+    class Meta:
+        queryset = MapSet.objects.all()
+        resource_name = 'mapsets'
+        authorization = ActAuthorization()
+
+
 class ActivationResource(ModelResource):
     """Activation api"""
-    map_products = fields.ToManyField(MapProductResource, 'mapproduct_set', full=True)
+    map_sets = fields.ToManyField(MapSetResource, 'mapset_set', full=True)
     disaster_type = fields.ToOneField(DisasterTypeResource, 'disaster_type', full=True)
     regions = fields.ToManyField(RegionResource, 'regions', null=True)
 
@@ -173,12 +184,12 @@ class ActivationResource(ModelResource):
         return queryset.filter(intersects)
 
     class Meta:
-        queryset = Activation.objects.distinct().order_by('-date')
+        queryset = Activation.objects.distinct().order_by('-activation_time')
         resource_name = 'activations'
         authorization = ActAuthorization()
         filtering = {
             'disaster_type': ALL_WITH_RELATIONS,
-            'date': ALL,
+            'activation_time': ALL,
             'keywords': ALL_WITH_RELATIONS,
             'regions': ALL_WITH_RELATIONS,
         }

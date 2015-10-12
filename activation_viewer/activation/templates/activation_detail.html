@@ -19,84 +19,53 @@
 
 {% block body_outer %}
 <div class="page-header">
-  <h2 class="page-title">Activation: {{ activation.activation_id|default:activation.activation_id }}</h2>
+  <h2 class="page-title">Activation: {{ activation.activation_id }}</h2>
 </div>
 
 <div class="row">
+  {% verbatim %}
   <div class="map col-md-8" ng-controller="MapCtrl">
-    <leaflet class="activation-map-container" center="center" id="activation-map">
-    </leaflet>
+    <div id="feature-info" class="panel">
+      <table class="table table-striped feature-info-table" ng-repeat="feature in feature_info" ng-cloak>
+        <thead>
+          <tr>
+            <th>{{ feature.id.split('.')[0] }}</th>
+            <th ng-repeat="prop in feature.properties_keys">{{prop}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <td>{{ feature.id.split('.')[1] }}</td>
+          <td ng-repeat="prop in feature.properties">{{prop}}</td>
+        </tbody>
+      </table>
+    </div>
+    <openlayers ol-center="center">
+      <ol-control name="{{ control.name }}" ng-repeat="control in controls|filter: {active: true}"></ol-control>
+    </openlayers>
   </div>
-
-  <div class="col-md-4">
-    <ul class="list-group">
-      <li class="list-group-item">
-        <button class="btn btn-primary btn-md btn-block" data-toggle="modal" data-target="#download-layer">{% trans "Download Activation" %}</button>
-      </li>
-      <div class="modal fade" id="download-layer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-              <h4 class="modal-title" id="myModalLabel">{% trans "Download Activation Layers" %}</h4>
-            </div>
-            <div class="modal-body">
-              {% if links %}
-              <ul>
-                {% for link in links %}
-                <li><a href="{{ link.url }}">{% trans link.name %}</a></li>
-                {% endfor %}
-              </ul>
-              {% endif %}
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {% if "change_activation_permissions" in perms_list %}
-      <li class="list-group-item">
-        <p><a href="#modal_perms" data-toggle="modal" class="btn btn-primary btn-block" data-target="#_permissions">{% trans "Change Activation Permissions" %}</a></p>
-      </li>
-      {% include "_act_permissions_form.html" %}
-      {% endif %}
-    </ul>
-    <h3>Map Products</h3>
-    <div id="map_products" ng-controller="ActivationController">
-      {% verbatim %}
-        <div ng-repeat="map_product in map_products" class="map-product panel panel-default">
-          <div class="panel-heading mp-heading">
-            <div class="col-md-7">
-              <h3 class="panel-title">{{ map_product.name }}</h3>
-              <p>Product type: {{ map_product.type }}</p>
-            </div>
-            <div>
-              <button type="button" class="btn btn-xs btn-info" ng-click="zoom_to_mp(map_product.id)">Zoom</button>
-              <button type="button" class="btn btn-xs btn-info" ng-click="add_mp_layers(map_product.id)">Show layers</button>
-            </div>
-          </div>
-          <div class="panel-body">
-            <ul class="list-group">
-              <li class="col-md-12 list-group-item" ng-repeat="layer in map_product.layers"><a href="{{ layer.detail_url }}">{{ layer.title }}</a>
-                <button class="btn btn-default btn-xs pull-right" id="layer_{{ layer.id }}" ng-click="toggle_layer(map_product.id, layer.id, $event)">Add to map</button>
-              </li>
-            </ul>
-          </div>
-        </div>
-      {% endverbatim %}
+  {% endverbatim %}
+  <div class="col-md-4" ng-controller="CartList">
+    <resource-cart></resource-cart>
+    <div id="map_products" class="col-md-12" ng-controller="ActivationController">
+      <h3>Map Products</h3>
+      <snippet-modal></snippet-modal>
     </div>
   </div> <!-- col-md-4 -->
 </div> <!-- row -->
 {% endblock %}
 
 {% block extra_script %}
-    {% include 'search/_spatial_tags.html' %}
-    <script type="text/javascript" src="{% static "js/app/bower_components/leaflet.fullscreen/Control.FullScreen.js" %}"></script>
+    <!-- <script src="{% static "js/app/bower_components/angular/angular.js" %}"></script>
+    <script src="{% static "js/app/bower_components/angular-leaflet-directive/dist/angular-leaflet-directive.js" %}"></script>-->
+    <script src="{% static "js/app/bower_components/openlayers3/build/ol-debug.js" %}"></script>
+    <script src="{% static "js/app/bower_components/angular-sanitize/angular-sanitize.min.js" %}"></script>
+    <script src="{% static "js/app/bower_components/angular-openlayers-directive/dist/angular-openlayers-directive.js" %}"></script>
+    <link rel="stylesheet" href="{% static "js/app/bower_components/openlayers3/build/ol.css" %}" />
+    <link rel="stylesheet" href="{% static "js/app/bower_components/angular-openlayers-directive/dist/angular-openlayers-directive.css" %}" />
     <script src="{% static "js/app/scripts/controllers/act_detail.js" %}"></script>
+    <script src="{% static "js/app/scripts/controllers/cart.js" %}"></script>
     <script type="text/javascript">
-      var module = angular.module('act_map', ['map_controller', 'activation_controller', 'query_activation']);
+      var module = angular.module('act_map', ['openlayers-directive', 'map_controller', 'activation_controller', 'query_activation', 'cart']);
       module.constant('ActData', {
         activation_id: {{ activation.id }}
       })
@@ -104,7 +73,6 @@
       GEOSERVER_PUBLIC_URL = "{{ GEOSERVER_BASE_URL }}";
     </script>
     
-    <link rel="stylesheet" href="{% static "js/app/bower_components/leaflet.fullscreen/Control.FullScreen.css" %}">
     {% if GEONODE_SECURITY_ENABLED %}
     {% include "_act_permissions_form_js.html" %}
     {% endif %}

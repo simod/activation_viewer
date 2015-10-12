@@ -1,15 +1,46 @@
 {% extends 'index.html' %}
 {% load i18n %}
-{% comment %}
-This is where you can override the hero area block. You can simply modify the content below or replace it wholesale to meet your own needs. 
-{% endcomment %}
+{% load base_tags %}
+
   {% block hero %}
   <div class="jumbotron">
     <div class="container">
-      <h1>{% trans "Welcome" %}</h1>
-      <p>{% blocktrans %}GeoNode is an open source platform for sharing geospatial data and maps.{% endblocktrans %}</p>
-      <p>{% blocktrans %}If you have any questions about the software or service, join our <a href="https://groups.google.com/d/forum/geonode-users">mailing list</a>.{% endblocktrans %}</p>
-      <span>{% trans 'Need help?' %} <a href="http://docs.geonode.org/en/latest/tutorials/users/quickstart/index.html">{% trans 'Getting Started' %}</a></span>
+      <h1>{% trans "Activation Viewer" %}</h1>
+      <p>{% blocktrans %}The Activation Viewer helps in use, share and consume the vector data produced within the Copernicus Rapid Mapping process.{% endblocktrans %}</p>
+      <p>This platform belongs to the European Commissions and is ran by the GEMMA action, part of the GLOBESEC unit of the Istitute for the Protection and Security of the Citizen.</p>
     </div>
+  </div>
+  {% endblock %}
+{% block mainbody %}
+  <div class="container">
+    {% if user.is_authenticated %}
+    <div class="row home-facets">
+    {% with facet_type='home' %}
+     {% facets as facets %}
+      <div class="col-md-4">
+        <p><a href="{% url "layer_browse" %}"><i class="fa fa-square-o fa-5x rotate-45"></i></a></p>
+        <h2><a href="{% url "layer_browse" %}">{{ facets.layer|default:_("No") }} {% blocktrans count counter=facets.layer %}Layer{% plural %}Layers{% endblocktrans %}</a></h2>
+        <p>{% trans "Click to search for geospatial data published by other users, organizations and public sources. Download data in standard formats." %}</p> 
+        <p class="text-center"><a class="btn btn-default" href="{% url "layer_upload" %}" role="button">{% trans "Add layers" %} &raquo;</a></p>
+      </div>
+      <div class="col-md-4">
+        <p><a href="{% url "maps_browse" %}"><i class="fa fa-map-marker fa-5x"></i></a></p>
+        <h2><a href="{% url "maps_browse" %}">{{ facets.map|default:_("No") }} {% blocktrans count counter=facets.map %}Map{% plural %}Maps{% endblocktrans %}</a></h2>
+        <p>{% trans "Data is available for browsing, aggregating and styling to generate maps which can be shared publicly or restricted to specific users only." %}</p>
+        <p><a class="btn btn-default" href="{% url "new_map" %}" role="button">{% trans "Create maps" %} &raquo;</a></p>
+      </div>
+      <div class="col-md-4">
+        
+        <p><a href="{% url "activation_browse" %}"><i class="fa fa-map-marker fa-5x"></i></a></p>
+        <h2><a href="{% url "activation_browse" %}">{{ activations_count|default:_("No") }} {% blocktrans count counter=activations_count %}Activation{% plural %}Activations{% endblocktrans %}</a></h2>
+        <p>{% trans "Explore the list of all the Activations using a dedicates search engine." %}</p>
+        <p><a class="btn btn-default" href="{% url "activation_browse" %}" role="button">{% trans "Explore activations" %} &raquo;</a></p>
+        
+      </div>
+    {% endwith %}
+    </div>
+    {% else %}
+    General content for anonymous users
+    {% endif %}
   </div>
   {% endblock %}
