@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "dependencies": {
     "angular-openlayers-directive": "https://github.com/tombatossals/angular-openlayers-directive.git#~1.2.0",
-    "openlayers3": "~3.0.0"
+    "openlayers3": "https://github.com/openlayers/ol3/releases/download/v3.4.0/v3.4.0-dist.zip"
   },
   "devDependencies": {}
 }

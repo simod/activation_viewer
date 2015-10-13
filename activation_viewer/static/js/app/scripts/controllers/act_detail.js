@@ -106,10 +106,6 @@
         }
       }
 
-      $scope.getMapSetArrowClass = function(a, b, c){
-        var target = event.target;
-      }
-
       function add_layer_to_map(map, layer){
         map.addLayer(layer);
         layer.is_on_map = true;

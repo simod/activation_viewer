@@ -25,8 +25,11 @@
 <div class="row">
   {% verbatim %}
   <div class="map col-md-8" ng-controller="MapCtrl">
-    <div id="feature-info" class="panel">
-      <table class="table table-striped feature-info-table" ng-repeat="feature in feature_info" ng-cloak>
+    <openlayers ol-center="center">
+      <ol-control name="{{ control.name }}" ng-repeat="control in controls|filter: {active: true}"></ol-control>
+    </openlayers>
+    <div id="feature-info" class=" col-md-12">
+      <table class="table table-striped table-bordered" ng-repeat="feature in feature_info" ng-cloak>
         <thead>
           <tr>
             <th>{{ feature.id.split('.')[0] }}</th>
@@ -39,9 +42,6 @@
         </tbody>
       </table>
     </div>
-    <openlayers ol-center="center">
-      <ol-control name="{{ control.name }}" ng-repeat="control in controls|filter: {active: true}"></ol-control>
-    </openlayers>
   </div>
   {% endverbatim %}
   <div class="col-md-4" ng-controller="CartList">
@@ -57,10 +57,10 @@
 {% block extra_script %}
     <!-- <script src="{% static "js/app/bower_components/angular/angular.js" %}"></script>
     <script src="{% static "js/app/bower_components/angular-leaflet-directive/dist/angular-leaflet-directive.js" %}"></script>-->
-    <script src="{% static "js/app/bower_components/openlayers3/build/ol-debug.js" %}"></script>
+    <script src="{% static "js/app/bower_components/openlayers3/ol.js" %}"></script>
     <script src="{% static "js/app/bower_components/angular-sanitize/angular-sanitize.min.js" %}"></script>
     <script src="{% static "js/app/bower_components/angular-openlayers-directive/dist/angular-openlayers-directive.js" %}"></script>
-    <link rel="stylesheet" href="{% static "js/app/bower_components/openlayers3/build/ol.css" %}" />
+    <link rel="stylesheet" href="{% static "js/app/bower_components/openlayers3/ol.css" %}" />
     <link rel="stylesheet" href="{% static "js/app/bower_components/angular-openlayers-directive/dist/angular-openlayers-directive.css" %}" />
     <script src="{% static "js/app/scripts/controllers/act_detail.js" %}"></script>
     <script src="{% static "js/app/scripts/controllers/cart.js" %}"></script>
