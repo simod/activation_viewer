@@ -3,6 +3,7 @@
 (function(){
   angular.module('map_controller', ['openlayers-directive'])
     .controller('MapCtrl', function ($scope, $http, olData) {
+      $scope.featureInfoActive = false;
       angular.extend($scope, {
         center: {
             lat: 0,
@@ -10,23 +11,48 @@
             zoom: 4
         }
       });
+
+      // Feature info control
+      var featureInfoControl = function(opt_options){
+        var options = opt_options || {};
+        
+        var button = document.createElement('button');
+        button.innerHTML = '?';
+
+        button.addEventListener('click', function(){
+          $scope.featureInfoActive = !$scope.featureInfoActive;
+          if ($scope.featureInfoActive == true){
+            $(button).addClass('active');
+          }else{
+            $(button).removeClass('active');
+          }
+          
+        }, true);
+
+        var element = document.createElement('div');
+        element.className = 'ol-control feature-info';
+        element.appendChild(button);
+        element.title = "Query map"
+
+        ol.control.Control.call(this, {
+          element: element,
+          target: options.target
+        });
+      }
+      ol.inherits(featureInfoControl, ol.control.Control);
+
       var map = olData.getMap();
       map.then(function(map){
-        // Add fullscreen control
-
-        // Hook the enter/exit fullscreen behaviors
-        // map.on('enterFullscreen', function () {
-        //   $('#map_products').addClass('fullscreen');
-        //   map.zoomIn(1);
-        //   map.panBy(L.point(2, 2));
-        // });
-        // map.on('exitFullscreen', function () {
-        //   $('#map_products').removeClass('fullscreen');
-        //   map.zoomOut(1);
-        // });
-
         map.on('singleclick', function(evt) {
-          var viewResolution = map.getView().getResolution();
+          if($scope.featureInfoActive == true){
+            getFeatureInfo(map, evt);
+          }
+        });
+        map.addControl(new featureInfoControl());
+      });
+      
+      function getFeatureInfo(map, evt){
+        var viewResolution = map.getView().getResolution();
           var map_layers = map.getLayers();
           var layers_typename = '';
           map_layers.forEach(function(layer, index, array){
@@ -48,11 +74,8 @@
               {'INFO_FORMAT': 'application/json',
                 'FEATURE_COUNT': 100});
           
-          getFeatureInfo(encodeURIComponent(decodeURIComponent(url)));
-        });
-      });
+        url = encodeURIComponent(decodeURIComponent(url));
 
-      function getFeatureInfo(url){
         $http.get('/proxy/?url='+url).then(function(response){
           for(var i=0;i<response.data.features.length;i++){
               response.data.features[i]['properties_keys'] = Object.keys(response.data.features[i].properties)
@@ -168,7 +191,7 @@
         map.then(function(map){
           var mp = $scope.map_products[mp_id];
           var extent = ol.proj.transformExtent([parseFloat(mp.bbox_x0), parseFloat(mp.bbox_y0), parseFloat(mp.bbox_x1), parseFloat(mp.bbox_y1)], 'EPSG:4326','EPSG:900913');
-          map.getView().fitExtent(extent, map.getSize());
+          map.getView().fit(extent, map.getSize());
         });
       }
 
