@@ -1,17 +1,49 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n avatar_tags staticfiles %}
 
 {% block extra_head %}
       <link href="{{ STATIC_URL }}css/site_base.css" rel="stylesheet"/>
 {% endblock %}
-{% block tabs %}
-<li id="nav_layers">
-  <a href="{% url "layer_browse" %}">{% trans "Layers" %}</a>
-</li>
-<li id="nav_maps">
-  <a href="{% url "maps_browse" %}">{% trans "Maps" %}</a>
-</li>
-<li id="nav_activations">
-  <a href="{% url "activation_browse" %}">Activations</a>
-</li>
-{% endblock %}
+
+{% block header %}
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="col-md-12">
+          <div class="logo col-md-3">
+            <a href="/"><img src="{% static "img/logo_en.gif" %}"></a>
+          </div>
+          <div class="col-md-7">
+            <div id="act_title">
+              <img src="{% static "img/title_en.png" %}">
+            </div>
+          </div>
+          <div class="col-md-2" id="login">
+            {% if user.is_authenticated %}
+              <a href="#" data-toggle="modal" data-target="#UserModal" role="button" aria-expanded="false">
+                {% avatar user 30 %} {{ user.username }}
+              </a>
+            {% else %}
+              <a href="#" data-toggle="modal" data-target="#SigninModal" role="button" >
+                {% trans "Sign in" %} 
+              </a>
+            {% endif %}
+          </div>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            {% block tabs %}
+            <li id="nav_layers">
+              <a href="{% url "layer_browse" %}">{% trans "Layers" %}</a>
+            </li>
+            <li id="nav_maps">
+              <a href="{% url "maps_browse" %}">{% trans "Maps" %}</a>
+            </li>
+            <li id="nav_activations">
+              <a href="{% url "activation_browse" %}">Activations</a>
+            </li>
+            {% endblock %}
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div><!-- container  -->
+    </div>
+    {% endblock header %}

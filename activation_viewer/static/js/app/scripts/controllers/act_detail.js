@@ -3,7 +3,7 @@
 (function(){
   angular.module('map_controller', ['openlayers-directive'])
     .controller('MapCtrl', function ($scope, $http, olData) {
-      $scope.featureInfoActive = false;
+      var featureInfoActive = false;
       angular.extend($scope, {
         center: {
             lat: 0,
@@ -20,8 +20,8 @@
         button.innerHTML = '?';
 
         button.addEventListener('click', function(){
-          $scope.featureInfoActive = !$scope.featureInfoActive;
-          if ($scope.featureInfoActive == true){
+          featureInfoActive = !featureInfoActive;
+          if (featureInfoActive == true){
             $(button).addClass('active');
           }else{
             $(button).removeClass('active');
@@ -44,7 +44,7 @@
       var map = olData.getMap();
       map.then(function(map){
         map.on('singleclick', function(evt) {
-          if($scope.featureInfoActive == true){
+          if(featureInfoActive == true){
             getFeatureInfo(map, evt);
           }
         });

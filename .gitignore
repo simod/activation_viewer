@@ -5,3 +5,4 @@ start.sh
 stop.sh
 activation_viewer.egg-info
 development.db
+activation_viewer/settings.py
