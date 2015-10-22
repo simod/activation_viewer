@@ -6,7 +6,7 @@
           {{ item.disaster_type.name }} in <span ng-repeat="region in item.regions">
           <span ng-if="$first">{{ region.name }} </span>
           <span ng-if="$middle">, {{ region.name }}</span>
-          <span ng-if="$last">and {{ region.name }}</span>
+          <span ng-if="$last && $index != 0">and {{ region.name }}</span>
         </span> </a></h4>
         <div class="actions">
           <p class="col-xs-5"><i class="fa fa-warning"></i>{{ item.disaster_type.name }}</p>
