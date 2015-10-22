@@ -6,16 +6,16 @@
       </h4>
     </div>
     <div id="map_product_list_{{ map_set.id }}" class="panel-collapse collapse" role="tabpanel">
-      <div class="panel-body">
+      <div class="mp_list_body panel-body">
         <div ng-repeat="map_product in map_set.map_products" class="map-product panel">
-          <div class="map-product-title">
+          <div class="map-product-title col-md-12" data-target="#map_product_{{ map_product.id }}" ng-init="isCollapsed = true" ng-click="isCollapsed = !isCollapsed" data-toggle="collapse" ng-class="isCollapsed ? 'fa fa-chevron-down' : 'fa fa-chevron-right'">
             <strong>{{item.activation_id}}_{{map_product.type}}</strong>
             <div ng-if="detail_page==true" class="pull-right">
               <button  type="button" class="btn btn-xs btn-info" ng-click="zoom_to_mp(map_product.id)">Zoom</button>
               <button  type="button" class="btn btn-xs btn-info" ng-click="add_mp_layers(map_product.id)">Show layers</button>
             </div>
           </div>
-          <ul class="list-group">
+          <ul id="map_product_{{ map_product.id }}" class="list-group panel-collapse collapse" role="tabpanel">
             <li class="col-md-12 list-group-item" ng-repeat="layer in map_product.layers">
 
               <a target="_blank" href="{{ layer.detail_url }}">{{ layer.title }}</a>
