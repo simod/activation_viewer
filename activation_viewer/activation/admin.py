@@ -10,6 +10,7 @@ class ActivationInline(admin.TabularInline):
 class MapProductInline(admin.TabularInline):
     model = MapProduct
     exclude = ['bbox_x0', 'bbox_x1', 'bbox_y1', 'bbox_y0']
+    filter_horizontal = ['layers']
 
 
 class ActivationAdmin(admin.ModelAdmin):
