@@ -1,0 +1,68 @@
+<table class="table table-bordered">
+  <tr>
+    <td>
+      <strong>Event Time (UTC)</strong>
+    </td>
+    <td>
+      {{ activation.event_time_utc|date:"Y-m-d P" }}
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <strong>Event Time (LOC)</strong>
+    </td>
+    <td>
+      {{ activation.event_time|date:"Y-m-d P" }}
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <strong>Event Type</strong>
+    </td>
+    <td>
+      {{ activation.disaster_type }}
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <strong>Activation Time (UTC)</strong>
+    </td>
+    <td>
+      {{ activation.activation_time|date:"Y-m-d P" }}
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <strong>Reference maps</strong>
+    </td>
+    <td>
+      {{ maps_count.reference }}
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <strong>Delineation maps</strong>
+    </td>
+    <td>
+      {{ maps_count.delineation }}
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <strong>Grading maps</strong>
+    </td>
+    <td>
+      {{ maps_count.grading }}
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <strong>Affected Countries</strong>
+    </td>
+    <td>
+      {% for region in activation.regions.all %}
+      <p>{{ region.name }}</p>
+      {% endfor %}
+    </td>
+  </tr>
+</table>

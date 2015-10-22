@@ -2,10 +2,15 @@
   <article ng-repeat="item in results" resource_id="{{ item.id }}" ng-cloak class="ng-cloak col-md-8">
     <div class="row items-list">
       <div class="col-xs-10 item-info">
-        <h4><a href="/activations/{{ item.activation_id }}">{{ item.activation_id }}</a></h4>
+        <h4><a href="/activations/{{ item.activation_id }}">{{ item.activation_id }} 
+          {{ item.disaster_type.name }} in <span ng-repeat="region in item.regions">
+          <span ng-if="$first">{{ region.name }} </span>
+          <span ng-if="$middle">, {{ region.name }}</span>
+          <span ng-if="$last">and {{ region.name }}</span>
+        </span> </a></h4>
         <div class="actions">
           <p class="col-xs-5"><i class="fa fa-warning"></i>{{ item.disaster_type.name }}</p>
-          <p class="col-xs-5"><i class="fa fa-calendar-o"></i>{{ item.activation_time|date }}</p>
+          <p class="col-xs-5"><i class="fa fa-calendar-o"></i>{{ item.event_time|date }}</p>
         </div> 
       </div>
       <div class="col-xs-2 item-info">

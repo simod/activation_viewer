@@ -9,7 +9,7 @@ from guardian.shortcuts import get_perms
 
 from geonode.security.views import _perms_info_json
 
-from .models import Activation
+from .models import Activation, MapProduct
 
 _PERMISSION_MSG_VIEW = "You are not permitted to view this activation"
 
@@ -29,6 +29,11 @@ def activation_detail(request, activation_id, template="activation_detail.html")
     context_dict = {
         'activation': activation,
         'perms_list': get_perms(request.user, activation),
+        'maps_count': {
+            'reference': MapProduct.objects.filter(type='reference', map_set__in=activation.mapset_set.all()).count(),
+            'grading': MapProduct.objects.filter(type='grading', map_set__in=activation.mapset_set.all()).count(),
+            'delineation': MapProduct.objects.filter(type='delineation', map_set__in=activation.mapset_set.all()).count()
+        }
     }
     return render_to_response(template, RequestContext(request, context_dict))
 

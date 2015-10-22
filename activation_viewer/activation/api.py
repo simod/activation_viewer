@@ -143,7 +143,7 @@ class ActivationResource(ModelResource):
     """Activation api"""
     map_sets = fields.ToManyField(MapSetResource, 'mapset_set', full=True)
     disaster_type = fields.ToOneField(DisasterTypeResource, 'disaster_type', full=True)
-    regions = fields.ToManyField(RegionResource, 'regions', null=True)
+    regions = fields.ToManyField(RegionResource, 'regions', full=True, null=True)
 
     def build_filters(self, filters={}):
         orm_filters = super(ActivationResource, self).build_filters(filters)
