@@ -200,9 +200,7 @@ class ActivationResource(ModelResource):
         }
 
 class ActFilteredResource(ModelResource):
-    """ Common resource used to apply faceting to categories, keywords, and
-    regions based on the type passed as query parameter in the form
-    type:layer/map/document"""
+    """ Activation faceting resource"""
 
     count = fields.IntegerField()
 
@@ -223,6 +221,7 @@ class ActFilteredResource(ModelResource):
 
 
 class ActKWSerializer(Serializer):
+    """Activation keyword serializer"""
     def get_resources_counts(self, options):
 
         resources = get_objects_for_user(
@@ -248,7 +247,7 @@ class ActKWSerializer(Serializer):
 
 
 class ActTagResource(ActFilteredResource):
-    """Tags api"""
+    """Activation Tags api"""
 
     def serialize(self, request, data, format, options={}):
         options['count_type'] = 'keywords'
