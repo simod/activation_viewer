@@ -2,9 +2,10 @@
 
 (function(){
   angular.module('cart', [])
-    .controller('CartList', function($scope, cart){
+    .controller('CartList', function($scope, cart, Configs){
       $scope.cart = cart;
       $scope.layers_params = '';
+      $scope.geoserver_public_url = Configs.geoserver_public_url;
   
       $scope.newMap = function(){
         var items = cart.getCart().items;

@@ -1,3 +1,6 @@
+import time
+import json
+
 from django.db.models import Q, Count
 
 from tastypie.resources import ModelResource
@@ -5,8 +8,10 @@ from tastypie import fields
 from tastypie.authorization import DjangoAuthorization
 from tastypie.exceptions import Unauthorized
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
-
+from tastypie.serializers import Serializer
+from django.core.serializers.json import DjangoJSONEncoder
 from guardian.shortcuts import get_objects_for_user
+from taggit.models import Tag
 
 from geonode.api.resourcebase_api import LayerResource
 from geonode.api.api import CountJSONSerializer, RegionResource
@@ -193,3 +198,68 @@ class ActivationResource(ModelResource):
             'keywords': ALL_WITH_RELATIONS,
             'regions': ALL_WITH_RELATIONS,
         }
+
+class ActFilteredResource(ModelResource):
+    """ Common resource used to apply faceting to categories, keywords, and
+    regions based on the type passed as query parameter in the form
+    type:layer/map/document"""
+
+    count = fields.IntegerField()
+
+    def build_filters(self, filters={}):
+        self.type_filter = None
+
+        orm_filters = super(ActFilteredResource, self).build_filters(filters)
+
+        self.type_filter = Activation
+
+        return orm_filters
+
+    def serialize(self, request, data, format, options={}):
+        options['type_filter'] = getattr(self, 'type_filter', None)
+        options['user'] = request.user
+
+        return super(ActFilteredResource, self).serialize(request, data, format, options)
+
+
+class ActKWSerializer(Serializer):
+    def get_resources_counts(self, options):
+
+        resources = get_objects_for_user(
+            options['user'],
+            'activation.view_activation'
+        )
+
+        counts = list(resources.values(options['count_type']).annotate(count=Count(options['count_type'])))
+
+        return dict([(c[options['count_type']], c['count']) for c in counts])
+
+    def to_json(self, data, options=None):
+        options = options or {}
+        data = self.to_simple(data, options)
+        counts = self.get_resources_counts(options)
+        if 'objects' in data:
+            for item in data['objects']:
+                item['count'] = counts.get(item['id'], 0)
+        # Add in the current time.
+        data['requested_time'] = time.time()
+
+        return json.dumps(data, cls=DjangoJSONEncoder, sort_keys=True)
+
+
+class ActTagResource(ActFilteredResource):
+    """Tags api"""
+
+    def serialize(self, request, data, format, options={}):
+        options['count_type'] = 'keywords'
+
+        return super(ActTagResource, self).serialize(request, data, format, options)
+
+    class Meta:
+        queryset = Tag.objects.all().order_by('name')
+        resource_name = 'act-keywords'
+        allowed_methods = ['get']
+        filtering = {
+            'slug': ALL,
+        }
+        serializer = ActKWSerializer()

@@ -18,11 +18,10 @@ body.activations li#nav_activations a {
     z-index: 999999999999;
     background: white;
     position: absolute;
-    right: -350px;
-    top: -100px;
-    width: 350px;
+    right: 15px;
+    top: 70px;
+    width: 400px;
     border: 1px solid gray;
-    height: 700px;
 }
 
 #search_filters.fullscreen{
@@ -78,7 +77,12 @@ body.activations li#nav_activations a {
     left: .5em;
   }
 
-  .ol-control button.active{
+.zoom-full {
+    top: 95px;
+    left: .5em;
+  }
+
+.ol-control button.active{
     background-color: #4c6079;
   }
 
@@ -140,4 +144,37 @@ body > .x-panel-noborder{
 .mp_list_body{
     padding-left: 5px;
     padding-right: 5px;
+}
+
+.map:-moz-full-screen {
+  height: 100%;
+  width: 100%;
+}
+.map:-webkit-full-screen {
+  height: 100%;
+  width: 100%;
+}
+.map:-ms-fullscreen {
+  height: 100%;
+  width: 100%;
+}
+.map:fullscreen {
+  height: 100%;
+  width: 100%;
+}
+
+.ol-full-screen {
+  top: 1em !important;
+}
+
+.map-fullscreen{
+    position: absolute;
+    width: 100%;
+    heigth: 100%;
+    top: 0;
+}
+
+#activation-buttons {
+    height: 60px;
+    padding-top: 25px;
 }

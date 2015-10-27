@@ -11,8 +11,8 @@
           <div class="map-product-title col-md-12">
             <strong data-target="#map_product_{{ map_product.id }}" ng-init="isCollapsed = true" ng-click="isCollapsed = !isCollapsed" data-toggle="collapse" ng-class="isCollapsed ? 'fa fa-chevron-down' : 'fa fa-chevron-right'">{{item.activation_id}}_{{map_product.type}}</strong>
             <div ng-if="detail_page==true" class="pull-right">
-              <button  type="button" class="btn btn-xs btn-info" ng-click="zoom_to_mp(map_product.id)">Zoom</button>
-              <button  type="button" class="btn btn-xs btn-info" ng-click="add_mp_layers(map_product.id)">Show layers</button>
+              <button type="button" class="btn btn-xs btn-info" ng-click="zoom_to_mp(map_product.id)">Zoom</button>
+              <button type="button" class="btn btn-xs btn-info" ng-click="add_mp_layers(map_product.id)">Show layers</button>
             </div>
           </div>
           <ul id="map_product_{{ map_product.id }}" class="list-group panel-collapse collapse" role="tabpanel">
@@ -20,10 +20,13 @@
 
               <a target="_blank" href="{{ layer.detail_url }}">{{ layer.title }}</a>
               
+              <a ng-href="{{geoserver_public_url}}wfs?format_options=charset%3AUTF-8&typename={{layer.typename }}&outputFormat=SHAPE-ZIP&version=1.0.0&service=WFS&request=GetFeature"><span class="pull-right btn-default btn btn-xs fa fa-lg fa-cloud-download" title="Download"></a>
+              </span>
               <span id="{{ layer.id }}" data="item" ng-class="cart.getFaClass(layer.id)" class="pull-right btn-default btn btn-xs fa fa-lg" ng-click="cart.toggleItem(layer)" title="Add/remove from composer">
               </span>
               <span ng-if="detail_page==true" ng-class="getFaClass(layer.id)" class="btn btn-default btn-xs pull-right fa" id="layer_{{ layer.id }}" ng-click="toggle_layer(map_product.id, layer.id, $event)" title="Add/remove from map">
               </span>
+
             
             </li>
           </ul>

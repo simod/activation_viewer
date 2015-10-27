@@ -2,15 +2,52 @@
 
 (function(){
   angular.module('map_controller', ['openlayers-directive'])
-    .controller('MapCtrl', function ($scope, $http, olData) {
+    .controller('MapCtrl', function ($rootScope, $scope, $http, olData, ActData) {
+
       var featureInfoActive = false;
       angular.extend($scope, {
         center: {
-            lat: 0,
-            lon: 0,
+            lat: ACTIVATION_CENTER[0],
+            lon: ACTIVATION_CENTER[1],
             zoom: 4
-        }
+        },
+        controls: [
+            { name: 'fullscreen', active: true }
+        ]
       });
+      var map = olData.getMap();
+
+      $rootScope.zoom_full = function(){
+        map.then(function(map){
+          var act_bbox = ActData.activation_bbox;
+          var extent = ol.proj.transformExtent([parseFloat(act_bbox[0]), parseFloat(act_bbox[1]), 
+            parseFloat(act_bbox[2]), parseFloat(act_bbox[3])], 'EPSG:4326','EPSG:900913');
+          map.getView().fit(extent, map.getSize());
+        });
+      };
+
+      // Zoom to full extent control
+      var zoomFull = function(opt_options){
+        var options = opt_options || {};
+        
+        var button = document.createElement('button');
+        button.innerHTML = 'Z';
+
+        button.addEventListener('click', function(){ 
+          $rootScope.zoom_full();
+        }, true);
+
+        var element = document.createElement('div');
+        element.className = 'ol-control zoom-full';
+        element.appendChild(button);
+        element.title = "Zoom to activation extent"
+
+        ol.control.Control.call(this, {
+          element: element,
+          target: options.target
+        });
+      };
+      ol.inherits(zoomFull, ol.control.Control);
 
       // Feature info control
       var featureInfoControl = function(opt_options){
@@ -41,14 +78,25 @@
       }
       ol.inherits(featureInfoControl, ol.control.Control);
 
-      var map = olData.getMap();
-      map.then(function(map){
+      map.then(function(map){        
         map.on('singleclick', function(evt) {
           if(featureInfoActive == true){
             getFeatureInfo(map, evt);
           }
         });
         map.addControl(new featureInfoControl());
+        map.addControl(new zoomFull());
+        // workaround for chrome fullscreen
+        document.addEventListener("webkitfullscreenchange", function(evt) {
+          var viewport = $('.angular-openlayers-map').first();
+          if(viewport.hasClass('map-fullscreen')){
+            viewport.removeClass('map-fullscreen');
+            $('#map_products').removeClass('fullscreen');
+          }else{
+            viewport.addClass('map-fullscreen');
+            $('#map_products').addClass('fullscreen');
+          }
+        });
       });
       
       function getFeatureInfo(map, evt){
@@ -209,8 +257,32 @@
               add_layer_to_map(map, layer);
             }
           }
-          $scope.zoom_to_mp(mp_id);
+          //$scope.zoom_to_mp(mp_id);
         })
       };
+
+      function add_all_layers(){
+        $.each($scope.map_products, function(mp_id){
+          // mp is the id
+          $scope.add_mp_layers(mp_id);
+        });
+      }
+
+      function remove_all_layers(){
+        map.then(function(map){
+          $.each(layers, function(layer_id){
+            // layer is the id
+            remove_layer_from_map(map, layers[layer_id]);
+          })
+        })
+      }
+
+      $scope.toggleLayers = function(action){
+        if(action == true){
+          add_all_layers();
+        }else{
+          remove_all_layers();
+        }
+      }
     });
 })();

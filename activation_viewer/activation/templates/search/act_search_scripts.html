@@ -17,13 +17,11 @@
 {% endif %}
 <script src="{{ STATIC_URL }}geonode/js/search/explore.js"></script>
 <script src="{% static "js/app/scripts/act_search.js" %}"></script>
-<script type="text/javascript" src="{% static "js/app/bower_components/leaflet.fullscreen/Control.FullScreen.js" %}"></script>
-<link rel="stylesheet" href="{% static "js/app/bower_components/leaflet.fullscreen/Control.FullScreen.css" %}">
 
 <script type="text/javascript">
   $("body").attr('ng-controller', 'geonode_search_controller');
   DISASTER_TYPES_ENDPOINT = '{% url 'api_dispatch_list' api_name='api' resource_name='disastertypes' %}';
-  KEYWORDS_ENDPOINT = '{% url 'api_dispatch_list' api_name='api' resource_name='keywords' %}';
+  KEYWORDS_ENDPOINT = '{% url 'api_dispatch_list' api_name='api' resource_name='act-keywords' %}';
   REGIONS_ENDPOINT = '{% url 'api_dispatch_list' api_name='api' resource_name='regions' %}';
   CLIENT_RESULTS_LIMIT = {{ CLIENT_RESULTS_LIMIT }};
   AUTOCOMPLETE_URL_RESOURCEBASE = '{% url "autocomplete_light_autocomplete" "ResourceBaseAutocomplete" %}';
@@ -32,7 +30,8 @@
   var controllers = ['geonode_main_search', 'cart'];
   var module = angular.module('search', controllers);
   module.constant('Configs', {
-    url: SEARCH_URL
+    url: SEARCH_URL,
+    geoserver_public_url: "{{ GEOSERVER_BASE_URL }}"
   });
 
   var deps = ['search','leaflet-directive'];
