@@ -18,7 +18,7 @@
           <ul id="map_product_{{ map_product.id }}" class="list-group panel-collapse collapse" role="tabpanel">
             <li class="col-md-12 list-group-item" ng-repeat="layer in map_product.layers">
 
-              <a target="_blank" href="{{ layer.detail_url }}">{{ layer.title | limitTo: 30}}</a>
+              <a target="_blank" href="{{ layer.detail_url }}" title="{{ layer.title }}">{{ layer.title | limitTo: 30}}{{ layer.title.length > 30 ? '...' : '' }}</a>
               
               <a ng-href="{{geoserver_public_url}}wfs?format_options=charset%3AUTF-8&typename={{layer.typename }}&outputFormat=SHAPE-ZIP&version=1.0.0&service=WFS&request=GetFeature"><span class="pull-right btn-default btn btn-xs fa fa-lg fa-cloud-download" title="Download"></a>
               </span>
