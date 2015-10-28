@@ -35,6 +35,7 @@
 <div class="row">
   <div id="activation_info" class="col-md-3">
     {% include "activation_info_table.html" %}
+    {% if related_maps.count > 0 %}
     <table class="table table-bordered table-striped">
       <thead>
         <tr>
@@ -49,6 +50,7 @@
         {% endfor %}
       </tbody>
     </table>
+    {% endif %}
   </div>
   {% verbatim %}
   <div class="map col-md-5" ng-controller="MapCtrl">
