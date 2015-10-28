@@ -5,9 +5,11 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
 
+from taggit.models import Tag
 from guardian.shortcuts import get_perms
 
 from geonode.security.views import _perms_info_json
+from geonode.maps.models import Map
 
 from .models import Activation, MapProduct
 
@@ -35,7 +37,8 @@ def activation_detail(request, activation_id, template="activation_detail.html")
             'reference': MapProduct.objects.filter(type='reference', map_set__in=activation.mapset_set.all()).count(),
             'grading': MapProduct.objects.filter(type='grading', map_set__in=activation.mapset_set.all()).count(),
             'delineation': MapProduct.objects.filter(type='delineation', map_set__in=activation.mapset_set.all()).count()
-        }
+        },
+        'related_maps': Map.objects.filter(keywords__in=Tag.objects.filter(name=activation.activation_id))
     }
     return render_to_response(template, RequestContext(request, context_dict))
 
