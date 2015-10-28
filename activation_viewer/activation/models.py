@@ -169,6 +169,18 @@ class MapProduct(models.Model):
         )
 
 
+class ExternalLayer(models.Model):
+    """External layers related to an activation"""
+
+    title = models.CharField(max_length=128)
+    layer_name = models.CharField(max_length=128)
+    url = models.URLField()
+    activation = models.ForeignKey(Activation)
+
+    def __unicode__(self):
+        return self.title
+
+
 def mapproduct_layers_changed(instance, *args, **kwargs):
     instance.set_bbox_from_layers()
     instance.map_set.activation.set_bbox_from_mapproducts()

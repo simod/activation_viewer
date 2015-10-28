@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import DisasterType, Activation, MapProduct, MapSet
+from .models import DisasterType, Activation, MapProduct, MapSet, ExternalLayer
 
 
 class ActivationInline(admin.TabularInline):
@@ -29,3 +29,4 @@ admin.site.register(DisasterType, DisasterTypeAdmin)
 admin.site.register(Activation, ActivationAdmin)
 admin.site.register(MapProduct)
 admin.site.register(MapSet, MapSetAdmin)
+admin.site.register(ExternalLayer)

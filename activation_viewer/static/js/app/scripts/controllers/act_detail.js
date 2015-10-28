@@ -284,5 +284,28 @@
           remove_all_layers();
         }
       }
+
+      var external_layers = {};
+      $scope.toggle_external_layer = function(url, layer_name){
+        map.then(function(map){
+          if (external_layers.hasOwnProperty(layer_name)){
+            var the_layer = external_layers[layer_name];
+            if(the_layer.is_on_map == true){
+              map.removeLayer(the_layer);
+              the_layer.is_on_map = false;
+            }else{
+              map.addLayer(the_layer);
+              the_layer.is_on_map = true;
+            }
+          }else{
+            var new_layer = new ol.layer.Image({
+              source: new ol.source.ImageWMS({url: url, params:{layers: layer_name}})
+            });
+            external_layers[layer_name] = new_layer;
+            new_layer.is_on_map = true;
+            map.addLayer(new_layer);
+          }
+        });
+      }
     });
 })();

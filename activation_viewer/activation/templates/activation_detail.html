@@ -82,6 +82,20 @@
         <button type="button" ng-init="action = true" class="btn-xs btn btn-info" ng-click="toggleLayers(action); action = !action" ng-bind-html="action == true ? 'Show all layers' : 'Hide layers'"></button>
       </div>
       <snippet-modal></snippet-modal>
+      {% if external_layers.count > 0 %}
+      <h3>External layers</h3>
+      <table class="table table-striped table-bordered">
+        <tbody>
+          {% for ext_l in external_layers %}
+          <tr>
+            <td>{{ ext_l.title }}
+            <span ng-init="on_map = false" ng-class="on_map==true ? 'fa-map-o' : 'fa-map'" class="btn btn-default btn-xs pull-right fa" ng-click="toggle_external_layer('{{ ext_l.url }}', '{{ ext_l.layer_name }}'); on_map=!on_map" title="Add/remove from map">
+              </span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
     </div>
   </div> <!-- col-md-4 -->
 </div> <!-- row -->
