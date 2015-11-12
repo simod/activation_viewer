@@ -57,7 +57,7 @@
 
       $scope.$on('addActivationLayers', function(event, act_id){
         $.each(ActServices.activations.get(act_id).getMapProducts(), function(mapproduct_id){
-          $scope.showMapProductLayers(act_id, mapproduct_id);
+          showMapProductLayers(act_id, mapproduct_id);
         });
       });
 
