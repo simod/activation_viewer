@@ -6,16 +6,8 @@ body.activations li#nav_activations a {
   .navbar-active;
 }
 
-.map{
-    height: 700px;
-}
-
-.activation-map-container{
-    height: 500px;
-}
-
 #map_products.fullscreen{
-    z-index: 999999999999;
+    z-index: 999999999999999;
     background: white;
     position: absolute;
     right: 15px;
@@ -25,7 +17,7 @@ body.activations li#nav_activations a {
 }
 
 #search_filters.fullscreen{
-    z-index: 999999999999;
+    z-index: 999999999999999;
     position: absolute;
     left: 25px;
     top: 100px;
@@ -51,14 +43,6 @@ body.activations li#nav_activations a {
 #composerCart{
     border: 1px solid rgb(204, 204, 204);
     padding-bottom: 10px;
-}
-
-.map-product{
-    margin-bottom: 100px;
-}
-
-.map-product-title{
-    margin-bottom: 15px;
 }
 
 #feature-info{
@@ -177,4 +161,26 @@ body > .x-panel-noborder{
 #activation-buttons {
     height: 60px;
     padding-top: 25px;
+}
+
+.list-group.panel-body{
+    padding: 0;
+}
+
+.list-group-item{
+    border-left: 0;
+    border-right: 0;
+}
+
+#full-map-composer > .modal-dialog{
+    width: 100%;
+}
+
+#activations-list-modal{
+    overflow: auto;
+    width: 40%;
+}
+
+.list-map{
+    width: 60%;
 }

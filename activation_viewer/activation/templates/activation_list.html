@@ -15,13 +15,44 @@
   {% include "search/_act_search_content.html" %}
   {% endwith %}
 
+  <div class="modal fade" id="full-map-composer">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-body">
+          <div class="row">
+            <div class="list-map col-md-7" ng-controller="MapCtrl">
+              <openlayers ol-center="center" height="600px">
+                <ol-control name="{{ control.name }}" ng-repeat="control in controls|filter: {active: true}"></ol-control>
+              </openlayers>
+            </div> <!-- map -->
+            <div id="activations-list-modal" class="col-md-5">
+            </div>
+          </div>
+        </div> <!-- modal-body -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div> <!-- modal-footer -->
+      </div> <!-- modal-content -->
+    </div> <!-- modal-dialog -->
+  </div>
+
 {% endblock %}
 {% block extra_script %}
-  
+  <link rel="stylesheet" href="{% static "js/app/bower_components/openlayers3/ol.css" %}" />
+  <link rel="stylesheet" href="{% static "js/app/bower_components/angular-openlayers-directive/dist/angular-openlayers-directive.css" %}" />
   <script type="text/javascript">
     SEARCH_URL = '{% url 'api_dispatch_list' api_name='api' resource_name='activations' %}';
   </script>
+  <script src="{% static "js/app/bower_components/openlayers3/ol-debug.js" %}"></script>
+  <script src="{% static "js/app/bower_components/angular-sanitize/angular-sanitize.min.js" %}"></script>
+  <script src="{% static "js/app/bower_components/angular-openlayers-directive/dist/angular-openlayers-directive.js" %}"></script>
+  <script src="{% static "js/app/scripts/controllers/act_list.js" %}"></script>
   <script src="{% static "js/app/scripts/controllers/cart.js" %}"></script>
+  <script src="{% static "js/app/scripts/services/activation_services.js" %}"></script>
+  <script src="{% static "js/app/scripts/directives/layers_switcher.js" %}"></script>
+  <script src="{% static "js/app/scripts/controllers/layers_switcher_controller.js" %}"></script>
+  <script src="{% static "js/app/scripts/services/map_services.js" %}"></script>
+  <script src="{% static "js/app/scripts/controllers/map_controller.js" %}"></script>
   {% with include_spatial='true' %}
   {% include 'search/act_search_scripts.html' %}
   {% endwith %}

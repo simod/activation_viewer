@@ -26,9 +26,18 @@
   CLIENT_RESULTS_LIMIT = {{ CLIENT_RESULTS_LIMIT }};
   AUTOCOMPLETE_URL_RESOURCEBASE = '{% url "autocomplete_light_autocomplete" "ResourceBaseAutocomplete" %}';
   AUTOCOMPLETE_URL_REGION = '{% url "autocomplete_light_autocomplete" "RegionAutocomplete" %}';
-
-  var controllers = ['geonode_main_search', 'cart'];
+  MAP_INITIAL_CENTER = [0, 0];
+  GEOSERVER_PUBLIC_URL = "{{ GEOSERVER_BASE_URL }}";
+  var controllers = ['geonode_main_search', 
+                     'cart', 
+                     'layers_switcher_controller', 
+                     'layers_switcher_directive',
+                     'map_controller',
+                     'actications_list_controller']; 
   var module = angular.module('search', controllers);
+  module.constant('ActData', {
+    full_bbox: [-140, -70, 140, 70]        
+  });
   module.constant('Configs', {
     url: SEARCH_URL,
     geoserver_public_url: "{{ GEOSERVER_BASE_URL }}"

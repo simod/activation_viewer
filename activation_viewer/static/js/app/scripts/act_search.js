@@ -112,6 +112,7 @@
         $scope.results = data.objects;
         $scope.total_counts = data.meta.total_count;
         $scope.$root.query_data = data;
+        $scope.$broadcast('updateActivationsData', data.objects);
       });
     };
     query_api($scope.query);

@@ -1,0 +1,161 @@
+'use strict';
+
+(function(){
+  angular.module('map_controller', ['openlayers-directive', 'map_addons', 'activation_services'])
+    .controller('MapCtrl', function ($rootScope, $scope, $http, olData, MapAddons, ActServices) {
+
+      angular.extend($scope, {
+        center: {
+            lat: MAP_INITIAL_CENTER[0],
+            lon: MAP_INITIAL_CENTER[1],
+            zoom: 4
+        },
+        controls: [
+            { name: 'fullscreen', active: true }
+        ],
+      });
+      
+      var map = olData.getMap();
+
+      // Initial map config
+      map.then(function(map){        
+        
+        var featureInfoControl = new MapAddons.featureInfoControl();
+        map.addControl(featureInfoControl);
+        map.addControl(new MapAddons.zoomFull());
+        map.addInteraction(new ol.interaction.MouseWheelZoom());
+
+        map.on('singleclick', function(evt) {
+          if(featureInfoControl.active){
+            getFeatureInfo(evt);
+          }
+        });
+      });
+      
+      //Layer event listeners
+      $rootScope.$on('createLayer', function(event, activation_id, layer_data){
+        var layer = createLayer(layer_data);
+        addLayerToMap(layer);
+        addLayerToActivation(activation_id, layer);
+      });
+
+      $rootScope.$on('addLayer', function(event, layer){
+        setLayerVisible(layer);
+      });
+
+      $rootScope.$on('removeLayer', function(event, layer){
+        setLayerInvisible(layer);
+      });
+
+      $rootScope.$on('hideAllLayers', function(event){
+        hideAllLayers();
+      });
+
+      function addLayerToMap(layer){
+        map.then(function(map){
+           map.addLayer(layer);
+        })       
+      };
+
+      function setLayerVisible(layer){
+        layer.setVisible(true);
+      };
+
+      function setLayerInvisible(layer){
+        layer.setVisible(false); 
+      };
+
+      function addLayerToActivation(activation_id, layer){
+        ActServices.activations.get(activation_id).addLayer(layer);
+      };
+
+      function hideAllLayers(){
+        map.then(function(map){
+          map.getLayers().forEach(function(layer){
+            if(layer.getProperties().name !== 'default'){
+              setLayerInvisible(layer);
+            }
+          })
+        });
+      };
+
+      //Map state event listeners
+
+      // Zoom to extent
+      // @bbox = [minx, miny, maxx, maxy]
+      $rootScope.$on('ZoomToExtent', function(event, bbox){
+        map.then(function(map){
+          var extent = ol.proj.transformExtent([
+            parseFloat(bbox[0]), 
+            parseFloat(bbox[1]), 
+            parseFloat(bbox[2]), 
+            parseFloat(bbox[3])], 
+            'EPSG:4326','EPSG:900913');
+          map.getView().fit(extent, map.getSize());
+        });
+      });
+
+      $rootScope.$on('updateMapSize', function(){
+        map.then(function(map){
+          map.updateSize();
+        })
+      });
+
+      //Used to create the layer only once then is stored the activation service.
+      function createLayer(layer_data){
+        var layer = new ol.layer.Tile({
+          source: new ol.source.TileWMS({
+            url: GEOSERVER_PUBLIC_URL + 'wms',
+            params: {'LAYERS': decodeURIComponent(layer_data.detail_url.split('/')[2])},
+            serverType: 'geoserver',
+            transparent: true,
+            format: 'image/png'
+          })
+        })
+        layer.id = layer_data.id;
+        return layer;
+      };
+
+      // GetFeatureinfo implementation
+      function getFeatureInfo(evt){
+        map.then(function(map){
+
+          var viewResolution = map.getView().getResolution();
+          var map_layers = map.getLayers();
+          var layers_typename = '';
+
+          map_layers.forEach(function(layer, index, array){
+            var source = layer.getSource();
+            if(source instanceof ol.source.TileWMS){
+              layers_typename += source.getParams()['LAYERS'];
+              if(index < array.length -1){
+                layers_typename += ',';
+              }
+            }
+          });
+
+          var wmsSource = new ol.source.TileWMS({
+            url: GEOSERVER_PUBLIC_URL + 'wms',
+            params: {'LAYERS': layers_typename},
+            serverType: 'geoserver'
+          });
+
+          var url = wmsSource.getGetFeatureInfoUrl(
+              evt.coordinate, viewResolution, 'EPSG:3857',
+              {'INFO_FORMAT': 'application/json',
+                'FEATURE_COUNT': 100});
+          
+          url = encodeURIComponent(decodeURIComponent(url));
+
+          $http.get('/proxy/?url='+url).then(function(response){
+            if(response.data.hasOwnProperty('features')){
+              for(var i=0;i<response.data.features.length;i++){
+                response.data.features[i]['properties_keys'] = Object.keys(response.data.features[i].properties)
+              }
+              $scope.feature_info = response.data.features;
+            }
+          });
+        });
+      }
+    });
+})();

@@ -11,9 +11,9 @@ def create_activation_data():
             'bbox_x1': 30,
             'bbox_y0': 20,
             'bbox_y1': 30,
-            'date': "2015-07-17T04:23:12",
+            'event_time': "2015-07-17T04:23:12",
             'glide_number': "glide1",
-            'service_level': 1, 
+            'disaster_type': 1, 
         }, 
         {
             'activation_id': 'activ2',
@@ -21,9 +21,9 @@ def create_activation_data():
             'bbox_x1': 40,
             'bbox_y0': 40,
             'bbox_y1': 40,
-            'date': "2015-07-17T04:12:21",
+            'event_time': "2015-07-17T04:12:21",
             'glide_number': 'glide2',
-            'service_level': 1, 
+            'disaster_type': 1, 
         }
     ]
 

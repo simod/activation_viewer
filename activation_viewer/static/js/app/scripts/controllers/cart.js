@@ -24,13 +24,6 @@
       };
     }])
 
-    .directive('snippetModal', [function(){
-      return {
-        restrict: 'E',
-        templateUrl: "/static/js/app/templates/_act_layers_list.html"
-      };
-    }])
-
     .service('cart', function(){
       
       this.init = function(){

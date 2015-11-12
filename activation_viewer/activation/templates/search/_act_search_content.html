@@ -1,5 +1,5 @@
 {% load i18n %}
-<div class="row" ng-controller="CartList">
+<div class="row" ng-controller="ActivationListController">
   <div class="col-md-3">
     <div class="selections">
       <h5>
@@ -13,7 +13,7 @@
         {% include "search/_extent_filter.html" %}
       </div>
   </div>
-  <div class="col-md-9">
+  <div class="col-md-9" ng-controller="CartList">
     <div class="col-md-3">
       <span>Total: </span>
       <span ng-bind="total_counts"></span>
@@ -22,7 +22,11 @@
     <div class="col-md-4 pull-right">
       <resource-cart></resource-cart>
     </div>
-    {% include '_activation_snippet.html' %}
+    <div id="activations-list-container">
+      <div id="activations-list">
+      {% include '_activation_snippet.html' %}
+      </div>
+    </div>
     {% include 'search/_pagination.html' %}
     </div>
   </div>
