@@ -157,5 +157,32 @@
           });
         });
       }
+
+
+      // External Layers management
+      var external_layers = {};
+      
+      $scope.$on('toggleExternalLayer', function(event, url, layer_name){
+        toggleExternalLayer(url, layer_name);
+      });
+
+      function toggleExternalLayer(url, layer_name){
+        map.then(function(map){
+          if (external_layers.hasOwnProperty(layer_name)){
+            var the_layer = external_layers[layer_name];
+            if(the_layer.getVisible()){
+              setLayerInvisible(the_layer);
+            }else{
+              setLayerVisible(the_layer);
+            }
+          }else{
+            var new_layer = new ol.layer.Image({
+              source: new ol.source.ImageWMS({url: url, params:{layers: layer_name}})
+            });
+            external_layers[layer_name] = new_layer;
+            map.addLayer(new_layer);
+          }
+        });
+      }
     });
 })();
