@@ -3,7 +3,7 @@ from django.conf.urls import patterns, url, include
 from geonode.urls import urlpatterns, api
 
 from activation_viewer.activation.api import ActivationResource, MapProductResource, \
-    DisasterTypeResource, MapSetResource, ActTagResource
+    DisasterTypeResource, MapSetResource, ActTagResource, ActLayerResource
 from .views import ActIndex
 
 api.register(ActivationResource())
@@ -11,6 +11,7 @@ api.register(MapProductResource())
 api.register(DisasterTypeResource())
 api.register(MapSetResource())
 api.register(ActTagResource())
+api.register(ActLayerResource())
 
 urlpatterns = patterns('',
     url(r'^/?$',

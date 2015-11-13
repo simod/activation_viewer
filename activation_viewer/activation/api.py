@@ -13,8 +13,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 from guardian.shortcuts import get_objects_for_user
 from taggit.models import Tag
 
-from geonode.api.resourcebase_api import LayerResource
 from geonode.api.api import CountJSONSerializer, RegionResource
+from geonode.layers.models import Layer
 
 from .models import Activation, MapProduct, DisasterType, MapSet
 
@@ -105,6 +105,26 @@ class MpAuthorization(DjangoAuthorization):
         raise Unauthorized()
 
 
+class ActLayerResource(ModelResource):
+
+    class Meta:
+        queryset = Layer.objects.all()
+        resource_name = 'actlayers'
+        excludes = ['abstract', 'abstract_en', 'charset',
+                    'constraints_other', 'constraints_other_en', 'csw_anytext',
+                    'csw_insert_date', 'csw_mdsource', 'csw_schema',
+                    'csw_type', 'csw_typename', 'csw_wkt_geometry',
+                    'data_quality_statement', 'data_quality_statement_en', 'date',
+                    'date_type', 'distribution_description', 'distribution_description_en',
+                    'distribution_url', 'edition', 'featured',
+                    'is_published', 'language', 'maintenance_frequency',
+                    'metadata_uploaded', 'metadata_xml', 'popular_count',
+                    'purpose', 'purpose_en', 'rating',
+                    'share_count', 'supplemental_information', 'supplemental_information_en',
+                    'temporal_extent_end', 'temporal_extent_start', 'uuid',
+                    ]
+
+
 class DisasterTypeResource(ModelResource):
     """Disaster Types API"""
 
@@ -125,7 +145,7 @@ class DisasterTypeResource(ModelResource):
 
 class MapProductResource(ModelResource):
     """ActivationLayer api"""
-    layers = fields.ToManyField(LayerResource, 'layers', full=True)
+    layers = fields.ToManyField(ActLayerResource, 'layers', full=True)
 
     class Meta:
         queryset = MapProduct.objects.all()
