@@ -106,7 +106,7 @@ class MpAuthorization(DjangoAuthorization):
 
 
 class ActLayerResource(ModelResource):
-
+    """Light layer api for activations"""
     class Meta:
         queryset = Layer.objects.all()
         resource_name = 'actlayers'

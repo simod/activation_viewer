@@ -9,6 +9,6 @@
         </tr>
     </table>
     <p><button class="btn btn-default btn-xs" ng-disabled="!cart.getCart().items.length" ng-click="newMap()">Make your map!</button>
-    <button class="btn btn-default btn-xs" ng-if="!(has_map && has_cart)" data-toggle="modal" data-target="#full-map-composer">Open live map</button>
+    <button class="btn btn-default btn-xs" ng-if="!(has_map && has_cart)" data-toggle="modal" data-target="#full-map-composer" ng-cloak>Open live map</button>
     </p>
 </div>
