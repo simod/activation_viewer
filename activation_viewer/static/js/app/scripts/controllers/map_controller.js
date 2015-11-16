@@ -180,6 +180,7 @@
               source: new ol.source.ImageWMS({url: url, params:{layers: layer_name}})
             });
             external_layers[layer_name] = new_layer;
+            new_layer.setZIndex(0);
             map.addLayer(new_layer);
           }
         });

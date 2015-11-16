@@ -13,7 +13,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from guardian.shortcuts import get_objects_for_user
 from taggit.models import Tag
 
-from geonode.api.api import CountJSONSerializer, RegionResource
+from geonode.api.api import CountJSONSerializer, RegionResource, TagResource
 from geonode.layers.models import Layer
 
 from .models import Activation, MapProduct, DisasterType, MapSet
@@ -169,6 +169,7 @@ class ActivationResource(ModelResource):
     map_sets = fields.ToManyField(MapSetResource, 'mapset_set', full=True)
     disaster_type = fields.ToOneField(DisasterTypeResource, 'disaster_type', full=True)
     regions = fields.ToManyField(RegionResource, 'regions', full=True, null=True)
+    keywords = fields.ToManyField(TagResource, 'keywords', null=True)
 
     def build_filters(self, filters={}):
         orm_filters = super(ActivationResource, self).build_filters(filters)
