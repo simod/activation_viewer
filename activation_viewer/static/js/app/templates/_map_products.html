@@ -13,8 +13,8 @@
 
   <!-- tabpanel -->
   <div id="map_product_{{ map_product.id }}" role="tabpanel" class="panel-collapse collapse">
-    <div class="list-group panel-body">
-      <div class="col-md-12 list-group-item" ng-repeat="layer in map_product.layers">
+    <div class="list-group panel-body sortable">
+      <div class="col-md-12 list-group-item" ng-repeat="layer in map_product.layers" data-layer-id="{{layer.id}}" data-activation-id="{{ activation.id }}">
         
         <a ng-init="has_map ? limit = 28 : limit = 65" target="_blank" href="{{ layer.detail_url }}" title="{{ layer.title }}">{{ layer.title | limitTo: limit}}{{ layer.title.length > limit ? '...' : '' }}</a>
         

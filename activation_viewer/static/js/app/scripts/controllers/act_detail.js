@@ -5,11 +5,11 @@
 
     .controller('ActivationController', function($rootScope, $scope, ActData, olData, ActServices){
       
+      $scope.has_map = true;
+      $scope.has_cart = true;
+      
       // Load activation data and fill up the services
       ActServices.query(ActData.activation_id).then(function(data){
-        $scope.has_map = true;
-        $scope.has_cart = true;
-
         var activation = new ActServices.activation();
         activation.activation = data;
         ActServices.activations.add(activation);

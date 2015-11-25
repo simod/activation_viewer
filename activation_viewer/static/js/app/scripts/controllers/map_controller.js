@@ -51,6 +51,10 @@
         hideAllLayers();
       });
 
+      $rootScope.$on('sortLayer', function(event, act_id, layer_id, offset){
+        sortLayer(act_id, layer_id, offset);
+      });
+
       function addLayerToMap(layer){
         map.then(function(map){
            map.addLayer(layer);
@@ -78,6 +82,25 @@
           })
         });
       };
+
+      function sortLayer(activation_id, layer_id, offset){
+        map.then(function(map){
+          var layer = ActServices.activations.get(activation_id).getLayer(layer_id);
+          if(layer){
+            var layers = map.getLayers();
+            for(var i=0;i<layers.getArray().length;i++){
+              if(layers.getArray()[i] == layer){
+                layers.removeAt(i);
+                var index = i-offset;
+                if(index < 1){index = 1};
+                if(index > layers.getArray().length){index = layers.getArray().length -1};
+                layers.insertAt(index, layer);
+                break;
+              }
+            }
+          }
+        });
+      }
 
       //Map state event listeners
 
