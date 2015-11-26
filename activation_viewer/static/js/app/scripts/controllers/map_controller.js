@@ -55,6 +55,9 @@
         sortLayer(act_id, layer_id, offset);
       });
 
+      /*
+      Listeners functions
+      */
       function addLayerToMap(layer){
         map.then(function(map){
            map.addLayer(layer);
@@ -69,7 +72,12 @@
         layer.setVisible(false); 
       };
 
+      
       function addLayerToActivation(activation_id, layer){
+        /* 
+        When created, keep a reference to the layer into the Activaition
+        used to work with the layer later on and avoid slow loops.
+        */
         ActServices.activations.get(activation_id).addLayer(layer);
       };
 
@@ -83,7 +91,11 @@
         });
       };
 
+      
       function sortLayer(activation_id, layer_id, offset){
+        /*
+        Sort the layer by the offset from the current location
+        */
         map.then(function(map){
           var layer = ActServices.activations.get(activation_id).getLayer(layer_id);
           if(layer){
@@ -203,8 +215,7 @@
               source: new ol.source.ImageWMS({url: url, params:{layers: layer_name}})
             });
             external_layers[layer_name] = new_layer;
-            new_layer.setZIndex(0);
-            map.addLayer(new_layer);
+            map.getLayers().setAt(1, new_layer);
           }
         });
       }
