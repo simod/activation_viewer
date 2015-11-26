@@ -91,7 +91,7 @@
             for(var i=0;i<layers.getArray().length;i++){
               if(layers.getArray()[i] == layer){
                 layers.removeAt(i);
-                var index = i-offset;
+                var index = i + offset;
                 if(index < 1){index = 1};
                 if(index > layers.getArray().length){index = layers.getArray().length -1};
                 layers.insertAt(index, layer);
