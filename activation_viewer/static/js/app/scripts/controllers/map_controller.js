@@ -139,12 +139,8 @@
       //Used to create the layer only once then is stored the activation service.
       function createLayer(layer_data){
         var layer = new ol.layer.Tile({
-          source: new ol.source.TileWMS({
-            url: GEOSERVER_PUBLIC_URL + 'wms',
-            params: {'LAYERS': decodeURIComponent(layer_data.detail_url.split('/')[2])},
-            serverType: 'geoserver',
-            transparent: true,
-            format: 'image/png'
+          source: new ol.source.XYZ({
+            url: layer_data.tms_url
           })
         })
         layer.id = layer_data.id;
