@@ -22,10 +22,25 @@
 
       $timeout(function(){$( ".sortable" ).sortable(
         {
+          start: function(event, ui) {
+            // creates a temporary attribute on the element with the old index
+            $(this).attr('data-previndex', ui.item.index());
+          },
           update: function(event, ui){
-          $rootScope.$emit('sortLayer', ui.item.attr('data-layer-id'));
+            // offset is the number of leve dragged up or down
+            // negative means it's dragged down, positive is dragged up
+            var old_index = $(this).attr('data-previndex');
+            $(this).removeAttr('data-previndex');
+            var new_index = ui.item.index();
+            var offset = old_index - new_index;
+
+            $rootScope.$emit('sortLayer', 
+              ui.item.attr('data-activation-id'),
+              ui.item.attr('data-layer-id'), 
+              offset);
+          }
         }
-      })}, 1000);
+      )}, 1000);
 
       $scope.getFaClass = function(act_id, layer_id){
         //Returns the correct font awesone icon checking if the layer is on the map or not.

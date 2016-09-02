@@ -51,10 +51,13 @@
         hideAllLayers();
       });
 
-      $rootScope.$on('raiseLayer', function(event, act_id, layer_id){
-        raiseLayer(act_id, layer_id);
+      $rootScope.$on('sortLayer', function(event, act_id, layer_id, offset){
+        sortLayer(act_id, layer_id, offset);
       });
 
+      /*
+      Listeners functions
+      */
       function addLayerToMap(layer){
         map.then(function(map){
            map.addLayer(layer);
@@ -69,7 +72,12 @@
         layer.setVisible(false); 
       };
 
+      
       function addLayerToActivation(activation_id, layer){
+        /* 
+        When created, keep a reference to the layer into the Activaition
+        used to work with the layer later on and avoid slow loops.
+        */
         ActServices.activations.get(activation_id).addLayer(layer);
       };
 
@@ -83,10 +91,26 @@
         });
       };
 
-      function raiseLayer(activation_id, layer_id){
+      
+      function sortLayer(activation_id, layer_id, offset){
+        /*
+        Sort the layer by the offset from the current location
+        */
         map.then(function(map){
-          ActServices.activations.get(activation_id).getLayer(layer_id);
-          
+          var layer = ActServices.activations.get(activation_id).getLayer(layer_id);
+          if(layer){
+            var layers = map.getLayers();
+            for(var i=0;i<layers.getArray().length;i++){
+              if(layers.getArray()[i] == layer){
+                layers.removeAt(i);
+                var index = i + offset;
+                if(index < 1){index = 1};
+                if(index > layers.getArray().length){index = layers.getArray().length -1};
+                layers.insertAt(index, layer);
+                break;
+              }
+            }
+          }
         });
       }
 
@@ -115,8 +139,12 @@
       //Used to create the layer only once then is stored the activation service.
       function createLayer(layer_data){
         var layer = new ol.layer.Tile({
-          source: new ol.source.XYZ({
-            url: layer_data.tms_url
+          source: new ol.source.TileWMS({
+            url: GEOSERVER_PUBLIC_URL + 'wms',
+            params: {'LAYERS': decodeURIComponent(layer_data.detail_url.split('/')[2])},
+            serverType: 'geoserver',
+            transparent: true,
+            format: 'image/png'
           })
         })
         layer.id = layer_data.id;
@@ -187,8 +215,7 @@
               source: new ol.source.ImageWMS({url: url, params:{layers: layer_name}})
             });
             external_layers[layer_name] = new_layer;
-            new_layer.setZIndex(0);
-            map.addLayer(new_layer);
+            map.getLayers().setAt(1, new_layer);
           }
         });
       }
