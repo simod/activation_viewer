@@ -17,7 +17,15 @@
   });
 
   angular.module('layers_switcher_controller', ['activation_services'])
-    .controller('LayerSwitcherController', function($rootScope, $scope, ActServices){
+    .controller('LayerSwitcherController', function($rootScope, $scope, $timeout, ActServices){
+
+
+      $timeout(function(){$( ".sortable" ).sortable(
+        {
+          update: function(event, ui){
+          $rootScope.$emit('sortLayer', ui.item.attr('data-layer-id'));
+        }
+      })}, 1000);
 
       $scope.getFaClass = function(act_id, layer_id){
         //Returns the correct font awesone icon checking if the layer is on the map or not.
@@ -63,6 +71,10 @@
 
       $scope.$on('hideActivationLayers', function(event){
         $rootScope.$emit('hideAllLayers');
+      });
+
+      $scope.$on('raiseLayer', function(event, act_id, layer_id){
+        $rootScope.$emit('raiseLayer', act_id, layer_id);
       });
 
       function showMapProductLayers(act_id, mapproduct_id){

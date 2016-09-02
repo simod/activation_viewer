@@ -107,6 +107,12 @@ class MpAuthorization(DjangoAuthorization):
 
 class ActLayerResource(ModelResource):
     """Light layer api for activations"""
+
+    tms_url = fields.CharField()
+
+    def dehydrate_tms_url(self, bundle):
+        return bundle.obj.link_set.get(name='Tiles').url
+
     class Meta:
         queryset = Layer.objects.all()
         resource_name = 'actlayers'
@@ -116,7 +122,7 @@ class ActLayerResource(ModelResource):
                     'csw_type', 'csw_typename', 'csw_wkt_geometry',
                     'data_quality_statement', 'data_quality_statement_en', 'date',
                     'date_type', 'distribution_description', 'distribution_description_en',
-                    'distribution_url', 'edition', 'featured',
+                    'edition', 'featured',
                     'is_published', 'language', 'maintenance_frequency',
                     'metadata_uploaded', 'metadata_xml', 'popular_count',
                     'purpose', 'purpose_en', 'rating',

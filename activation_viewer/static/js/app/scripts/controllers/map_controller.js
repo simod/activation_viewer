@@ -51,6 +51,10 @@
         hideAllLayers();
       });
 
+      $rootScope.$on('raiseLayer', function(event, act_id, layer_id){
+        raiseLayer(act_id, layer_id);
+      });
+
       function addLayerToMap(layer){
         map.then(function(map){
            map.addLayer(layer);
@@ -79,6 +83,13 @@
         });
       };
 
+      function raiseLayer(activation_id, layer_id){
+        map.then(function(map){
+          ActServices.activations.get(activation_id).getLayer(layer_id);
+          
+        });
+      }
+
       //Map state event listeners
 
       // Zoom to extent
@@ -104,12 +115,8 @@
       //Used to create the layer only once then is stored the activation service.
       function createLayer(layer_data){
         var layer = new ol.layer.Tile({
-          source: new ol.source.TileWMS({
-            url: GEOSERVER_PUBLIC_URL + 'wms',
-            params: {'LAYERS': decodeURIComponent(layer_data.detail_url.split('/')[2])},
-            serverType: 'geoserver',
-            transparent: true,
-            format: 'image/png'
+          source: new ol.source.XYZ({
+            url: layer_data.tms_url
           })
         })
         layer.id = layer_data.id;

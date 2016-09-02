@@ -58,7 +58,7 @@
             return this.activations.hasOwnProperty(id);
           }
         },
-
+        
         query: function(activation_id){
           var promise = $http.get('/api/activations/'+activation_id)
             .then(function(response){
