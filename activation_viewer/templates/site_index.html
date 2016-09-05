@@ -13,7 +13,6 @@
   {% endblock %}
 {% block mainbody %}
   <div class="container">
-    {% if user.is_authenticated %}
     <div class="row home-facets">
     {% with facet_type='home' %}
      {% facets as facets %}
@@ -39,8 +38,5 @@
       </div>
     {% endwith %}
     </div>
-    {% else %}
-    General content for anonymous users
-    {% endif %}
   </div>
   {% endblock %}
