@@ -10,6 +10,11 @@
             lon: MAP_INITIAL_CENTER[1],
             zoom: 4
         },
+        defaults: {
+          view: {
+            maxZoom: 21
+          }
+        },
         controls: [
             { name: 'fullscreen', active: true }
         ],
