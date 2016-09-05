@@ -1,14 +1,15 @@
 
   <!-- tab -->
   <div class="col-md-12 panel-heading" role="tab">
-    <strong class="panel-title" data-target="#map_product_{{ map_product.id }}" ng-init="isCollapsed = true" ng-click="isCollapsed = !isCollapsed" data-toggle="collapse" ng-class="isCollapsed ? 'fa fa-chevron-down' : 'fa fa-chevron-right'">{{activation.activation_id}}_{{map_product.type}}
-    </strong>
-    
-    <div ng-if="has_map" class="pull-right">
-      <button type="button" class="btn btn-xs btn-info" ng-click="zoomToMapProduct(activation.id, map_product.id)">Zoom</button>
-      <button type="button" ng-init="action = true" class="btn btn-xs btn-info" ng-click="toggleMapProductLayers(action, activation.id, map_product.id); action = !action" ng-bind-html="action ? 'Show layers' : 'Hide layers'"></button>
-    </div>
-
+    <h4 class="panel-title">
+      <a class="panel-title ms-title" data-target="#map_product_{{ map_product.id }}" ng-init="isCollapsed = true" ng-click="isCollapsed = !isCollapsed" data-toggle="collapse" ng-class="isCollapsed ? 'fa fa-chevron-right' : 'fa fa-chevron-down'">{{activation.activation_id}}_{{map_product.type}}
+      </a>
+      
+      <div ng-if="has_map" class="pull-right">
+        <button type="button" class="btn btn-xs btn-info" ng-click="zoomToMapProduct(activation.id, map_product.id)">Zoom</button>
+        <button type="button" ng-init="action = true" class="btn btn-xs btn-info" ng-click="toggleMapProductLayers(action, activation.id, map_product.id); action = !action" ng-bind-html="action ? 'Show layers' : 'Hide layers'"></button>
+      </div>
+    </h4>
   </div>
 
   <!-- tabpanel -->
@@ -18,13 +19,13 @@
         
         <a ng-init="has_map ? limit = 28 : limit = 65" target="_blank" href="{{ layer.detail_url }}" title="{{ layer.title }}">{{ layer.title | limitTo: limit}}{{ layer.title.length > limit ? '...' : '' }}</a>
         
-        <a ng-if="layer.storeType=='dataStore'" ng-href="{{geoserver_public_url}}wfs?format_options=charset%3AUTF-8&typename={{layer.typename }}&outputFormat=SHAPE-ZIP&version=1.0.0&service=WFS&request=GetFeature" class="pull-right btn-default btn btn-xs fa fa-lg fa-cloud-download" title="Download">
+        <a ng-if="layer.storeType=='dataStore'" ng-href="{{geoserver_public_url}}wfs?format_options=charset%3AUTF-8&typename={{ layer.typename }}&outputFormat=SHAPE-ZIP&version=1.0.0&service=WFS&request=GetFeature" class="pull-right btn-default btn btn-xs fa fa-lg fa-cloud-download" title="Download">
         </a>
         <span ng-if="has_cart" id="{{ layer.id }}" ng-class="cart.getFaClass(layer.id)" class="pull-right btn-default btn btn-xs fa fa-lg" ng-click="cart.toggleItem(layer)" title="Add/remove from composer">
         </span>
         <span ng-if="has_map" ng-class="getFaClass(activation.id, layer.id)" class="btn btn-default btn-xs pull-right fa" id="layer_{{ layer.id }}" ng-click="toggleLayer(activation.id, layer, $event)" title="Add/remove from map">
         </span>
-
+        <span type="button" class="btn btn-default btn-xs pull-right fa tms-link" data-container="body" data-toggle="popover" title="TMS url" data-content="http://tiles.copernicus-ems.eu/cache/layers/{{layer.id}}">TMS</span>
       </div>
     </div>
   </div> <!-- tabpanel -->

@@ -380,5 +380,11 @@
         });
       });
     }
+
+    $('body').popover({
+        selector: '.tms-link',
+        trigger: 'click',
+        placement: 'top'
+      });
   });
 })();
