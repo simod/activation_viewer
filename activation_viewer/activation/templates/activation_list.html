@@ -20,12 +20,12 @@
       <div class="modal-content">
         <div class="modal-body">
           <div class="row">
-            <div class="list-map col-md-7" ng-controller="MapCtrl">
-              <openlayers ol-center="center" height="600px" ol-defaults="defaults">
+            <div class="list-map col-md-8" ng-controller="MapCtrl">
+              <openlayers ol-center="center" ol-defaults="defaults">
                 <ol-control name="{{ control.name }}" ng-repeat="control in controls|filter: {active: true}"></ol-control>
               </openlayers>
             </div> <!-- map -->
-            <div id="activations-list-modal" class="col-md-5">
+            <div id="activations-list-modal" class="col-md-4">
             </div>
           </div>
         </div> <!-- modal-body -->

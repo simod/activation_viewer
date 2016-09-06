@@ -142,13 +142,30 @@ body > .x-panel-noborder {
 }
 #activations-list-modal {
   overflow: auto;
-  width: 40%;
-  max-height: 600px;
+  width: 30%;
 }
 .list-map {
-  width: 60%;
+  width: 70%;
   height: 100%;
 }
 .popover {
   max-width: 100%;
+}
+#activations-list-modal .activation-article {
+  width: 100%;
+}
+@media (min-height: 600px) {
+  .angular-openlayers-map {
+    height: 500px !important;
+  }
+}
+@media (min-height: 800px) {
+  .angular-openlayers-map {
+    height: 700px !important;
+  }
+}
+@media (min-height: 1000px) {
+  .angular-openlayers-map {
+    height: 900px !important;
+  }
 }
