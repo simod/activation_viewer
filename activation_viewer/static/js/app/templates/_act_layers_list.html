@@ -1,8 +1,7 @@
 <!-- tablist -->
 <!-- ng-init used to integrate with the geonode search engine that is returning item. In our activation detail page we use activation instead -->
 <div class="panel panel-group" ng-init="item ? activation = item : null" role="tablist" id="map-set-list" ng-controller="LayerSwitcherController">
-  <button ng-if="has_map" type="button" class="btn-xs btn btn-info" ng-click="zoomToActivation(item.id )">Zoom</button>
-        <button ng-if="has_map" type="button" ng-init="action = true" class="btn-xs btn btn-info" ng-click="toggleActivationLayers(action, item.id); action = !action" ng-bind-html="action == true ? 'Show all layers' : 'Hide layers'"></button>
+  
   <div ng-repeat="map_set in activation.map_sets" class="panel panel-default map-set">
     
     <!-- tab -->

@@ -17,6 +17,8 @@
         <button class="btn btn-xs pull-right" ng-init="toggled = false" ng-class="toggled ? 'btn-info' : 'btn-default'" ng-click="toggled = !toggled" data-toggle="collapse" data-target="#layers-list-{{ item.id }}">Layers</button>
       </div>
     </div>
+    <button ng-if="has_map" type="button" class="btn-xs btn btn-info" ng-click="zoomToActivation(item.id )">Zoom</button>
+    <button ng-if="has_map" type="button" ng-init="action = true" class="btn-xs btn btn-info" ng-click="toggleActivationLayers(action, item.id); action = !action" ng-bind-html="action == true ? 'Show all layers' : 'Hide layers'"></button>
     <div class="collapse" id="layers-list-{{ item.id }}">
       <div class="well">
         <layer-switcher></layer-switcher>
