@@ -88,15 +88,19 @@
         $rootScope.$emit('hideAllLayers');
       });
 
-      $scope.$on('raiseLayer', function(event, act_id, layer_id){
-        $rootScope.$emit('raiseLayer', act_id, layer_id);
-      });
-
       function showMapProductLayers(act_id, mapproduct_id){
         var activation = ActServices.activations.get(act_id);
         var map_product = activation.getMapProduct(mapproduct_id);
         $.each(map_product.layers, function(index, layer_data){
           addLayer(activation.getLayer(layer_data.id), act_id, layer_data);
+        });
+        $.each(map_product.layers, function(index, layer_data){
+          if(layer_data.storeType === 'dataStore'){
+            $rootScope.$emit('sortLayer', 
+              act_id,
+              layer_data.id, 
+              -50);
+          }
         });
       };
 
