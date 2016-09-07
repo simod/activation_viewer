@@ -66,7 +66,8 @@
       function addLayerToMap(layer){
         map.then(function(map){
           if (layer.storeType == 'dataStore'){
-            map.getLayers().insertAt(0, layer);
+            var layers = map.getLayers();
+            layers.insertAt((Math.abs(layers.length - 1)), layer);
           }else{
             map.addLayer(layer);
           }
