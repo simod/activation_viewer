@@ -65,7 +65,11 @@
       */
       function addLayerToMap(layer){
         map.then(function(map){
-           map.addLayer(layer);
+          if (layer.storeType == 'dataStore'){
+            map.getLayers().insertAt(0, layer);
+          }else{
+            map.addLayer(layer);
+          }
         })       
       };
 
@@ -149,6 +153,7 @@
           })
         })
         layer.id = layer_data.id;
+        layer.dataType = layer.storeType;
         return layer;
       };
 

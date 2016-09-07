@@ -27,7 +27,7 @@
             $(this).attr('data-previndex', ui.item.index());
           },
           update: function(event, ui){
-            // offset is the number of leve dragged up or down
+            // offset is the number of levels dragged up or down
             // negative means it's dragged down, positive is dragged up
             var old_index = $(this).attr('data-previndex');
             $(this).removeAttr('data-previndex');
