@@ -92,14 +92,13 @@
         var activation = ActServices.activations.get(act_id);
         var map_product = activation.getMapProduct(mapproduct_id);
         $.each(map_product.layers, function(index, layer_data){
-          addLayer(activation.getLayer(layer_data.id), act_id, layer_data);
+          if (layer_data.storeType==="coverageStore"){
+            addLayer(activation.getLayer(layer_data.id), act_id, layer_data);
+          }
         });
         $.each(map_product.layers, function(index, layer_data){
-          if(layer_data.storeType === 'dataStore'){
-            $rootScope.$emit('sortLayer', 
-              act_id,
-              layer_data.id, 
-              -50);
+          if (layer_data.storeType==="dataStore"){
+            addLayer(activation.getLayer(layer_data.id), act_id, layer_data);
           }
         });
       };
