@@ -150,6 +150,7 @@
         })
         layer.id = layer_data.id;
         return layer;
+        
       };
 
       // GetFeatureinfo implementation
