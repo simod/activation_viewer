@@ -153,7 +153,7 @@
           })
         })
         layer.id = layer_data.id;
-        layer.dataType = layer.storeType;
+        layer.storeType = layer.storeType;
         return layer;
       };
 
