@@ -146,11 +146,17 @@
         var layer = new ol.layer.Tile({
           source: new ol.source.XYZ({
             url: layer_data.tms_url
-          })
-        })
+          }),
+          extent: ol.proj.transformExtent([
+            parseFloat(layer_data.bbox_x0), 
+            parseFloat(layer_data.bbox_y0), 
+            parseFloat(layer_data.bbox_x1), 
+            parseFloat(layer_data.bbox_y1)], 
+            'EPSG:4326','EPSG:900913')
+        });
         layer.id = layer_data.id;
         return layer;
-        
+
       };
 
       // GetFeatureinfo implementation
