@@ -8,7 +8,7 @@
         center: {
             lat: MAP_INITIAL_CENTER[0],
             lon: MAP_INITIAL_CENTER[1],
-            zoom: 4
+            zoom: 11
         },
         defaults: {
           view: {

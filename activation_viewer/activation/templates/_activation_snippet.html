@@ -14,7 +14,7 @@
         </div> 
       </div>
       <div class="col-xs-2 item-info">
-        <button class="btn btn-xs pull-right" ng-init="toggled = false" ng-class="toggled ? 'btn-info' : 'btn-default'" ng-click="toggled = !toggled" data-toggle="collapse" data-target="#layers-list-{{ item.id }}">Layers</button>
+        <button class="btn btn-s pull-right" ng-init="toggled = false" ng-class="toggled ? 'btn-info' : 'btn-default'" ng-click="toggled = !toggled" data-toggle="collapse" data-target="#layers-list-{{ item.id }}">Expand</button>
       </div>
     </div>
     <button ng-if="has_map" type="button" class="btn-xs btn btn-info" ng-click="zoomToActivation(item.id )">Zoom</button>
