@@ -114,7 +114,7 @@ class ActLayerResource(ModelResource):
         return bundle.obj.link_set.get(name='Tiles').url
 
     class Meta:
-        queryset = Layer.objects.all()
+        queryset = Layer.objects.order_by('-storeType')
         resource_name = 'actlayers'
         excludes = ['abstract', 'abstract_en', 'charset',
                     'constraints_other', 'constraints_other_en', 'csw_anytext',
