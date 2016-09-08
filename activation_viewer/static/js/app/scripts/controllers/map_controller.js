@@ -29,6 +29,13 @@
         map.addControl(featureInfoControl);
         map.addControl(new MapAddons.zoomFull());
         map.addInteraction(new ol.interaction.MouseWheelZoom());
+        
+        map.getControls().forEach(function(control){
+          if(control instanceof ol.control.Attribution){
+            control.setCollapsible(false);
+            control.setCollapsed(false);
+          }
+        });
 
         map.on('singleclick', function(evt) {
           if(featureInfoControl.active){
@@ -142,10 +149,16 @@
       });
 
       //Used to create the layer only once then is stored the activation service.
+      var attribution = new ol.Attribution({
+        html: 'Copernicus Emergency Management Service (&copy; 2016 European Union),'+
+              '<a href="http://emergency.copernicus.eu/mapping/list-of-components/EMSR177" target="_blank">[EMSR177] Earthquake in Central Italy</a>, '+
+              'Aerial Data Provided by <a href="http://www.cgrspa.com" target="_blank">CGR Spa</a>'
+      });
       function createLayer(layer_data){
         var layer = new ol.layer.Tile({
           source: new ol.source.XYZ({
-            url: layer_data.tms_url
+            url: layer_data.tms_url,
+            attributions: [attribution]
           }),
           extent: ol.proj.transformExtent([
             parseFloat(layer_data.bbox_x0), 
