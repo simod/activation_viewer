@@ -18,6 +18,14 @@
         controls: [
             { name: 'fullscreen', active: true }
         ],
+        osm: {
+            name: 'OpenStreetMap',
+            source: {
+                type: 'OSM',
+                url: 'http://europa.eu/webtools/maps/tiles/osm-ec/{z}/{x}/{y}.png',
+                attribution: '<a href="http://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>'
+            }
+        }
       });
       
       var map = olData.getMap();

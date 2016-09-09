@@ -21,8 +21,9 @@
         <div class="modal-body">
           <div class="row">
             <div class="list-map col-md-8" ng-controller="MapCtrl">
-              <openlayers ol-center="center" ol-defaults="defaults">
+              <openlayers ol-center="center" ol-defaults="defaults" custom-layers="true">
                 <ol-control name="{{ control.name }}" ng-repeat="control in controls|filter: {active: true}"></ol-control>
+                <ol-layer ol-layer-properties="osm"></ol-layer>
               </openlayers>
             </div> <!-- map -->
             <div id="activations-list-modal" class="col-md-4">
