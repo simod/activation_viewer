@@ -19,7 +19,7 @@
             { name: 'fullscreen', active: true }
         ],
         osm: {
-            name: 'OpenStreetMap',
+            name: 'default',
             source: {
                 type: 'OSM',
                 url: 'http://europa.eu/webtools/maps/tiles/osm-ec/{z}/{x}/{y}.png',
