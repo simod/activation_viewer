@@ -54,8 +54,9 @@
   </div>
   {% verbatim %}
   <div class="map col-md-5" ng-controller="MapCtrl">
-    <openlayers ol-center="center">
+    <openlayers ol-center="center" ol-defaults="defaults" custom-layers="true">
       <ol-control name="{{ control.name }}" ng-repeat="control in controls|filter: {active: true}"></ol-control>
+      <ol-layer ol-layer-properties="osm"></ol-layer>
     </openlayers>
   </div>
   {% endverbatim %}
