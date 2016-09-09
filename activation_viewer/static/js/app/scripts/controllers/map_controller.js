@@ -22,10 +22,15 @@
       
       var map = olData.getMap();
 
+      var popup = new ol.Overlay({
+        element: document.getElementById('popup')
+      });
+
+      var featureInfoControl = new MapAddons.featureInfoControl();
+      
       // Initial map config
       map.then(function(map){        
         
-        var featureInfoControl = new MapAddons.featureInfoControl();
         map.addControl(featureInfoControl);
         map.addControl(new MapAddons.zoomFull());
         map.addInteraction(new ol.interaction.MouseWheelZoom());
@@ -38,9 +43,7 @@
         });
 
         map.on('singleclick', function(evt) {
-          if(featureInfoControl.active){
-            getFeatureInfo(evt);
-          }
+          getLayersInfo(evt);
         });
       });
       
@@ -168,6 +171,8 @@
             'EPSG:4326','EPSG:900913')
         });
         layer.id = layer_data.id;
+        layer.title = layer_data.title;
+        layer.typename = layer_data.typename;
         return layer;
 
       };
@@ -181,9 +186,8 @@
           var layers_typename = '';
 
           map_layers.forEach(function(layer, index, array){
-            var source = layer.getSource();
-            if(source instanceof ol.source.TileWMS){
-              layers_typename += source.getParams()['LAYERS'];
+            if (!(layer.getSource() instanceof ol.source.OSM)){
+              layers_typename += layer.typename;
               if(index < array.length -1){
                 layers_typename += ',';
               }
@@ -214,7 +218,49 @@
         });
       }
 
+      function getLayersInfo(evt){
+        var element = popup.getElement();
+        if(featureInfoControl.active){
+          map.then(function(map){
+            // Popup showing the position the user clicked
+            
+            map.addOverlay(popup);
+ 
+            var coordinate = evt.coordinate;
+            var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
+                coordinate, 'EPSG:3857', 'EPSG:4326'));
 
+            $(element).popover('destroy');
+            popup.setPosition(coordinate);
+            // the keys are quoted to prevent renaming in ADVANCED mode.
+            
+
+            var layer_titles = [];
+            var layers = map.getLayers();
+            layers.forEach(function(layer){
+              if (!(layer.getSource() instanceof ol.source.OSM)){
+                if(ol.extent.containsCoordinate(layer.getExtent(), evt.coordinate)){
+                  layer_titles.push(layer.title);
+                }
+              }
+            });
+            var titles_html = '<ul>';
+            for(var i=0;i<layer_titles.length;i++){
+              titles_html += '<li>'+layer_titles[i]+'</li>'
+            }
+            titles_html += '</ul>';
+            $(element).popover({
+              'placement': 'top',
+              'animation': false,
+              'html': true,
+              'content': titles_html
+            });
+            $(element).popover('show');
+          });
+        }else{
+          $(element).popover('destroy');
+        }
+      }
       // External Layers management
       var external_layers = {};
       

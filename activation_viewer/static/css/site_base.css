@@ -152,7 +152,8 @@ body > .x-panel-noborder {
   height: 100%;
 }
 .popover {
-  max-width: 100%;
+  max-width: 600px;
+  z-index: 2000;
 }
 #activations-list-modal .activation-article {
   width: 100%;
