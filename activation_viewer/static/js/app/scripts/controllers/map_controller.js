@@ -244,18 +244,21 @@
                 }
               }
             });
-            var titles_html = '<ul>';
-            for(var i=0;i<layer_titles.length;i++){
-              titles_html += '<li>'+layer_titles[i]+'</li>'
+            if (layer_titles.length > 0){
+              var titles_html = '<ul>';
+              for(var i=0;i<layer_titles.length;i++){
+                titles_html += '<li>'+layer_titles[i]+'</li>'
+              }
+              titles_html += '</ul>';
+              $(element).popover({
+                'placement': 'top',
+                'animation': false,
+                'html': true,
+                'content': titles_html
+              });
+              $(element).popover('show');
             }
-            titles_html += '</ul>';
-            $(element).popover({
-              'placement': 'top',
-              'animation': false,
-              'html': true,
-              'content': titles_html
-            });
-            $(element).popover('show');
+            
           });
         }else{
           $(element).popover('destroy');
