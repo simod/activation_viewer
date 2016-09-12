@@ -1,32 +1,26 @@
 
   <!-- tab -->
-  <div class="col-md-12 panel-heading" role="tab">
-    <h4 class="panel-title">
-      <i ng-init="isCollapsed = true" ng-click="isCollapsed = !isCollapsed" ng-class="isCollapsed ? 'fa fa-chevron-right' : 'fa fa-chevron-down'"><a class="panel-title ms-title" data-target="#map_product_{{ map_product.id }}" data-toggle="collapse">{{activation.activation_id}}_{{map_product.type}}
-      </a></i>
-      
-      <div ng-if="has_map" class="pull-right">
-        <button type="button" class="btn btn-xs btn-info" ng-click="zoomToMapProduct(activation.id, map_product.id)">Zoom</button>
-        <button type="button" ng-init="action = true" class="btn btn-xs btn-info" ng-click="toggleMapProductLayers(action, activation.id, map_product.id); action = !action" ng-bind-html="action ? 'Show layers' : 'Hide layers'"></button>
-      </div>
-    </h4>
-  </div>
+    <strong class="ms-title list-group-item-heading">
+      {{map_product.type}}
+      <button ng-if="has_map" type="button" ng-init="action = true" class="btn btn-xs btn-info pull-right" ng-click="toggleMapProductLayers(action, item.id, map_product.id); action = !action" ng-bind-html="action ? 'Show layers' : 'Hide layers'"></button> 
+      <button ng-if="has_map" type="button" class="btn btn-xs btn-info pull-right" ng-click="zoomToMapProduct(item.id, map_product.id)" style="margin-right: 5px">Zoom</button>     
+    </strong>
+    
+
 
   <!-- tabpanel -->
-  <div id="map_product_{{ map_product.id }}" role="tabpanel" class="panel-collapse collapse">
-    <div class="list-group panel-body sortable">
-      <div class="col-md-12 list-group-item" ng-repeat="layer in map_product.layers" data-layer-id="{{layer.id}}" data-activation-id="{{ activation.id }}">
+  <div id="map_product_{{ map_product.id }}"  class="list-group sortable map-product-layers">
+      <div class="list-group-item" ng-repeat="layer in map_product.layers" data-layer-id="{{layer.id}}" data-activation-id="{{ item.id }}">
         
         <a ng-if="!has_map" target="_blank" href="{{ layer.detail_url }}" title="{{ layer.title }}">{{ layer.title | limitTo: 55}}{{ layer.title.length > 55 ? '...' : '' }}</a>
-        <a ng-if="has_map" target="_blank" href="{{ layer.detail_url }}" title="{{ layer.title }}">{{ layer.title | limitTo: 30}}{{ layer.title.length > 30 ? '...' : '' }}</a>
+        <a ng-if="has_map" target="_blank" href="{{ layer.detail_url }}" title="{{ layer.title }}">{{ layer.title | limitTo: 35}}{{ layer.title.length > 35 ? '...' : '' }}</a>
         
         <a ng-if="layer.storeType=='dataStore'" ng-href="{{geoserver_public_url}}wfs?format_options=charset%3AUTF-8&typename={{ layer.typename }}&outputFormat=SHAPE-ZIP&version=1.0.0&service=WFS&request=GetFeature" class="pull-right btn-default btn btn-xs fa fa-lg fa-cloud-download" title="Download">
         </a>
-        <span ng-if="has_cart" id="{{ layer.id }}" ng-class="cart.getFaClass(layer.id)" class="pull-right btn-default btn btn-xs fa fa-lg" ng-click="cart.toggleItem(layer)" title="Add/remove from composer">
-        </span>
-        <span ng-if="has_map" ng-class="getFaClass(activation.id, layer.id)" class="btn btn-default btn-xs pull-right fa" id="layer_{{ layer.id }}" ng-click="toggleLayer(activation.id, layer, $event)" title="Add/remove from map">
-        </span>
-        <span type="button" class="btn btn-default btn-xs pull-right fa tms-link" data-container="body" data-toggle="popover" title="TMS url" data-content="http://tiles.copernicus-ems.eu/cache/layers/{{layer.id}}">TMS</span>
-      </div>
+        <div ng-if="has_cart" id="{{ layer.id }}" ng-class="cart.getFaClass(layer.id)" class="pull-right btn-default btn btn-xs fa fa-lg" ng-click="cart.toggleItem(layer)" title="Add/remove from composer">
+        </div>
+        <div ng-if="has_map" ng-class="getFaClass(item.id, layer.id)" class="btn btn-default btn-xs pull-right fa" id="layer_{{ layer.id }}" ng-click="toggleLayer(item.id, layer, $event)" title="Add/remove from map">
+        </div>
+        <div type="button" class="btn btn-default btn-xs pull-right fa tms-link" data-container="body" data-toggle="popover" title="TMS url" data-content="http://tiles.copernicus-ems.eu/cache/layers/{{layer.id}}">TMS</div>
     </div>
-  </div> <!-- tabpanel -->
+  </div> <!-- list-group -->

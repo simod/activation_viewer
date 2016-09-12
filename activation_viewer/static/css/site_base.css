@@ -181,3 +181,16 @@ body > .x-panel-noborder {
     height: 850px !important;
   }
 }
+.map-product-layers {
+  margin-top: 15px;
+}
+.map-product {
+  border-bottom: 0px;
+  padding-bottom: 0px;
+}
+.map-product-list {
+  margin-bottom: 0px;
+}
+.map-set {
+  padding-bottom: 0px;
+}

@@ -20,13 +20,13 @@
       <div class="modal-content">
         <div class="modal-body">
           <div class="row">
-            <div class="list-map col-md-8" ng-controller="MapCtrl">
+            <div class="list-map col-md-7" ng-controller="MapCtrl">
               <openlayers ol-center="center" ol-defaults="defaults" custom-layers="true">
                 <ol-control name="{{ control.name }}" ng-repeat="control in controls|filter: {active: true}"></ol-control>
                 <ol-layer ol-layer-properties="osm"></ol-layer>
               </openlayers>
             </div> <!-- map -->
-            <div id="activations-list-modal" class="col-md-4">
+            <div id="activations-list-modal" class="col-md-5">
             </div>
           </div>
         </div> <!-- modal-body -->
@@ -48,6 +48,7 @@
   <script src="{% static "js/app/bower_components/angular-sanitize/angular-sanitize.min.js" %}"></script>
   <script src="{% static "js/app/bower_components/angular-openlayers-directive/dist/angular-openlayers-directive.js" %}"></script>
   <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  <script src="{% static "js/app/scripts/controllers/act_controller.js" %}"></script>
   <script src="{% static "js/app/scripts/controllers/act_list.js" %}"></script>
   <script src="{% static "js/app/scripts/controllers/cart.js" %}"></script>
   <script src="{% static "js/app/scripts/services/activation_services.js" %}"></script>

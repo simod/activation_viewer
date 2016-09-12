@@ -2,20 +2,6 @@
 
 (function(){
 
-  // Handle maps set icons
-  $(document).on('hidden.bs.collapse shown.bs.collapse', '.map-set', function(evt){
-    if($(evt.target).hasClass('ms-tabpanel')){
-      var elem = $($(evt.currentTarget).find('i')[0]);
-      if (elem.hasClass('fa-chevron-right')){
-        elem.removeClass('fa-chevron-right');
-        elem.addClass('fa-chevron-down');
-      }else{
-        elem.removeClass('fa-chevron-down');
-        elem.addClass('fa-chevron-right');
-      }
-    }
-  });
-
   angular.module('layers_switcher_controller', ['activation_services'])
     .controller('LayerSwitcherController', function($rootScope, $scope, $timeout, ActServices){
 
