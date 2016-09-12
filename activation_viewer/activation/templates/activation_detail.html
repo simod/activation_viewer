@@ -67,7 +67,7 @@
       <h3 class="col-md-7">Map Sets</h3>
       <div id="activation-buttons">
         <button type="button" class="btn-xs btn btn-info" ng-click="zoomToActivation({{ activation.id }})">Zoom</button>
-        <button type="button" ng-init="action = true" class="btn-xs btn btn-info" ng-click="toggleActivationLayers(action, {{ activation.id }}); action = !action" ng-bind-html="action == true ? 'Show all layers' : 'Hide layers'"></button>
+        <button type="button" ng-init="action = false" class="btn-xs btn btn-info" ng-click="toggleActivationLayers(action, {{ activation.id }}); action = !action" ng-bind-html="action == true ? 'Show all layers' : 'Hide layers'"></button>
       </div>
       <layer-switcher></layer-switcher>
       {% if external_layers.count > 0 %}

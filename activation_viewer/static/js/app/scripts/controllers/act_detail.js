@@ -19,7 +19,8 @@
             activation.addMapProduct(val);
           });
         });
-      })
+        $scope.$broadcast('addActivationLayers', ActData.activation_id);
+      });
 
       var map = olData.getMap();
 

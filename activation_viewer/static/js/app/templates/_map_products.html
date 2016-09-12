@@ -17,7 +17,8 @@
     <div class="list-group panel-body sortable">
       <div class="col-md-12 list-group-item" ng-repeat="layer in map_product.layers" data-layer-id="{{layer.id}}" data-activation-id="{{ activation.id }}">
         
-        <a ng-init="has_map ? limit = 28 : limit = 65" target="_blank" href="{{ layer.detail_url }}" title="{{ layer.title }}">{{ layer.title | limitTo: limit}}{{ layer.title.length > limit ? '...' : '' }}</a>
+        <a ng-if="!has_map" target="_blank" href="{{ layer.detail_url }}" title="{{ layer.title }}">{{ layer.title | limitTo: 55}}{{ layer.title.length > 55 ? '...' : '' }}</a>
+        <a ng-if="has_map" target="_blank" href="{{ layer.detail_url }}" title="{{ layer.title }}">{{ layer.title | limitTo: 30}}{{ layer.title.length > 30 ? '...' : '' }}</a>
         
         <a ng-if="layer.storeType=='dataStore'" ng-href="{{geoserver_public_url}}wfs?format_options=charset%3AUTF-8&typename={{ layer.typename }}&outputFormat=SHAPE-ZIP&version=1.0.0&service=WFS&request=GetFeature" class="pull-right btn-default btn btn-xs fa fa-lg fa-cloud-download" title="Download">
         </a>
