@@ -1,67 +1,39 @@
-<table class="table table-bordered">
+<table class="table table-bordered col-md-12">
   <tr>
     <td>
-      <strong>Event Time (UTC)</strong>
-    </td>
-    <td>
+      <strong>Event Time (UTC): </strong>
       {{ activation.event_time_utc|date:"Y-m-d P" }}
     </td>
-  </tr>
-  <tr>
     <td>
-      <strong>Event Time (LOC)</strong>
+      <strong>Event Time (LOC): </strong>
+     {{ activation.event_time|date:"Y-m-d P" }}
     </td>
     <td>
-      {{ activation.event_time|date:"Y-m-d P" }}
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <strong>Event Type</strong>
+      <strong>Event Type: </strong>
+     {{ activation.disaster_type }}
     </td>
     <td>
-      {{ activation.disaster_type }}
+      <strong>Activation Time (UTC): </strong>
+     {{ activation.activation_time|date:"Y-m-d P" }}
     </td>
   </tr>
   <tr>
     <td>
-      <strong>Activation Time (UTC)</strong>
+      <strong>Reference maps: </strong>
+     {{ maps_count.reference }}
     </td>
     <td>
-      {{ activation.activation_time|date:"Y-m-d P" }}
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <strong>Reference maps</strong>
+      <strong>Delineation maps: </strong>
+     {{ maps_count.delineation }}
     </td>
     <td>
-      {{ maps_count.reference }}
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <strong>Delineation maps</strong>
+      <strong>Grading maps: </strong>
+     {{ maps_count.grading }}
     </td>
     <td>
-      {{ maps_count.delineation }}
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <strong>Grading maps</strong>
-    </td>
-    <td>
-      {{ maps_count.grading }}
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <strong>Affected Countries</strong>
-    </td>
-    <td>
-      {% for region in activation.regions.all %}
-      <p>{{ region.name }}</p>
+      <strong>Affected Countries: </strong>
+     {% for region in activation.regions.all %}
+      {{ region.name }}  
       {% endfor %}
     </td>
   </tr>

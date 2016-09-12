@@ -33,8 +33,19 @@
 </div>
 <div id="fullscreen-map"></div>
 <div class="row" ng-controller="ActivationController">
-  <div id="activation_info" class="col-md-3">
-    {% include "activation_info_table.html" %}
+  {% include "activation_info_table.html" %}
+  {% verbatim %}
+  <div class="map col-md-8" ng-controller="MapCtrl">
+    <openlayers ol-center="center" ol-defaults="defaults" custom-layers="true">
+      <ol-control name="{{ control.name }}" ng-repeat="control in controls|filter: {active: true}"></ol-control>
+      <ol-layer ol-layer-properties="osm"></ol-layer>
+    </openlayers>
+  </div>
+  {% endverbatim %}
+  <div id="map_products" class="col-md-4" ng-controller="CartList">
+    <resource-cart></resource-cart>
+    <div id="activation_info" class="col-md-3">
+    
     {% if related_maps.count > 0 %}
     <table class="table table-bordered table-striped">
       <thead>
@@ -52,16 +63,6 @@
     </table>
     {% endif %}
   </div>
-  {% verbatim %}
-  <div class="map col-md-5" ng-controller="MapCtrl">
-    <openlayers ol-center="center" ol-defaults="defaults" custom-layers="true">
-      <ol-control name="{{ control.name }}" ng-repeat="control in controls|filter: {active: true}"></ol-control>
-      <ol-layer ol-layer-properties="osm"></ol-layer>
-    </openlayers>
-  </div>
-  {% endverbatim %}
-  <div id="map_products" class="col-md-4" ng-controller="CartList">
-    <resource-cart></resource-cart>
     <div class="col-md-12">
       <h3 class="col-md-7">Map Sets</h3>
       <div id="activation-buttons">
