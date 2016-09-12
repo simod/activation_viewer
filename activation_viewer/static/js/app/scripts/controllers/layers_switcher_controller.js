@@ -5,7 +5,7 @@
   // Handle maps set icons
   $(document).on('hidden.bs.collapse shown.bs.collapse', '.map-set', function(evt){
     if($(evt.target).hasClass('ms-tabpanel')){
-      var elem = $($(evt.currentTarget).find('.ms-title')[0]);
+      var elem = $($(evt.currentTarget).find('i')[0]);
       if (elem.hasClass('fa-chevron-right')){
         elem.removeClass('fa-chevron-right');
         elem.addClass('fa-chevron-down');

@@ -2,8 +2,8 @@
   <!-- tab -->
   <div class="col-md-12 panel-heading" role="tab">
     <h4 class="panel-title">
-      <a class="panel-title ms-title" data-target="#map_product_{{ map_product.id }}" ng-init="isCollapsed = true" ng-click="isCollapsed = !isCollapsed" data-toggle="collapse" ng-class="isCollapsed ? 'fa fa-chevron-right' : 'fa fa-chevron-down'">{{activation.activation_id}}_{{map_product.type}}
-      </a>
+      <i ng-init="isCollapsed = true" ng-click="isCollapsed = !isCollapsed" ng-class="isCollapsed ? 'fa fa-chevron-right' : 'fa fa-chevron-down'"><a class="panel-title ms-title" data-target="#map_product_{{ map_product.id }}" data-toggle="collapse">{{activation.activation_id}}_{{map_product.type}}
+      </a></i>
       
       <div ng-if="has_map" class="pull-right">
         <button type="button" class="btn btn-xs btn-info" ng-click="zoomToMapProduct(activation.id, map_product.id)">Zoom</button>
