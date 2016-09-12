@@ -168,18 +168,13 @@ body > .x-panel-noborder {
     height: 650px !important;
   }
 }
-@media (min-height: 1000px) {
-  #full-map-composer .angular-openlayers-map {
-    height: 850px !important;
-  }
-}
 @media (min-height: 600px) {
   #full-map-composer .angular-openlayers-map {
-    height: 450px !important;
+    height: 650px !important;
   }
 }
 @media (min-height: 800px) {
   #full-map-composer .angular-openlayers-map {
-    height: 650px !important;
+    height: 850px !important;
   }
 }
