@@ -15,7 +15,7 @@
         <a ng-if="!has_map" target="_blank" href="{{ layer.detail_url }}" title="{{ layer.title }}">{{ layer.title | limitTo: 55}}{{ layer.title.length > 55 ? '...' : '' }}</a>
         <a ng-if="has_map" target="_blank" href="{{ layer.detail_url }}" title="{{ layer.title }}">{{ layer.title | limitTo: 20}}{{ layer.title.length > 20 ? '...' : '' }}</a>
         
-        <a ng-if="layer.storeType=='dataStore'" ng-href="{{geoserver_public_url}}wfs?format_options=charset%3AUTF-8&typename={{ layer.typename }}&outputFormat=SHAPE-ZIP&version=1.0.0&service=WFS&request=GetFeature" class="pull-right btn-default btn btn-xs fa fa-lg fa-cloud-download" title="Download">
+        <a ng-if="layer.storeType=='dataStore'" ng-href="{{geoserver_public_url}}wfs?format_options=charset%3AUTF-8&typename={{ layer.typename }}&outputFormat=SHAPE-ZIP&version=1.0.0&service=WFS&request=GetFeature" class="pull-right btn-default btn btn-xs fa fa-lg fa-cloud-download" target="_blank" title="Download">
         </a>
         <div ng-if="has_cart" id="{{ layer.id }}" ng-class="cart.getFaClass(layer.id)" class="pull-right btn-default btn btn-xs fa fa-lg" ng-click="cart.toggleItem(layer)" title="Add/remove from composer">
         </div>
