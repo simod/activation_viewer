@@ -15,7 +15,7 @@ api.register(ActLayerResource())
 
 urlpatterns = patterns('',
     url(r'^/?$',
-       ActIndex.as_view(template_name='site_index.html'),
+       ActIndex.as_view(template_name='index_new.html'),
        name='home'),
     url(r'^activations/', include('activation_viewer.activation.urls')),
     url(r'', include(api.urls)),

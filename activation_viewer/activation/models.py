@@ -46,6 +46,7 @@ class Activation(models.Model):
     activation_time = models.DateTimeField('Activation Time', blank=True, null=True)
     regions = models.ManyToManyField(Region, verbose_name='Affected Countries', blank=True, null=True)
     keywords = TaggableManager('keywords', blank=True)
+    thumbnail_url = models.CharField(max_length=256, blank=True, null=True)
 
     def __unicode__(self):
         return '%s, %s' % (self.activation_id, self.disaster_type)

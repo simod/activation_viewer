@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="keywords" content="copernicus ems, copernicus, maps, European Commission, JRC, emergency, crisis, activation viewer" />
+    <meta name="Description" content="European Commission Copernicus EMS Activation Viewer" />
+    <meta name="Creator" content="JRC">
+    <meta http-equiv="Content-Language" content="en">
+    <meta name="Classification" content="26">
+    <meta name="Date" content="10/09/2016">
+    <meta name="viewport" content="width=device-width">
+
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Intl.~locale.en,Object.assign"></script>
+    {% if DEBUG_REACT %}
+    <link rel="stylesheet" type="text/css" href="http://localhost:3001/app.css">
+    {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}app.css">
+    {% endif %}
+    
+    <title>{{ SITE_NAME }}</title>
+</head>
+<body>
+    <div id="main">
+        
+    </div>
+    <script type="text/javascript">
+        ACTIVATIONS_API = '{% url 'api_dispatch_list' api_name='api' resource_name='activations' %}';
+    </script>
+    {% if DEBUG_REACT %}
+    <script src="http://localhost:3001/loader.js"></script>
+    <script src="http://localhost:3001/build/app-debug.js"></script>
+    {% else %}
+    <script src="{{ STATIC_URL }}app.css"></script>
+    {% endif %}
+</body>
+</html>

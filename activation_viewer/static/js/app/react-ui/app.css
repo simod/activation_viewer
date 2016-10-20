@@ -1,0 +1,41 @@
+body{
+    margin: 0;
+    font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+#map {
+    height: 400px;
+    width: 100%;
+}
+
+#ec-logo{
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(166, 166, 166, .5) url('http://localhost:8000/static/img/ec_logo_neg.png') no-repeat 5px 0;
+    width: 425px;
+    height: 114px;
+    z-index: 100000;
+    pointer-events: none;
+}
+
+#title{
+    position: absolute;
+    top: 20px;
+    left: 40%;
+    z-index: 100000;
+    color: #737373;
+    font-size: 20px;
+    font-weight: 200;
+    pointer-events: none;
+}
+
+#latest_activations{
+    margin-top: 10px;
+}
+
+.act_snippet_selected{
+    box-shadow: 0 0 7px 5px rgba(255, 194, 102, 0.8);
+    transition: all 200ms ease-out;
+    border-radius: 2px;
+}
