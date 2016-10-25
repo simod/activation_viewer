@@ -1,6 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import FlatButton from 'material-ui/FlatButton';
 import ol from 'openlayers';
+import Popover from 'material-ui/Popover';
 
 var featureSelectedColors = {
   fill: 'rgba(255, 194, 102, 0.4)',
@@ -115,24 +116,18 @@ class GridTile extends Component {
   componentDidMount() {
     this.ensureImageCover();
     this._addBBoxToMap()
-    this.props.map.getInteractions().forEach(interaction => {
-      if (interaction instanceof ol.interaction.Select){
-        this.setState({
-          interaction: interaction
-        });
-        interaction.on('select', e => {
-          if (e.selected[0] == this.state.feature){
-            this._selectComponent();
-          }else if(e.deselected[0] == this.state.feature){
-            this._deselectComponent();
-          }
-        });
+    this.props.interaction.on('select', e => {
+      if (e.selected[0] == this.state.feature){
+        this._selectComponent();
+      }else if(e.deselected[0] == this.state.feature){
+        this._deselectComponent();
       }
     });
+
   }
 
   onMouseEnterHandler(){
-    let features = this.state.interaction.getFeatures();
+    let features = this.props.interaction.getFeatures();
     if (features.getLength() == 0){
       features.push(this.state.feature);
     }else{
@@ -150,7 +145,7 @@ class GridTile extends Component {
   }
 
   onMouseLeaveHandler(){
-    let features = this.state.interaction.getFeatures();
+    let features = this.props.interaction.getFeatures();
     features.forEach(feature => {
       if (feature == this.state.feature){
         features.remove(feature);
@@ -249,6 +244,7 @@ class GridTile extends Component {
       viewerButton,
       map,
       activation,
+      interaction,
       ...other,
     } = this.props;
 
@@ -374,6 +370,8 @@ GridTile.propTypes = {
   map: PropTypes.instanceOf(ol.Map),
 
   activation: PropTypes.object,
+
+  interaction: PropTypes.instanceOf(ol.interaction.Select),
 
 };
 

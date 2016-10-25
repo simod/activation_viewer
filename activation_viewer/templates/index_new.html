@@ -11,7 +11,7 @@
 
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Intl.~locale.en,Object.assign"></script>
     {% if DEBUG_REACT %}
-    <link rel="stylesheet" type="text/css" href="http://localhost:3001/app.css">
+    <link rel="stylesheet" type="text/css" href="http://localhost:3000/app.css">
     {% else %}
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}app.css">
     {% endif %}
@@ -26,8 +26,8 @@
         ACTIVATIONS_API = '{% url 'api_dispatch_list' api_name='api' resource_name='activations' %}';
     </script>
     {% if DEBUG_REACT %}
-    <script src="http://localhost:3001/loader.js"></script>
-    <script src="http://localhost:3001/build/app-debug.js"></script>
+    <script src="http://localhost:3000/loader.js"></script>
+    <script src="http://localhost:3000/build/app-debug.js"></script>
     {% else %}
     <script src="{{ STATIC_URL }}app.css"></script>
     {% endif %}

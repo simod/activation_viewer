@@ -34,6 +34,13 @@ export default class LatestActivations extends React.Component {
   }
   
   render() {
+    let selectInteraction = null;
+    this.props.map.getInteractions().forEach(interaction => {
+      if (interaction instanceof ol.interaction.Select){
+        selectInteraction =  interaction; 
+      }
+    });
+    
     return (
       <div id="latest_activations" style={styles.root}>
         <GridList
@@ -47,6 +54,7 @@ export default class LatestActivations extends React.Component {
               key={activation.id}
               activation={activation}
               map={this.props.map}
+              interaction={selectInteraction}
             > 
             <img src={activation.thumbnail_url} />
             </GridTile>
