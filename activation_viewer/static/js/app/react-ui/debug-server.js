@@ -1,1 +1,1 @@
-require('boundless-sdk-tools').startServer();
+require('./viewer-sdk-tools').startServer();

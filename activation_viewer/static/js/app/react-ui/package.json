@@ -12,9 +12,10 @@
     "start:debug": "node debug-server.js",
     "start:proxy": "node_modules/.bin/json-http-proxy -p 4000",
     "start": "node_modules/.bin/npm-run-all createdir start:debug",
-    "build:js": "node_modules/.bin/browserify -g [envify --NODE_ENV production] -p [minifyify --no-map --exclude node_modules/openlayers/dist/ol.js] app.jsx -o build/app.js",
-    "build": "node_modules/.bin/npm-run-all createdir build:js",
-    "test": "eslint app.jsx --ext .jsx,.js",
+    "build:home": "node_modules/.bin/browserify -g [envify --NODE_ENV production] -p [minifyify --no-map --exclude node_modules/openlayers/dist/ol.js] home.jsx -o build/home.js",
+    "build": "node_modules/.bin/npm-run-all createdir build:home build:composer",
+    "build:composer": "node_modules/.bin/browserify -g [envify --NODE_ENV production] -p [minifyify --no-map --exclude node_modules/openlayers/dist/ol.js] composer.jsx -o build/composer.js",
+    "test": "eslint home.jsx --ext .jsx,.js",
     "createzip": "node createpackage.js",
     "package": "node_modules/.bin/npm-run-all build createzip"
   },
