@@ -216,7 +216,7 @@ class AddActivationsModal extends React.Component {
     if (actInfo.objects){
       activations = actInfo.objects.map(activation => {
         return (
-          <ListItem style={{display: 'block'}}leftCheckbox={<Checkbox onCheck={this._onCheck.bind(this, activation)} />} rightIcon={ <FolderIcon />} initiallyOpen={true} key={activation.id} primaryText={<div className='layer-title-empty'>{activation.activation_id}</div>}/>
+          <ListItem style={{display: 'block'}} leftCheckbox={<Checkbox onCheck={this._onCheck.bind(this, activation)} />} rightIcon={ <FolderIcon />} initiallyOpen={true} key={activation.id} primaryText={<div className='layer-title-empty'>{activation.activation_id}</div>}/>
         );
       });
     }

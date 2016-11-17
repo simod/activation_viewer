@@ -12,6 +12,9 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import HTML5Backend from 'react-dnd-html5-backend';
+import {DragDropContext} from 'react-dnd';
+import LayerActions from 'boundless-sdk/js/actions/LayerActions.js';
 import ol from 'openlayers';
 import classNames from 'classnames';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
@@ -93,7 +96,7 @@ class ActivationsList extends React.Component {
     for (var i = 0, ii = layers.length; i < ii; ++i) {
       var lyr = layers[i];
       if (!this.props.filter || this.props.filter(lyr) === true) {
-        layerNodes.push(me.getLayerNode(lyr, group));
+        layerNodes.push(me.getLayerNode(lyr, group, (ii - i)));
       }
     }
     return layerNodes;
@@ -131,7 +134,7 @@ class ActivationsList extends React.Component {
   _onModalClose() {
     this._modalOpen = false;
   }
-  getLayerNode(lyr, group) {
+  getLayerNode(lyr, group, idx) {
     if (lyr.get('id') === undefined) {
       lyr.set('id', LayerIdService.generateId());
     }
@@ -139,11 +142,11 @@ class ActivationsList extends React.Component {
       if (lyr instanceof ol.layer.Group) {
         var children = this.props.showGroupContent ? this.renderLayerGroup(lyr) : [];
         return (
-          <LayerListItem {...this.props} allowReordering={false} onModalClose={this._onModalClose.bind(this)} onModalOpen={this._onModalOpen.bind(this)} key={lyr.get('id')} layer={lyr} nestedItems={children} title={lyr.get('title')} disableTouchRipple={true}/>
+          <LayerListItem index={idx} {...this.props} allowReordering={false} onModalClose={this._onModalClose.bind(this)} onModalOpen={this._onModalOpen.bind(this)} key={lyr.get('id')} layer={lyr} nestedItems={children} title={lyr.get('title')} disableTouchRipple={true}/>
         );
       } else {
         return (
-          <LayerListItem {...this.props} onModalClose={this._onModalClose.bind(this)} onModalOpen={this._onModalOpen.bind(this)} key={lyr.get('id')} layer={lyr} group={group} title={lyr.get('title')} disableTouchRipple={true}/>
+          <LayerListItem index={idx} moveLayer={this.moveLayer.bind(this)} {...this.props} onModalClose={this._onModalClose.bind(this)} onModalOpen={this._onModalOpen.bind(this)} key={lyr.get('id')} layer={lyr} group={group} title={lyr.get('title')} disableTouchRipple={true}/>
         );
       }
     }
@@ -159,6 +162,9 @@ class ActivationsList extends React.Component {
         background: rawTheme.palette.primary1Color
       })
     };
+  }
+  moveLayer(dragIndex, hoverIndex, layer, group) {
+    LayerActions.moveLayer(dragIndex, hoverIndex, layer, group);
   }
   render() {
     const {formatMessage} = this.props.intl;
@@ -286,10 +292,12 @@ ActivationsList.defaultProps = {
   allowEditing: false,
   allowFiltering: false,
   allowLabeling: false,
+  allowRemove: true,
   allowStyling: false,
   showGroupContent: true,
   showDownload: false,
   downloadFormat: 'GeoJSON',
+  includeLegend: false,
   showOpacity: false,
   showOnStart: false
 };
@@ -302,4 +310,4 @@ ActivationsList.childContextTypes = {
   muiTheme: React.PropTypes.object.isRequired
 };
 
-export default injectIntl(ActivationsList);
+export default injectIntl(DragDropContext(HTML5Backend)(ActivationsList));
