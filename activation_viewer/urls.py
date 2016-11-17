@@ -3,15 +3,15 @@ from django.conf.urls import patterns, url, include
 from geonode.urls import urlpatterns, api
 from django.views.generic import TemplateView
 
-from activation_viewer.activation.api import ActivationResource, MapProductResource, \
+from activation_viewer.activation.api import ActivationResource, ActivationFullResource, \
     DisasterTypeResource, MapSetResource, ActTagResource, ActLayerResource
 
 api.register(ActivationResource())
-api.register(MapProductResource())
 api.register(DisasterTypeResource())
 api.register(MapSetResource())
 api.register(ActTagResource())
 api.register(ActLayerResource())
+api.register(ActivationFullResource())
 
 urlpatterns = patterns('',
     url(r'^/?$',

@@ -1,19 +1,17 @@
 from django.contrib import admin
 
-from .models import DisasterType, Activation, MapProduct, MapSet, ExternalLayer
+from .models import DisasterType, Activation, MapSet, ExternalLayer
 
 
 class ActivationInline(admin.TabularInline):
     model = MapSet
-
-
-class MapProductInline(admin.TabularInline):
-    model = MapProduct
-    exclude = ['bbox_x0', 'bbox_x1', 'bbox_y1', 'bbox_y0']
     filter_horizontal = ['layers']
+    exclude = ['bbox_x0', 'bbox_x1', 'bbox_y1', 'bbox_y0']
+    prepopulated_fields = {"slug": ("name",)}
 
 
 class ActivationAdmin(admin.ModelAdmin):
+    inlines = [ActivationInline,]
     exclude = ['bbox_x0', 'bbox_x1', 'bbox_y1', 'bbox_y0']
 
 
@@ -22,11 +20,11 @@ class DisasterTypeAdmin(admin.ModelAdmin):
 
 
 class MapSetAdmin(admin.ModelAdmin):
-    inlines = [MapProductInline, ]
     prepopulated_fields = {"slug": ("name",)}
+    exclude = ['bbox_x0', 'bbox_x1', 'bbox_y1', 'bbox_y0']
+    filter_horizontal = ['layers']
 
 admin.site.register(DisasterType, DisasterTypeAdmin)
 admin.site.register(Activation, ActivationAdmin)
-admin.site.register(MapProduct)
 admin.site.register(MapSet, MapSetAdmin)
 admin.site.register(ExternalLayer)

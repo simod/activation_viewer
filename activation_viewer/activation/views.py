@@ -11,7 +11,7 @@ from guardian.shortcuts import get_perms
 from geonode.security.views import _perms_info_json
 from geonode.maps.models import Map
 
-from .models import Activation, MapProduct, ExternalLayer
+from .models import Activation, ExternalLayer
 
 _PERMISSION_MSG_VIEW = "You are not permitted to view this activation"
 
@@ -33,11 +33,6 @@ def activation_detail(request, activation_id, template="activation_detail.html")
         'act_lat': activation.bbox_y0 + abs(activation.bbox_y1  - activation.bbox_y0 )/2,
         'act_lon': activation.bbox_x0 + abs(activation.bbox_x1  - activation.bbox_x0 )/2,
         'perms_list': get_perms(request.user, activation),
-        'maps_count': {
-            'reference': MapProduct.objects.filter(type='reference', map_set__in=activation.mapset_set.all()).count(),
-            'grading': MapProduct.objects.filter(type='grading', map_set__in=activation.mapset_set.all()).count(),
-            'delineation': MapProduct.objects.filter(type='delineation', map_set__in=activation.mapset_set.all()).count()
-        },
         'related_maps': Map.objects.filter(keywords__slug__in=Tag.objects.filter(name=activation.activation_id)),
         'external_layers': ExternalLayer.objects.filter(activation=activation)
     }

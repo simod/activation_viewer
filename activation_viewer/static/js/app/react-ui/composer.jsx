@@ -7,7 +7,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import CustomTheme from './theme';
 import ToolActions from 'boundless-sdk/js/actions/ToolActions.js';
 import Zoom from 'boundless-sdk/js/components/Zoom.jsx';
-import LayerList from 'boundless-sdk/js/components/LayerList.jsx';
+import ActivationsList from './components/ComposerActivationsList.jsx';
 import LoadingPanel from 'boundless-sdk/js/components/LoadingPanel.jsx';
 import Select from 'boundless-sdk/js/components/Select.jsx';
 import HomeButton from 'boundless-sdk/js/components/HomeButton.jsx';
@@ -26,35 +26,34 @@ injectTapEventPlugin();
 var map = new ol.Map({
   controls: [],
   layers: [
-    new ol.layer.Group({
-      type: 'base-group',
-      title: 'Base maps',
-      layers: [
-        new ol.layer.Tile({
-          type: 'base',
-          title: 'Streets',
-          source: new ol.source.OSM()
-        }),
-        new ol.layer.Tile({
-          type: 'base',
-          title: 'Aerial',
-          visible: false,
-          source: new ol.source.XYZ({
-            attributions: [
-              new ol.Attribution({
-                html:['Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community']
-              })
-            ],
-            url: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+    new ol.layer.Tile({
+      type: 'base',
+      title: 'Streets',
+      source: new ol.source.OSM()
+    }),
+    new ol.layer.Tile({
+      type: 'base',
+      title: 'Aerial',
+      visible: false,
+      source: new ol.source.XYZ({
+        attributions: [
+          new ol.Attribution({
+            html:['Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community']
           })
-        })
-      ]
+        ],
+        url: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+      })
     })
   ],
   view: new ol.View({
     center: [-16839563.5993915, 8850169.509638],
-    zoom: 4
-  })
+    zoom: 11
+  }),
+  defaults: {
+    view: {
+      maxZoom: 21
+    }
+  }
 });
 
 var filterBaseLayersIn = lyr => {
@@ -76,14 +75,12 @@ class Composer extends React.Component {
       <div id='content' style={{background: CustomTheme.palette.canvasColor}}>
         <div className='row container'>
           <div className="col tabs" id="tabs-panel">
-          <Tabs value={1}>
-            <Tab value={1} label='layers'><div id='overlays'><LayerList filter={filterBaseLayersOut} showOnStart={true} addLayer={{allowUserInput: true, sources: [{url: '/geoserver/wms', type: 'WMS', title: 'Local GeoServer'}]}} showOpacity={true} showDownload={true} showGroupContent={true} showZoomTo={true} allowReordering={true} map={map} /></div></Tab>
-          </Tabs>               
+            <div id='overlays'><ActivationsList filter={filterBaseLayersOut} showOnStart={true} addLayer={{sources: {list: '/api/activations', full: '/api/activations-full'}}} showOpacity={true} showDownload={true} showGroupContent={true} showZoomTo={true} allowReordering={true} map={map} /></div>
           </div>
           <div className="col maps">
             <MapPanel id='map' map={map} />
             <LoadingPanel map={map} />
-            <div id='baselayers '><LayerList filter={filterBaseLayersIn} map={map} /></div>
+            <div id='baselayers '><ActivationsList filter={filterBaseLayersIn} map={map} /></div>
             <div id='home-button'><HomeButton map={map} /></div>
             <div id='zoom-buttons'><Zoom map={map} /></div>
           </div>

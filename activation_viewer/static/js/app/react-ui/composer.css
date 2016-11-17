@@ -104,5 +104,5 @@ html, body {
   background-color: #FFF;
 }
 #overlays .layer-list-list {
-  height: 100%;
+  height: calc(100% - 72px);
 }

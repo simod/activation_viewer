@@ -22,10 +22,37 @@ class DisasterType(models.Model):
 
 
 class MapSet(models.Model):
-    "MapSet"
+    """MapSet"""
     name = models.CharField(max_length=128)
     activation = models.ForeignKey('Activation')
     slug = models.SlugField()
+    layers = models.ManyToManyField(Layer, blank=True, null=True)
+    bbox_x0 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
+    bbox_x1 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
+    bbox_y0 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
+    bbox_y1 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
+
+    def set_bbox_from_layers(self):
+        x0 = x1 = y0 = y1 = 0
+        layers = self.layers.all()
+        for i in range(layers.count()):
+            layer = layers[i]
+            if i == 0:
+                x0, x1, y0, y1 = layer.bbox_x0, layer.bbox_x1, layer.bbox_y0, layer.bbox_y1
+            else:
+                if layer.bbox_x0 < x0: x0 = layer.bbox_x0
+                if layer.bbox_x1 > x1: x1 = layer.bbox_x1
+                if layer.bbox_y0 < y0: y0 = layer.bbox_y0
+                if layer.bbox_y1 > y1: y1 = layer.bbox_y1
+
+        MapSet.objects.filter(id=self.id).update(bbox_x0=x0, bbox_x1=x1, bbox_y0=y0, bbox_y1=y1)
+
+    class Meta:
+        verbose_name_plural = 'Map Sets'
+        permissions = (
+            ('view_mappset', 'Can view map mapset'),
+            ('change_mapset_permissions', 'Can change map set permissions'),
+        )
 
     def __unicode__(self):
         return self.name
@@ -42,7 +69,6 @@ class Activation(models.Model):
     glide_number = models.CharField(max_length=20, blank=True, null=True)
     disaster_type = models.ForeignKey(DisasterType)
     event_time = models.DateTimeField('Event Time', blank=True, null=True)
-    event_time_utc = models.DateTimeField('Event Time UTC', blank=True, null=True)
     activation_time = models.DateTimeField('Activation Time', blank=True, null=True)
     regions = models.ManyToManyField(Region, verbose_name='Affected Countries', blank=True, null=True)
     keywords = TaggableManager('keywords', blank=True)
@@ -115,59 +141,18 @@ class Activation(models.Model):
 
         return info
 
-    def set_bbox_from_mapproducts(self):
+    def set_bbox_from_mapsets(self):
         x0 = x1 = y0 = y1 = None
         for mapset in self.mapset_set.all():
-            mapproducts = mapset.mapproduct_set.all()
-            for i in range(mapproducts.count()):
-                mpp = mapproducts[i]
-                if not x0:
-                    x0, x1, y0, y1 = mpp.bbox_x0, mpp.bbox_x1, mpp.bbox_y0, mpp.bbox_y1
-                else:
-                    if mpp.bbox_x0 < x0: x0 = mpp.bbox_x0
-                    if mpp.bbox_x1 > x1: x1 = mpp.bbox_x1
-                    if mpp.bbox_y0 < y0: y0 = mpp.bbox_y0
-                    if mpp.bbox_y1 > y1: y1 = mpp.bbox_y1
-        Activation.objects.filter(id=self.id).update(bbox_x0=x0, bbox_x1=x1, bbox_y0=y0, bbox_y1=y1)
-
-
-
-class MapProduct(models.Model):
-    """Map Products of the activations"""
-
-    map_set = models.ForeignKey(MapSet)
-    service_level = models.IntegerField(choices=((1,1), (5,5)))
-    type = models.CharField(max_length=50, choices=[['reference', 'Reference'],['delineation',' Delineation'],['grading', 'Grading']])
-    layers = models.ManyToManyField(Layer, blank=True, null=True)
-    bbox_x0 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
-    bbox_x1 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
-    bbox_y0 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
-    bbox_y1 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
-
-    def __unicode__(self):
-        return '%s_%s' % (self.map_set.activation.activation_id, self.type)
-
-    def set_bbox_from_layers(self):
-        x0 = x1 = y0 = y1 = 0
-        layers = self.layers.all()
-        for i in range(layers.count()):
-            layer = layers[i]
-            if i == 0:
-                x0, x1, y0, y1 = layer.bbox_x0, layer.bbox_x1, layer.bbox_y0, layer.bbox_y1
+            if not x0:
+                x0, x1, y0, y1 = mapset.bbox_x0, mapset.bbox_x1, mapset.bbox_y0, mapset.bbox_y1
             else:
-                if layer.bbox_x0 < x0: x0 = layer.bbox_x0
-                if layer.bbox_x1 > x1: x1 = layer.bbox_x1
-                if layer.bbox_y0 < y0: y0 = layer.bbox_y0
-                if layer.bbox_y1 > y1: y1 = layer.bbox_y1
+                if mapset.bbox_x0 < x0: x0 = mapset.bbox_x0
+                if mapset.bbox_x1 > x1: x1 = mapset.bbox_x1
+                if mapset.bbox_y0 < y0: y0 = mapset.bbox_y0
+                if mapset.bbox_y1 > y1: y1 = mapset.bbox_y1
 
-        MapProduct.objects.filter(id=self.id).update(bbox_x0=x0, bbox_x1=x1, bbox_y0=y0, bbox_y1=y1)
-
-    class Meta:
-        verbose_name_plural = 'Map Products'
-        permissions = (
-            ('view_mapproduct', 'Can view map product'),
-            ('change_mapproduct_permissions', 'Can change map product permissions'),
-        )
+        Activation.objects.filter(id=self.id).update(bbox_x0=x0, bbox_x1=x1, bbox_y0=y0, bbox_y1=y1)
 
 
 class ExternalLayer(models.Model):
@@ -182,8 +167,8 @@ class ExternalLayer(models.Model):
         return self.title
 
 
-def mapproduct_layers_changed(instance, *args, **kwargs):
+def mapset_layers_changed(instance, *args, **kwargs):
     instance.set_bbox_from_layers()
-    instance.map_set.activation.set_bbox_from_mapproducts()
+    instance.activation.set_bbox_from_mapsets()
 
-signals.m2m_changed.connect(mapproduct_layers_changed, sender=MapProduct.layers.through)
+signals.m2m_changed.connect(mapset_layers_changed, sender=MapSet.layers.through)
