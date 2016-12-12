@@ -39,7 +39,7 @@ class ActAuthorization(DjangoAuthorization):
             bundle.request.user,
             'activation.view_activation')
 
-        return object_list.filter(id__in=permitted_ids)
+        return object_list.filter(activation_id__in=permitted_ids)
 
     def read_detail(self, object_list, bundle):
         return bundle.request.user.has_perm(

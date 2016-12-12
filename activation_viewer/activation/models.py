@@ -61,7 +61,7 @@ class MapSet(models.Model):
 class Activation(models.Model):
     """Activation model"""
     
-    activation_id = models.CharField(max_length=7, unique=True)
+    activation_id = models.CharField(max_length=7, unique=True, primary_key=True)
     bbox_x0 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
     bbox_x1 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
     bbox_y0 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
@@ -71,7 +71,6 @@ class Activation(models.Model):
     event_time = models.DateTimeField('Event Time', blank=True, null=True)
     activation_time = models.DateTimeField('Activation Time', blank=True, null=True)
     regions = models.ManyToManyField(Region, verbose_name='Affected Countries', blank=True, null=True)
-    keywords = TaggableManager('keywords', blank=True)
     thumbnail_url = models.CharField(max_length=256, blank=True, null=True)
 
     def __unicode__(self):
@@ -108,9 +107,9 @@ class Activation(models.Model):
 
         from guardian.models import UserObjectPermission, GroupObjectPermission
         UserObjectPermission.objects.filter(content_type=ContentType.objects.get_for_model(self),
-                                        object_pk=self.id).delete()
+                                        object_pk=self.activation_id).delete()
         GroupObjectPermission.objects.filter(content_type=ContentType.objects.get_for_model(self),
-                                         object_pk=self.id).delete()
+                                         object_pk=self.activation_id).delete()
 
         if 'users' in perm_spec and "AnonymousUser" in perm_spec['users']:
             anonymous_group = Group.objects.get(name='anonymous')
@@ -152,7 +151,12 @@ class Activation(models.Model):
                 if mapset.bbox_y0 < y0: y0 = mapset.bbox_y0
                 if mapset.bbox_y1 > y1: y1 = mapset.bbox_y1
 
-        Activation.objects.filter(id=self.id).update(bbox_x0=x0, bbox_x1=x1, bbox_y0=y0, bbox_y1=y1)
+        Activation.objects.filter(activation_id=self.activation_id).update(bbox_x0=x0, bbox_x1=x1, bbox_y0=y0, bbox_y1=y1)
+
+
+class ActivationMaps(models.Model):
+    """Store information about saved maps such as layers order, opacity and activations"""
+    pass
 
 
 class ExternalLayer(models.Model):

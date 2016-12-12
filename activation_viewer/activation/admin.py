@@ -12,6 +12,7 @@ class ActivationInline(admin.TabularInline):
 
 class ActivationAdmin(admin.ModelAdmin):
     inlines = [ActivationInline,]
+    filter_horizontal = ['regions']
     exclude = ['bbox_x0', 'bbox_x1', 'bbox_y1', 'bbox_y0']
 
 
