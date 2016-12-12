@@ -19,18 +19,18 @@ import IconButton from 'material-ui/IconButton';
 import RefreshIcon from 'material-ui/svg-icons/navigation/refresh';
 import pureRender from 'pure-render-decorator';
 import TextField from 'material-ui/TextField';
-import Button from 'boundless-sdk/js/components/Button.jsx';
+import Button from 'boundless-sdk/components/Button';
 import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import {List, ListItem} from 'material-ui/List';
 import Checkbox from 'material-ui/Checkbox';
 import FolderIcon from 'material-ui/svg-icons/file/folder-open';
 import LayerIcon from 'material-ui/svg-icons/maps/layers';
-import {doGET} from 'boundless-sdk/js/util.js';
+import util from 'boundless-sdk/util';
 
 import classNames from 'classnames';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import 'boundless-sdk/js/components/AddLayerModal.css';
+import 'boundless-sdk/components/AddLayerModal.css';
 
 
 const messages = defineMessages({
@@ -136,6 +136,18 @@ class AddActivationsModal extends React.Component {
       this._request.abort();
     }
   }
+  _initFromHash(){
+    let hash = global.location.hash.replace('#', '');
+    let activations = hash.split('/');
+    activations.forEach(activation_id => {
+      this._addActivation(activation_id)
+    })
+  }
+  componentDidMount() {
+    if (global.location.hash !== ''){
+      this._initFromHash();
+    }
+  }
   _getCaps() {
     var url = this.state.sources.list;
     var me = this;
@@ -152,7 +164,7 @@ class AddActivationsModal extends React.Component {
       delete me._request;
       me.setState({actInfo: JSON.parse(xmlhttp.response)});
     };
-    me._request = doGET(url, successCb, failureCb);
+    me._request = util.doGET(url, successCb, failureCb);
   }
   _setError(msg) {
     this.setState({
@@ -165,9 +177,8 @@ class AddActivationsModal extends React.Component {
   _onFilterChange(proxy, value) {
     this.setState({filter: value});
   }
-  _onActivationClick(activation) {
+  _addActivation(activation_id) {
     var map = this.props.map;
-    var titleObj = {empty: false, title: activation.activation_id};
     var url = this.state.sources.full;
 
     var successCb = xmlhttp => {
@@ -183,20 +194,49 @@ class AddActivationsModal extends React.Component {
               source: new ol.source.XYZ({
                 url: layer.tms_url
               }),
+              EX_GeographicBoundingBox: [
+                parseFloat(layer.bbox_x0), 
+                parseFloat(layer.bbox_y0), 
+                parseFloat(layer.bbox_x1), 
+                parseFloat(layer.bbox_y1)
+              ],
+              isRemovable: true,
               extent: ol.proj.transformExtent([
                 parseFloat(layer.bbox_x0), 
                 parseFloat(layer.bbox_y0), 
                 parseFloat(layer.bbox_x1), 
                 parseFloat(layer.bbox_y1)], 
-                'EPSG:4326','EPSG:900913')
+                'EPSG:4326','EPSG:3857')
             })
           );
         });
-        map_sets.push(new ol.layer.Group({title: map_set.name ,layers: layers}));
+        map_sets.push(
+          new ol.layer.Group({
+            title: map_set.name,
+            layers: layers,
+            EX_GeographicBoundingBox: [
+              parseFloat(map_set.bbox_x0), 
+              parseFloat(map_set.bbox_y0), 
+              parseFloat(map_set.bbox_x1), 
+              parseFloat(map_set.bbox_y1)
+            ],
+            isRemovable: true
+          })
+        );
       });
 
-      let act_group = new ol.layer.Group({title: act_data.activation_id ,layers: map_sets});
-      act_group.set('name', act_data.activation_id);
+      let act_group = new ol.layer.Group({
+        title: act_data.activation_id,
+        layers: map_sets,
+        EX_GeographicBoundingBox: [
+          parseFloat(act_data.bbox_x0), 
+          parseFloat(act_data.bbox_y0), 
+          parseFloat(act_data.bbox_x1), 
+          parseFloat(act_data.bbox_y1)
+        ],
+        isRemovable: true
+      });
+      act_group.set('act_id', act_data.activation_id);
       map.addLayer(act_group);
     }
 
@@ -208,15 +248,23 @@ class AddActivationsModal extends React.Component {
       }
     };
 
-    doGET(url + '/' + activation.id, successCb, failureCb);
-    
+    //  only add the activation if is not on the map already
+    let act_exists = false;
+    map.getLayers().forEach(layer => {
+      if (layer.get('act_id') == activation_id){
+        act_exists = true;
+      }
+    });
+    if (!act_exists){
+      util.doGET(url + activation_id + '/', successCb, failureCb);
+    }
   }
   _getActivationMarkup(actInfo) {
     var activations;
     if (actInfo.objects){
       activations = actInfo.objects.map(activation => {
         return (
-          <ListItem style={{display: 'block'}} leftCheckbox={<Checkbox onCheck={this._onCheck.bind(this, activation)} />} rightIcon={ <FolderIcon />} initiallyOpen={true} key={activation.id} primaryText={<div className='layer-title-empty'>{activation.activation_id}</div>}/>
+          <ListItem style={{display: 'block'}} leftCheckbox={<Checkbox onCheck={this._onCheck.bind(this, activation)} />} rightIcon={ <FolderIcon />} initiallyOpen={true} key={activation.activation_id} primaryText={<div className='layer-title-empty'>{activation.activation_id}</div>}/>
         );
       });
     }
@@ -241,7 +289,7 @@ class AddActivationsModal extends React.Component {
   }
   addActivations() {
     for (var i = 0, ii = this._checkedLayers.length; i < ii; ++i) {
-      this._onActivationClick(this._checkedLayers[i]);
+      this._addActivation(this._checkedLayers[i].activation_id);
     }
   }
   _handleRequestClose() {

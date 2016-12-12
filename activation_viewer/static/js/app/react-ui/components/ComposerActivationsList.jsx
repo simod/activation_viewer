@@ -14,24 +14,25 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import HTML5Backend from 'react-dnd-html5-backend';
 import {DragDropContext} from 'react-dnd';
-import LayerActions from 'boundless-sdk/js/actions/LayerActions.js';
+import LayerActions from 'boundless-sdk/actions/LayerActions';
 import ol from 'openlayers';
+import debounce from  'debounce';
 import classNames from 'classnames';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import LayerIdService from 'boundless-sdk/js/services/LayerIdService.js';
-import LayerStore from 'boundless-sdk/js/stores/LayerStore.js';
-import LayerListItem from 'boundless-sdk/js/components/LayerListItem.jsx';
-import Label from 'boundless-sdk/js/components/Label.jsx';
+import LayerIdService from 'boundless-sdk/services/LayerIdService';
+import LayerStore from 'boundless-sdk/stores/LayerStore';
+import LayerListItem from 'boundless-sdk/components/LayerListItem';
+import Label from 'boundless-sdk/components/Label';
 import AddActivationsModal from './AddActivationsModal.jsx';
 import RaisedButton from 'material-ui/RaisedButton';
-import Button from 'boundless-sdk/js/components/Button.jsx';
+import Button from 'boundless-sdk/components/Button';
 import NoteAdd from 'material-ui/svg-icons/action/note-add';
 import {List} from 'material-ui/List';
 import LayersIcon from 'material-ui/svg-icons/maps/layers';
 import {Toolbar, ToolbarGroup} from 'material-ui/Toolbar';
 import {defineMessages, injectIntl, intlShape} from 'react-intl';
 import pureRender from 'pure-render-decorator';
-import 'boundless-sdk/js/components/LayerList.css';
+import 'boundless-sdk/components/LayerList.css';
 
 
 const messages = defineMessages({
@@ -69,6 +70,7 @@ class ActivationsList extends React.Component {
     this.state = {
       muiTheme: context.muiTheme || getMuiTheme()
     };
+    this.moveLayer = debounce(this.moveLayer, 100);
   }
   getChildContext() {
     return {muiTheme: getMuiTheme()};
@@ -96,7 +98,7 @@ class ActivationsList extends React.Component {
     for (var i = 0, ii = layers.length; i < ii; ++i) {
       var lyr = layers[i];
       if (!this.props.filter || this.props.filter(lyr) === true) {
-        layerNodes.push(me.getLayerNode(lyr, group, (ii - i)));
+        layerNodes.push(me.getLayerNode(lyr, group, (ii - i) - 1));
       }
     }
     return layerNodes;
@@ -142,11 +144,11 @@ class ActivationsList extends React.Component {
       if (lyr instanceof ol.layer.Group) {
         var children = this.props.showGroupContent ? this.renderLayerGroup(lyr) : [];
         return (
-          <LayerListItem index={idx} {...this.props} allowReordering={false} onModalClose={this._onModalClose.bind(this)} onModalOpen={this._onModalOpen.bind(this)} key={lyr.get('id')} layer={lyr} nestedItems={children} title={lyr.get('title')} disableTouchRipple={true}/>
+          <LayerListItem index={idx} moveLayer={this.moveLayer} {...this.props} allowReordering={false} onModalClose={this._onModalClose.bind(this)} onModalOpen={this._onModalOpen.bind(this)} key={lyr.get('id')} group={group} layer={lyr} nestedItems={children} title={lyr.get('title')} disableTouchRipple={true}/>
         );
       } else {
         return (
-          <LayerListItem index={idx} moveLayer={this.moveLayer.bind(this)} {...this.props} onModalClose={this._onModalClose.bind(this)} onModalOpen={this._onModalOpen.bind(this)} key={lyr.get('id')} layer={lyr} group={group} title={lyr.get('title')} disableTouchRipple={true}/>
+          <LayerListItem index={idx} moveLayer={this.moveLayer} {...this.props} onModalClose={this._onModalClose.bind(this)} onModalOpen={this._onModalOpen.bind(this)} key={lyr.get('id')} layer={lyr} group={group} title={lyr.get('title')} disableTouchRipple={true}/>
         );
       }
     }

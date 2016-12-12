@@ -4,8 +4,8 @@ import {IntlProvider} from 'react-intl';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import ol from 'openlayers';
-import MapPanel from 'boundless-sdk/js/components/MapPanel.jsx';
-import LatestActivations from './components/latest_activations.jsx'
+import MapPanel from 'boundless-sdk/components/MapPanel';
+import LatestActivations from './components/ActivationsGrid.jsx'
 
 injectTapEventPlugin();
   

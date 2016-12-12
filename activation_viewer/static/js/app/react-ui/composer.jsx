@@ -2,19 +2,20 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ol from 'openlayers';
 import {addLocaleData, IntlProvider, injectIntl, intlShape} from 'react-intl';
-import MapPanel from 'boundless-sdk/js/components/MapPanel.jsx';
+import MapPanel from 'boundless-sdk/components/MapPanel';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import CustomTheme from './theme';
-import ToolActions from 'boundless-sdk/js/actions/ToolActions.js';
-import Zoom from 'boundless-sdk/js/components/Zoom.jsx';
+import ToolActions from 'boundless-sdk/actions/ToolActions';
+import Zoom from 'boundless-sdk/components/Zoom';
 import ActivationsList from './components/ComposerActivationsList.jsx';
-import LoadingPanel from 'boundless-sdk/js/components/LoadingPanel.jsx';
-import Select from 'boundless-sdk/js/components/Select.jsx';
-import HomeButton from 'boundless-sdk/js/components/HomeButton.jsx';
-import AddLayer from 'boundless-sdk/js/components/AddLayer.jsx';
+import LoadingPanel from 'boundless-sdk/components/LoadingPanel';
+import Select from 'boundless-sdk/components/Select';
+import HomeButton from 'boundless-sdk/components/HomeButton';
+import AddLayer from 'boundless-sdk/components/AddLayer';
 import RaisedButton from 'material-ui/RaisedButton';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import injectTapEventPlugin from 'react-tap-event-plugin';
+import AppConfig from './constants/AppConfig.js'
 
 // Needed for onTouchTap
 // Can go away when react 1.0 release
@@ -46,14 +47,10 @@ var map = new ol.Map({
     })
   ],
   view: new ol.View({
-    center: [-16839563.5993915, 8850169.509638],
-    zoom: 11
-  }),
-  defaults: {
-    view: {
-      maxZoom: 21
-    }
-  }
+    center: [0, 0],
+    zoom: 3,
+    maxZoom: 21
+  })
 });
 
 var filterBaseLayersIn = lyr => {
@@ -75,10 +72,10 @@ class Composer extends React.Component {
       <div id='content' style={{background: CustomTheme.palette.canvasColor}}>
         <div className='row container'>
           <div className="col tabs" id="tabs-panel">
-            <div id='overlays'><ActivationsList filter={filterBaseLayersOut} showOnStart={true} addLayer={{sources: {list: '/api/activations', full: '/api/activations-full'}}} showOpacity={true} showDownload={true} showGroupContent={true} showZoomTo={true} allowReordering={true} map={map} /></div>
+            <div id='overlays'><ActivationsList filter={filterBaseLayersOut} showOnStart={true} addLayer={{sources: {list: AppConfig.LIST_ACTIVATIONS_URL, full: AppConfig.FULL_ACTIVATIONS_URL}}} showOpacity={true} showDownload={true} showGroupContent={true} showZoomTo={true} allowRemove={true} allowReordering={true} map={map} /></div>
           </div>
           <div className="col maps">
-            <MapPanel id='map' map={map} />
+            <MapPanel id='map' useHistory={false} map={map} />
             <LoadingPanel map={map} />
             <div id='baselayers '><ActivationsList filter={filterBaseLayersIn} map={map} /></div>
             <div id='home-button'><HomeButton map={map} /></div>

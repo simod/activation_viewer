@@ -1,7 +1,7 @@
 import React from 'react';
 import {GridList} from 'material-ui/GridList';
-import GridTile from './activation_snippet.jsx';
-import {doGET} from 'boundless-sdk/js/util.js';
+import GridTile from './ActivationSnippet.jsx';
+import util from 'boundless-sdk/util';
 import ol from 'openlayers';
 
 const styles = {
@@ -26,7 +26,7 @@ export default class LatestActivations extends React.Component {
   }
   componentDidMount(){
     var self = this;
-    doGET(ACTIVATIONS_API, function(xmlhttp){
+    util.doGET(ACTIVATIONS_API, function(xmlhttp){
       self.setState({
         'activations': JSON.parse(xmlhttp.response).objects
       });
@@ -51,7 +51,7 @@ export default class LatestActivations extends React.Component {
         >
           {this.state.activations.map((activation) => (
             <GridTile
-              key={activation.id}
+              key={activation.activation_id}
               activation={activation}
               map={this.props.map}
               interaction={selectInteraction}

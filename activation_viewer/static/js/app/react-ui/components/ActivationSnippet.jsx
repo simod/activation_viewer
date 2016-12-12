@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react';
 import FlatButton from 'material-ui/FlatButton';
 import ol from 'openlayers';
 import Popover from 'material-ui/Popover';
+import AppConfig from '../constants/AppConfig.js'
 
 var featureSelectedColors = {
   fill: 'rgba(255, 194, 102, 0.4)',
@@ -176,7 +177,6 @@ class GridTile extends Component {
       parseFloat(this.props.activation.bbox_y1)
     ];
     var layer = this._buildOlBoxOverlay(bbox, this.props.activation.activation_id);
-    layer.activation_id = this.props.activation.id;
     this.props.map.addLayer(layer);
     this.setState({
       feature: layer.getSource().getFeatures()[0]
@@ -188,7 +188,6 @@ class GridTile extends Component {
     var geometry = ol.geom.Polygon.fromExtent(bbox);
     geometry.transform('EPSG:4326', 'EPSG:3857');
     return new ol.layer.Vector({
-      extent: bbox,
       source: new ol.source.Vector({
         features: [new ol.Feature({
           geometry: geometry
@@ -271,7 +270,8 @@ class GridTile extends Component {
         <div key="viewerButtonContainer" id='viewerButton' style={prepareStyles(styles.viewerButton)}>
           <FlatButton
             labelStyle={styles.viewerButtonLabel}
-            label="Open map" />
+            label="Open map"
+            href={AppConfig.COMPOSER_URL + '#' + activation.activation_id} />
         </div>
         )
     }
