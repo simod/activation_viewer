@@ -22,7 +22,8 @@ var map = new ol.Map({
   view: new ol.View({
     center: [6237703.28643, 6513410.44128],
     zoom: 4
-  })
+  }),
+  loadTilesWhileAnimating: true
 });
 
 map.addInteraction(new ol.interaction.Select({

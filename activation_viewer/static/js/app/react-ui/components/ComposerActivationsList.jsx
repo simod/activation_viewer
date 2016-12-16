@@ -21,7 +21,7 @@ import classNames from 'classnames';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import LayerIdService from 'boundless-sdk/services/LayerIdService';
 import LayerStore from 'boundless-sdk/stores/LayerStore';
-import LayerListItem from 'boundless-sdk/components/LayerListItem';
+import LayerListItem from './LayerListItem.jsx';
 import Label from 'boundless-sdk/components/Label';
 import AddActivationsModal from './AddActivationsModal.jsx';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -32,6 +32,7 @@ import LayersIcon from 'material-ui/svg-icons/maps/layers';
 import {Toolbar, ToolbarGroup} from 'material-ui/Toolbar';
 import {defineMessages, injectIntl, intlShape} from 'react-intl';
 import pureRender from 'pure-render-decorator';
+import Divider from 'material-ui/Divider';
 import 'boundless-sdk/components/LayerList.css';
 
 
@@ -97,6 +98,9 @@ class ActivationsList extends React.Component {
     var layerNodes = [];
     for (var i = 0, ii = layers.length; i < ii; ++i) {
       var lyr = layers[i];
+      if (lyr.get('act_id') && layerNodes.length > 0){
+        layerNodes.push(<Divider inset={true} key={'divider'} />);
+      }
       if (!this.props.filter || this.props.filter(lyr) === true) {
         layerNodes.push(me.getLayerNode(lyr, group, (ii - i) - 1));
       }
@@ -144,11 +148,37 @@ class ActivationsList extends React.Component {
       if (lyr instanceof ol.layer.Group) {
         var children = this.props.showGroupContent ? this.renderLayerGroup(lyr) : [];
         return (
-          <LayerListItem index={idx} moveLayer={this.moveLayer} {...this.props} allowReordering={false} onModalClose={this._onModalClose.bind(this)} onModalOpen={this._onModalOpen.bind(this)} key={lyr.get('id')} group={group} layer={lyr} nestedItems={children} title={lyr.get('title')} disableTouchRipple={true}/>
+          <LayerListItem 
+          index={idx} 
+          moveLayer={this.moveLayer} 
+          {...this.props} 
+          allowReordering={false} 
+          onModalClose={this._onModalClose.bind(this)} 
+          onModalOpen={this._onModalOpen.bind(this)} 
+          key={lyr.get('id')} 
+          group={group} 
+          layer={lyr} 
+          nestedItems={children} 
+          title={lyr.get('title')} 
+          disableTouchRipple={true}
+          open={true}
+          collapsible={true}/>
         );
       } else {
         return (
-          <LayerListItem index={idx} moveLayer={this.moveLayer} {...this.props} onModalClose={this._onModalClose.bind(this)} onModalOpen={this._onModalOpen.bind(this)} key={lyr.get('id')} layer={lyr} group={group} title={lyr.get('title')} disableTouchRipple={true}/>
+          <LayerListItem 
+          index={idx} 
+          moveLayer={this.moveLayer} 
+          {...this.props} 
+          onModalClose={this._onModalClose.bind(this)} 
+          onModalOpen={this._onModalOpen.bind(this)} 
+          key={lyr.get('id')} 
+          layer={lyr} 
+          group={group} 
+          title={lyr.get('title')} 
+          disableTouchRipple={true}
+          open={true}
+          collapsible={false}/>
         );
       }
     }

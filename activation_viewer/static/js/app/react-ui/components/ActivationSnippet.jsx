@@ -143,6 +143,14 @@ class GridTile extends Component {
       });
     }
     this._selectComponent();
+    let view = this.props.map.getView();
+    view.fit(this._getActivationGeometry(), 
+      this.props.map.getSize(), 
+      {
+        duration: 800, 
+        maxZoom: 10, 
+        padding: [100, 500, 0, 0]
+      });
   }
 
   onMouseLeaveHandler(){
@@ -169,24 +177,27 @@ class GridTile extends Component {
     this.state.feature.setStyle(getFeatureStyle(this.props.activation.activation_id, false));
   }
 
-  _addBBoxToMap(){
-    var bbox = [
+  _getActivationGeometry(){
+    let bbox = [
       parseFloat(this.props.activation.bbox_x0),
       parseFloat(this.props.activation.bbox_y0),
       parseFloat(this.props.activation.bbox_x1),
       parseFloat(this.props.activation.bbox_y1)
     ];
-    var layer = this._buildOlBoxOverlay(bbox, this.props.activation.activation_id);
+    let geometry = ol.geom.Polygon.fromExtent(bbox);
+    geometry.transform('EPSG:4326', 'EPSG:3857');
+    return geometry;
+  }
+
+  _addBBoxToMap(){
+    var layer = this._buildOlBoxOverlay(this._getActivationGeometry(), this.props.activation.activation_id);
     this.props.map.addLayer(layer);
     this.setState({
       feature: layer.getSource().getFeatures()[0]
     });
   }
 
-  _buildOlBoxOverlay(bbox, lable){
-    var self = this;
-    var geometry = ol.geom.Polygon.fromExtent(bbox);
-    geometry.transform('EPSG:4326', 'EPSG:3857');
+  _buildOlBoxOverlay(geometry, lable){
     return new ol.layer.Vector({
       source: new ol.source.Vector({
         features: [new ol.Feature({
