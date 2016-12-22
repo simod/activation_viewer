@@ -2,10 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {IntlProvider} from 'react-intl';
 import injectTapEventPlugin from 'react-tap-event-plugin';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import ol from 'openlayers';
 import MapPanel from 'boundless-sdk/components/MapPanel';
-import LatestActivations from './components/ActivationsGrid.jsx'
+import LatestActivations from './components/ActivationsGrid.jsx';
+import ViewerAppBar from './components/ViewerAppBar.jsx';
+import CustomTheme from './theme';
+
 
 injectTapEventPlugin();
   
@@ -32,9 +35,15 @@ map.addInteraction(new ol.interaction.Select({
 
 
 class App extends React.Component {
+  getChildContext() {
+    return {
+      muiTheme: getMuiTheme(CustomTheme)
+    };
+  }
   render() {
     return (
       <div id='content'>
+        <ViewerAppBar />
         <div id="ec-logo"></div>
         <div id="title">
           <h1>Copernicus EMS Activation Viewer</h1>
@@ -43,13 +52,15 @@ class App extends React.Component {
           <p>This platform belongs to the European Commission, Joint Research Centre and is run by the GEMMA project, Disaster Risk Management Unit.</p>
         </div>
         <MapPanel id='map' map={map} useHistory={false} />
-        <MuiThemeProvider>
-          <LatestActivations map={map} />
-        </MuiThemeProvider>
+        <LatestActivations map={map} />
       </div>
     );
   }
 }
+
+App.childContextTypes = {
+  muiTheme: React.PropTypes.object
+};
 
 ReactDOM.render(
   <IntlProvider locale="en"><App /></IntlProvider>,

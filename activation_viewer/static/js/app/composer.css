@@ -25,7 +25,7 @@ body{
   top: 45% !important;
 }
 .container {
-  height: 100%;
+  height: calc(100% - 64px);
 }
 #content {
   width: 100%;
@@ -36,14 +36,10 @@ body{
 .maps {
   height: 100%;
   width: 70%;
-  position: absolute;
-  top: 0px;
-  left: 30%;
 }
 .tabs {
   height: 100%;
   width: 30%;
-  position: absolute;
   top: 0px;
   left: 0px;
 }
@@ -60,12 +56,13 @@ body{
 #zoom-buttons {
   margin-left: 20px;
   position: absolute;
-  top: 20px;
+  top: 84px;
 }
+
 #home-button {
   margin-left: 20px;
   position: absolute;
-  top: 180px;
+  top: 220px;
 }
 html, body {
   height: 100%;
@@ -76,26 +73,27 @@ html, body {
   background-color: white;
   height: 100%;
 }
-#overlays {
-  height: 100%;
-}
-#overlays .layer-switcher {
+
+.overlays {
   height: 100%;
   max-width: none !important;
   position: relative !important;
   top: 0em !important;
   right: 0em !important;
 }
-#overlays .layerlistbutton {
+
+.overlays .layerlistbutton {
   display: none !important;
 }
-#overlays .layer-tree-panel {
+
+.overlays .layer-tree-panel {
   margin-right: 0px !important;
   max-height: 100% !important;
   padding-right: 0px !important;
   height: 100%
 }
-#overlays .layer-list-header {
+
+.overlays .layer-list-header {
   position: absolute;
   top: 0px;
   width: calc(100% - 3px);
@@ -103,6 +101,14 @@ html, body {
   z-index: 1000;
   background-color: #FFF;
 }
-#overlays .layer-list-list {
+
+.overlays .layer-list-list {
   height: calc(100% - 72px);
+}
+
+.baselayers.layer-switcher{
+  position: absolute;
+  top: 84px;
+  right: 0;
+  margin-right: 20px;
 }

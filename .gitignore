@@ -6,3 +6,4 @@ stop.sh
 activation_viewer.egg-info
 development.db
 activation_viewer/settings.py
+activation_viewer/static/js/app/build

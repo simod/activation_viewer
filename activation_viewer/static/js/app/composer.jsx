@@ -16,13 +16,13 @@ import RaisedButton from 'material-ui/RaisedButton';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import AppConfig from './constants/AppConfig.js'
+import ViewerAppBar from './components/ViewerAppBar.jsx';
 
 // Needed for onTouchTap
 // Can go away when react 1.0 release
 // Check this repo: 
 // https://github.com/zilverline/react-tap-event-plugin
 injectTapEventPlugin();
-
 
 var map = new ol.Map({
   controls: [],
@@ -68,16 +68,18 @@ class Composer extends React.Component {
     };
   }
   render() {
+    
     return (
-      <div id='content' style={{background: CustomTheme.palette.canvasColor}}>
+      <div id='content'>
+        <ViewerAppBar page={'composer'}/>
         <div className='row container'>
           <div className="col tabs" id="tabs-panel">
-            <div id='overlays'><ActivationsList filter={filterBaseLayersOut} showOnStart={true} addLayer={{sources: {list: AppConfig.LIST_ACTIVATIONS_URL, full: AppConfig.FULL_ACTIVATIONS_URL}}} showOpacity={true} showDownload={true} showGroupContent={true} showZoomTo={true} allowRemove={true} allowReordering={true} map={map} /></div>
+            <ActivationsList className={'overlays'} filter={filterBaseLayersOut} showOnStart={true} addLayer={{sources: {list: AppConfig.LIST_ACTIVATIONS_URL, full: AppConfig.FULL_ACTIVATIONS_URL}}} showOpacity={true} showDownload={true} showGroupContent={true} showZoomTo={true} allowRemove={true} allowReordering={true} map={map} />
           </div>
           <div className="col maps">
             <MapPanel id='map' useHistory={false} map={map} />
             <LoadingPanel map={map} />
-            <div id='baselayers '><ActivationsList filter={filterBaseLayersIn} map={map} /></div>
+            <ActivationsList className={'baselayers'} filter={filterBaseLayersIn} map={map} />
             <div id='home-button'><HomeButton map={map} /></div>
             <div id='zoom-buttons'><Zoom map={map} /></div>
           </div>

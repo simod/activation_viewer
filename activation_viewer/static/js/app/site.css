@@ -1,0 +1,12 @@
+.appBar h1{
+  cursor: pointer;
+  max-width: 450px;
+}
+
+.appBarMenu{
+  padding-top: 10px;
+}
+
+.appBarTab{
+  min-width: 200px;
+}

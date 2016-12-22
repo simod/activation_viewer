@@ -1,2 +1,2 @@
-cd activation_viewer/static/js/app/react-ui/
+cd activation_viewer/static/js/app
 npm start

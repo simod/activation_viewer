@@ -176,17 +176,7 @@ const messages = defineMessages({
 class LayerListItem extends React.Component {
   constructor(props) {
     super(props);
-    if (this.props.group) {
-      if (this.props.group.get('type') === 'base-group') {
-        this.props.group.on('change:visible', function(evt) {
-          this.setState({disabled: !evt.target.getVisible()});
-        }, this);
-      } else {
-        this.props.group.on('change:visible', function(evt) {
-          this.setState({checked: evt.target.getVisible()});
-        }, this);
-      }
-    }
+    
     this.formats_ = {
       GeoJSON: {
         format: new ol.format.GeoJSON(),
@@ -206,8 +196,7 @@ class LayerListItem extends React.Component {
     };
     this.state = {
       tableOpen: false,
-      checked: props.layer.getVisible(),
-      open: this.props.open
+      checked: props.layer.getVisible()
     };
   }
   getChildContext() {
@@ -216,8 +205,33 @@ class LayerListItem extends React.Component {
   componentDidMount() {
     this.props.layer.on('change:visible', this._changeLayerVisible, this);
   }
+  _disableGroupEvents(evt) {
+    this.setState({disabled: !evt.target.getVisible()});
+  }
+  _enableGroupEvents(evt) {
+    this.setState({checked: evt.target.getVisible()});
+  }
   componentWillUnmount() {
     this.props.layer.un('change:visible', this._changeLayerVisible, this);
+    if (this.props.group) {
+      if (this.props.group.get('type') === 'base-group') {
+        this.props.group.un('change:visible', this._disableGroupEvents, this);
+      } else {
+        this.props.group.un('change:visible', this._enableGroupEvents, this);
+      }
+    }
+  }
+  componentWillMount() {
+    this.setState({
+      open: this.props.open
+    });
+    if (this.props.group) {
+      if (this.props.group.get('type') === 'base-group') {
+        this.props.group.on('change:visible', this._disableGroupEvents, this);
+      } else {
+        this.props.group.on('change:visible', this._enableGroupEvents, this);
+      }
+    }
   }
   _changeLayerVisible(evt) {
     this.setState({checked: evt.target.getVisible()});
@@ -437,10 +451,11 @@ class LayerListItem extends React.Component {
         innerDivStyle={innerDivStyle} 
         autoGenerateNestedIndicator={false} 
         primaryText={input ? undefined : this.props.title} 
-        nestedItems={this.state.open ? this.props.nestedItems : []} 
+        nestedItems={this.props.nestedItems} 
         nestedListStyle={{'marginLeft':'40px'}} 
         initiallyOpen={true} 
-        disableTouchRipple={true}>
+        disableTouchRipple={true}
+        open={this.state.open}>
           {collapseElement}
           {input}
           {legend}   

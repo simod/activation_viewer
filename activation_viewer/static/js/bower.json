@@ -1,9 +1,0 @@
-{
-  "name": "js",
-  "version": "0.0.0",
-  "dependencies": {
-    "angular-openlayers-directive": "https://github.com/tombatossals/angular-openlayers-directive.git#~1.2.0",
-    "openlayers3": "https://github.com/openlayers/ol3/releases/download/v3.10.0/v3.10.0-dist.zip"
-  },
-  "devDependencies": {}
-}

@@ -10,7 +10,7 @@ body{
 
 #ec-logo{
     position: absolute;
-    top: 0;
+    top: 64px;
     left: 0;
     background: rgba(166, 166, 166, .5) url('http://localhost:8000/static/img/ec_logo_neg.png') no-repeat 5px 0;
     width: 425px;
@@ -21,7 +21,7 @@ body{
 
 #title{
     position: absolute;
-    top: 20px;
+    top: 84px;
     left: 40%;
     z-index: 100000;
     color: #737373;
