@@ -16,17 +16,24 @@ var map = new ol.Map({
   layers: [
     new ol.layer.Tile({
       type: 'base',
-      title: 'OSM Streets',
-      source: new ol.source.TileArcGISRest({
-        url: 'http://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer'
+      title: 'base',
+      source: new ol.source.XYZ({
+        url: 'https://cartodb-basemaps-{a-c}.global.ssl.fastly.net/dark_nolabels/{z}/{x}/{y}@2x.png',
+        attributions: [
+          new ol.Attribution({
+            html: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+          })
+        ]
       })
     })
   ],
   view: new ol.View({
     center: [6237703.28643, 6513410.44128],
-    zoom: 4
+    zoom: 4,
+    maxZoom: 18
   }),
-  loadTilesWhileAnimating: true
+  loadTilesWhileAnimating: true,
+  controls: [new ol.control.Attribution({collapsible: false})],
 });
 
 map.addInteraction(new ol.interaction.Select({
