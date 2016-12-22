@@ -145,7 +145,8 @@ class DisasterTypeResource(ModelResource):
         resource_name = 'disastertypes'
         serializer = DtypeSerializer()
         filtering = {
-            'slug': ALL
+            'slug': ALL,
+            'name': ALL
         }
 
 
@@ -211,18 +212,46 @@ class ActivationFullResource(ModelResource):
         authorization = ActAuthorization()
         filtering = {
             'disaster_type': ALL_WITH_RELATIONS,
-            'activation_time': ALL,
-            'keywords': ALL_WITH_RELATIONS,
             'regions': ALL_WITH_RELATIONS,
+            'activation_id': ALL
         }
 
 class ActivationResource(ModelResource):
     regions = fields.ToManyField(RegionResource, 'regions', full=True, null=True)
     disaster_type = fields.ToOneField(DisasterTypeResource, 'disaster_type', full=True)
+    
     class Meta:
         queryset = Activation.objects.distinct().order_by('-activation_time')
         resource_name = 'activations'
         authorization = ActAuthorization()
+        filtering = {
+            'disaster_type': ALL_WITH_RELATIONS,
+            'regions': ALL_WITH_RELATIONS,
+            'activation_id': ALL
+        }
+
+    def build_filters(self, filters={}):
+        orm_filters = super(ActivationResource, self).build_filters(filters)
+        if 'q' in filters:
+            orm_filters.update({'q': filters['q']})
+        
+        return orm_filters
+
+    def apply_filters(self, request, applicable_filters):
+        q = applicable_filters.pop('q', None)
+        semi_filtered = super(
+            ActivationResource,
+            self).apply_filters(
+            request,
+            applicable_filters)
+        filtered = semi_filtered
+
+        if q:
+            filtered = filtered.filter(
+                Q(activation_id__icontains=q) |
+                Q(disaster_type__name__icontains=q) |
+                Q(regions__name__icontains=q))
+        return filtered
 
 class ActFilteredResource(ModelResource):
     """ Activation faceting resource"""

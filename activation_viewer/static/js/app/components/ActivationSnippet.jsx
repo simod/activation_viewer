@@ -114,31 +114,39 @@ class GridTile extends Component {
     };
   }
 
+  _onInteractionSelect(e){
+    let thisFeature = this.state.layer.getSource().getFeatures()[0];
+    if (e.selected[0] == thisFeature){
+      this._selectComponent();
+    }else if(e.deselected[0] == thisFeature){
+      this._deselectComponent();
+    }
+  }
+
   componentDidMount() {
     this.ensureImageCover();
-    this._addBBoxToMap()
-    this.props.interaction.on('select', e => {
-      if (e.selected[0] == this.state.feature){
-        this._selectComponent();
-      }else if(e.deselected[0] == this.state.feature){
-        this._deselectComponent();
-      }
-    });
+    this._addBBoxToMap();
+    this.props.interaction.on('select', this._onInteractionSelect, this);
+  }
 
+  componentWillUnmount(){
+    this.props.interaction.un('select', this._onInteractionSelect, this);
+    this._removeBboxFromMap();
   }
 
   onMouseEnterHandler(){
     let features = this.props.interaction.getFeatures();
+    let thisFeature = this.state.layer.getSource().getFeatures()[0];
     if (features.getLength() == 0){
-      features.push(this.state.feature);
+      features.push(thisFeature);
     }else{
       features.forEach(feature => {
         let matched = false;
-        if (feature == this.state.feature){
+        if (feature == thisFeature){
           matched = true;
         }
         if (!matched){
-          features.push(this.state.feature);
+          features.push(thisFeature);
         }
       });
     }
@@ -155,8 +163,9 @@ class GridTile extends Component {
 
   onMouseLeaveHandler(){
     let features = this.props.interaction.getFeatures();
+    let thisFeature = this.state.layer.getSource().getFeatures()[0];
     features.forEach(feature => {
-      if (feature == this.state.feature){
+      if (feature == thisFeature){
         features.remove(feature);
       }
     });
@@ -164,17 +173,19 @@ class GridTile extends Component {
   }
 
   _selectComponent(){
+    let thisFeature = this.state.layer.getSource().getFeatures()[0];
     this.setState({
       selectClass: 'act_snippet_selected'
     });
-    this.state.feature.setStyle(getFeatureStyle(this.props.activation.activation_id, true));
+    thisFeature.setStyle(getFeatureStyle(this.props.activation.activation_id, true));
   }
 
   _deselectComponent(){
+    let thisFeature = this.state.layer.getSource().getFeatures()[0];
     this.setState({
       selectClass: ''
     });
-    this.state.feature.setStyle(getFeatureStyle(this.props.activation.activation_id, false));
+    thisFeature.setStyle(getFeatureStyle(this.props.activation.activation_id, false));
   }
 
   _getActivationGeometry(){
@@ -193,8 +204,12 @@ class GridTile extends Component {
     var layer = this._buildOlBoxOverlay(this._getActivationGeometry(), this.props.activation.activation_id);
     this.props.map.addLayer(layer);
     this.setState({
-      feature: layer.getSource().getFeatures()[0]
+      layer: layer
     });
+  }
+
+  _removeBboxFromMap(){
+    this.props.map.removeLayer(this.state.layer);
   }
 
   _buildOlBoxOverlay(geometry, lable){
