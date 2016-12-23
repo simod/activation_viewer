@@ -2,16 +2,16 @@ import React, {Component, PropTypes} from 'react';
 import FlatButton from 'material-ui/FlatButton';
 import ol from 'openlayers';
 import Popover from 'material-ui/Popover';
-import AppConfig from '../constants/AppConfig.js'
+import AppConfig from '../constants/AppConfig.js';
 
 var featureSelectedColors = {
-  fill: 'rgba(255, 194, 102, 0.4)',
-  stroke: 'rgba(255, 194, 102, 0.1)'
+  fill: 'rgba(255, 166, 77, 0.6)',
+  stroke: 'rgba(255, 166, 77, 0.3)'
 }
 
 var featureDeselectedColors = {
-  fill: 'rgba(102, 204, 255, 0.3)',
-  stroke: 'rgba(102, 204, 255, 0.1)'
+  fill: 'rgba(255, 166, 77, 0.4)',
+  stroke: 'rgba(255, 166, 77, 0.1)'
 }
 
 function getFeatureStyle(lable, selected){
@@ -104,7 +104,8 @@ function getStyles(props, context) {
   return styles;
 }
 
-class GridTile extends Component {
+
+class ActSnippet extends Component {
   constructor(props){
     super();
     this.onMouseEnterHandler = this.onMouseEnterHandler.bind(this);
@@ -137,6 +138,7 @@ class GridTile extends Component {
   onMouseEnterHandler(){
     let features = this.props.interaction.getFeatures();
     let thisFeature = this.state.layer.getSource().getFeatures()[0];
+    let self = this;
     if (features.getLength() == 0){
       features.push(thisFeature);
     }else{
@@ -152,13 +154,42 @@ class GridTile extends Component {
     }
     this._selectComponent();
     let view = this.props.map.getView();
-    view.fit(this._getActivationGeometry(), 
-      this.props.map.getSize(), 
-      {
-        duration: 800, 
-        maxZoom: 10, 
-        padding: [100, 500, 0, 0]
+
+    let viewExtent = view.calculateExtent(this.props.map.getSize());
+    let layerExtent = this._getActivationGeometry().getExtent();
+
+    if (ol.extent.containsExtent(viewExtent, layerExtent)){
+
+      view.fit(this._getActivationGeometry(), 
+        this.props.map.getSize(), 
+        {
+          maxZoom: 10, 
+          center: ol.extent.getCenter(self._getActivationGeometry().getExtent()),
+          duration: 300
+        }
+      );
+
+    }else{
+
+      view.animate({
+        zoom: 3,
+        duration: 500
       });
+
+      setTimeout(function(){
+        view.animate({
+          duration: 800, 
+          center: ol.extent.getCenter(layerExtent)
+        });
+      }, 100);
+
+      setTimeout(function(){
+        view.animate({
+          zoom: 7,
+          duration: 500
+        });
+      }, 700);
+    }
   }
 
   onMouseLeaveHandler(){
@@ -334,7 +365,7 @@ class GridTile extends Component {
   }
 }
 
-GridTile.propTypes = {
+ActSnippet.propTypes = {
   /**
    * An IconButton element to be used as secondary action target
    * (primary action target is the tile itself).
@@ -346,7 +377,7 @@ GridTile.propTypes = {
   actionPosition: PropTypes.oneOf(['left', 'right']),
   /**
    * Theoretically you can pass any node as children, but the main use case is to pass an img,
-   * in whichcase GridTile takes care of making the image "cover" available space
+   * in whichcase ActSnippet takes care of making the image "cover" available space
    * (similar to background-size: cover or to object-fit:cover).
    */
   children: PropTypes.node,
@@ -401,7 +432,7 @@ GridTile.propTypes = {
 
 };
 
-GridTile.defaultProps = {
+ActSnippet.defaultProps = {
   titlePosition: 'bottom',
   titleBackground: 'rgba(0, 0, 0, 0.4)',
   actionPosition: 'right',
@@ -411,8 +442,8 @@ GridTile.defaultProps = {
   viewerButton: true,
 };
 
-GridTile.contextTypes = {
+ActSnippet.contextTypes = {
   muiTheme: PropTypes.object.isRequired,
 };
 
-export default GridTile;
+export default ActSnippet;

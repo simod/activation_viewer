@@ -1,6 +1,6 @@
 import React from 'react';
 import {GridList} from 'material-ui/GridList';
-import GridTile from './ActivationSnippet.jsx';
+import ActSnippet from './ActivationSnippet.jsx';
 import ol from 'openlayers';
 import 'whatwg-fetch';
 import queryString from 'query-string';
@@ -87,10 +87,11 @@ export default class LatestActivations extends React.Component {
   return (
     <div id="latest_activations" style={styles.root}>
       <TextField
-          id="search-activations"
           hintText="Search"
           floatingLabelText="Search"
           onChange={this._onSearch}
+          className={'activationsSearch'}
+          floatingLabelFocusStyle={{'color': 'rgba(255, 166, 77, 1)'}}
         />
       <GridList
         cellHeight={180}
@@ -99,14 +100,14 @@ export default class LatestActivations extends React.Component {
         style={styles.gridList}
       >
         {this.state.activations.map((activation) => (
-          <GridTile
+          <ActSnippet
             key={activation.activation_id}
             activation={activation}
             map={this.props.map}
             interaction={selectInteraction}
           > 
           <img src={activation.thumbnail_url} />
-          </GridTile>
+          </ActSnippet>
         ))}
       </GridList>
     </div>

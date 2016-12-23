@@ -4,7 +4,8 @@ body{
 }
 
 #map {
-    height: 400px;
+    height: 464px;
+    margin-top: -64px;
 }
 
 #ec-logo{
@@ -12,8 +13,8 @@ body{
     top: 64px;
     left: 0;
     background: rgba(166, 166, 166, .5) url('http://localhost:8000/static/img/ec_logo_neg.png') no-repeat 5px 0;
-    width: 425px;
-    height: 114px;
+    width: 296px;
+    height: 84px;
     z-index: 100000;
     pointer-events: none;
 }
@@ -37,4 +38,26 @@ body{
     box-shadow: 0 0 7px 5px rgba(255, 194, 102, 0.8);
     transition: all 200ms ease-out;
     border-radius: 2px;
+}
+
+.activationsSearch{
+    position: absolute !important;
+    top: 421px;
+    background-color: rgba(255, 255, 255, 0.55) !important;
+    height: 43px !important;
+    border-radius: 3px 3px 0 0;
+}
+
+.activationsSearch label{
+    top: 8px !important;
+}
+
+.activationsSearch input{
+    margin-top: 0px !important;
+}
+
+.activationsSearch div:nth-child(4) hr:nth-child(2){
+    border-top: none rgb(255, 166, 77) !important;
+    border-right: none rgb(255, 166, 77) !important;
+    border-bottom: 2px solid rgb(255, 166, 77) !important;
 }

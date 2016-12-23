@@ -53,10 +53,9 @@ class App extends React.Component {
         <ViewerAppBar />
         <div id="ec-logo"></div>
         <div id="title">
-          <h1>Copernicus EMS Activation Viewer</h1>
           <p>The Activation Viewer helps to use, 
           share and consume the vector data and raster tiles of aerial imagery produced within the Copernicus Emergency Mapping Service.</p>
-          <p>This platform belongs to the European Commission, Joint Research Centre and is run by the GEMMA project, Disaster Risk Management Unit.</p>
+          <p>This platform belongs to the European Commission, Disaster Risk Management Unit.</p>
         </div>
         <MapPanel id='map' map={map} useHistory={false} />
         <LatestActivations map={map} />

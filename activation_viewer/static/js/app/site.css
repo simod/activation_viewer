@@ -1,3 +1,11 @@
+body{
+  background-color: rgba(115, 115, 115, 0.5);
+}
+
+.appBar{
+    background-color: rgba(255, 166, 77, 0.5) !important;
+}
+
 .appBar h1{
   cursor: pointer;
   max-width: 450px;
@@ -5,6 +13,10 @@
 
 .appBarMenu{
   padding-top: 10px;
+}
+
+.appBarMenu > div{
+  background-color: rgba(0, 151, 167, 0) !important;
 }
 
 .appBarTab{
