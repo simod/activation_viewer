@@ -5,13 +5,13 @@ import Popover from 'material-ui/Popover';
 import AppConfig from '../constants/AppConfig.js';
 
 var featureSelectedColors = {
-  fill: 'rgba(255, 166, 77, 0.6)',
-  stroke: 'rgba(255, 166, 77, 0.3)'
+  fill: 'rgba(250, 167, 63, 0.6)',
+  stroke: 'rgba(250, 167, 63, 0.3)'
 }
 
 var featureDeselectedColors = {
-  fill: 'rgba(255, 166, 77, 0.4)',
-  stroke: 'rgba(255, 166, 77, 0.1)'
+  fill: 'rgba(250, 167, 63, 0.4)',
+  stroke: 'rgba(250, 167, 63, 0.1)'
 }
 
 function getFeatureStyle(lable, selected){
@@ -27,7 +27,7 @@ function getFeatureStyle(lable, selected){
     text: new ol.style.Text({
       text: lable,
       fill: new ol.style.Fill({
-        color: '#737373'
+        color: '#989898'
       }),
       font: '12px sans-serif'
     })
@@ -46,7 +46,8 @@ function getStyles(props, context) {
     root: {
       position: 'relative',
       display: 'block',
-      height: '100%',
+      height: '200px',
+      width: '324px',
       overflow: 'hidden',
     },
     titleBar: {
@@ -314,7 +315,7 @@ class ActSnippet extends Component {
         <div style={prepareStyles(styles.titleWrap)}>
           <div style={prepareStyles(styles.title)}>{this.props.activation.activation_id}</div>
           <div style={prepareStyles(styles.subtitle)}>
-          {this.props.activation.disaster_type.name} in {this.props.activation.regions[0].name}
+          {this.props.activation.disaster_type.name} in {this.props.activation.region.name}
           </div>
         </div>
         {actionIcon ? (<div style={prepareStyles(styles.actionIcon)}>{actionIcon}</div>) : null}

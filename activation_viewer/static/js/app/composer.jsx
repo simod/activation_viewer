@@ -17,6 +17,7 @@ import {Tabs, Tab} from 'material-ui/Tabs';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import AppConfig from './constants/AppConfig.js'
 import ViewerAppBar from './components/ViewerAppBar.jsx';
+import ActInfoPanel from './components/ComposerActInfoPanel.jsx'
 
 // Needed for onTouchTap
 // Can go away when react 1.0 release
@@ -29,8 +30,28 @@ var map = new ol.Map({
   layers: [
     new ol.layer.Tile({
       type: 'base',
-      title: 'Streets',
-      source: new ol.source.OSM()
+      title: 'Streets dark',
+      source: new ol.source.XYZ({
+        url: 'https://cartodb-basemaps-{a-c}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}@2x.png',
+        attributions: [
+          new ol.Attribution({
+            html: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+          })
+        ]
+      })
+    }),
+    new ol.layer.Tile({
+      type: 'base',
+      title: 'Streets light',
+      visible: false,
+      source: new ol.source.XYZ({
+        url: 'https://cartodb-basemaps-{a-c}.global.ssl.fastly.net/light_all/{z}/{x}/{y}@2x.png',
+        attributions: [
+          new ol.Attribution({
+            html: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+          })
+        ]
+      })
     }),
     new ol.layer.Tile({
       type: 'base',
@@ -39,7 +60,7 @@ var map = new ol.Map({
       source: new ol.source.XYZ({
         attributions: [
           new ol.Attribution({
-            html:['Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community']
+            html:['Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP']
           })
         ],
         url: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
@@ -50,7 +71,8 @@ var map = new ol.Map({
     center: [0, 0],
     zoom: 3,
     maxZoom: 21
-  })
+  }),
+  controls: [new ol.control.Attribution({collapsible: false})]
 });
 
 var filterBaseLayersIn = lyr => {
@@ -83,6 +105,7 @@ class Composer extends React.Component {
             <div id='home-button'><HomeButton map={map} /></div>
             <div id='zoom-buttons'><Zoom map={map} /></div>
           </div>
+          <ActInfoPanel />
         </div>
       </div>
     );

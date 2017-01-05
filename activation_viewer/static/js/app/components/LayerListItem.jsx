@@ -42,6 +42,7 @@ import WMSLegend from 'boundless-sdk/components/WMSLegend';
 import {defineMessages, injectIntl, intlShape} from 'react-intl';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import pureRender from 'pure-render-decorator';
+import CustomTheme from '../theme';
 
 const layerListItemSource = {
   canDrag(props, monitor) {
@@ -200,7 +201,7 @@ class LayerListItem extends React.Component {
     };
   }
   getChildContext() {
-    return {muiTheme: getMuiTheme()};
+    return {muiTheme: getMuiTheme(CustomTheme)};
   }
   componentDidMount() {
     this.props.layer.on('change:visible', this._changeLayerVisible, this);

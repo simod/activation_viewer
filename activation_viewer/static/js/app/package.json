@@ -28,6 +28,7 @@
     "openlayers": "3.20.0",
     "query-string": "^4.2.3",
     "react": "15.3.2",
+    "react-addons-css-transition-group": "^15.3.2",
     "react-dom": "15.3.2",
     "react-intl": "^2.1.5",
     "react-tap-event-plugin": "^1.0.0",

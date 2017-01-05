@@ -19,7 +19,7 @@ import IconButton from 'material-ui/IconButton';
 import RefreshIcon from 'material-ui/svg-icons/navigation/refresh';
 import pureRender from 'pure-render-decorator';
 import TextField from 'material-ui/TextField';
-import Button from 'boundless-sdk/components/Button';
+import FlatButton from 'material-ui/FlatButton';
 import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import {List, ListItem} from 'material-ui/List';
@@ -31,6 +31,7 @@ import util from 'boundless-sdk/util';
 import classNames from 'classnames';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import 'boundless-sdk/components/AddLayerModal.css';
+import CustomTheme from '../theme';
 
 
 const messages = defineMessages({
@@ -67,7 +68,7 @@ const messages = defineMessages({
   title: {
     id: 'addwmslayermodal.title',
     description: 'Title for the modal Add layer dialog',
-    defaultMessage: 'Add Layers'
+    defaultMessage: 'Add Activations'
   },
   nolayertitle: {
     id: 'addwmslayermodal.nolayertitle',
@@ -129,7 +130,7 @@ class AddActivationsModal extends React.Component {
     };
   }
   getChildContext() {
-    return {muiTheme: getMuiTheme()};
+    return {muiTheme: getMuiTheme(CustomTheme)};
   }
   componentWillUnmount() {
     if (this._request) {
@@ -150,6 +151,8 @@ class AddActivationsModal extends React.Component {
   }
   _getCaps() {
     var url = this.state.sources.list;
+    var filter = this.state.filter || '';
+    url = url + '?q=' + filter;
     var me = this;
     const {formatMessage} = this.props.intl;
     var failureCb = function(xmlhttp) {
@@ -177,6 +180,13 @@ class AddActivationsModal extends React.Component {
   _onFilterChange(proxy, value) {
     this.setState({filter: value});
   }
+
+  componentDidUpdate(prevProps, prevState){
+    if(JSON.stringify(prevState.filter) != JSON.stringify(this.state.filter)){
+      this._getCaps();
+    }
+  }
+
   _addActivation(activation_id) {
     var map = this.props.map;
     var url = this.state.sources.full;
@@ -264,7 +274,15 @@ class AddActivationsModal extends React.Component {
     if (actInfo.objects){
       activations = actInfo.objects.map(activation => {
         return (
-          <ListItem style={{display: 'block'}} leftCheckbox={<Checkbox onCheck={this._onCheck.bind(this, activation)} />} rightIcon={ <FolderIcon />} initiallyOpen={true} key={activation.activation_id} primaryText={<div className='layer-title-empty'>{activation.activation_id}</div>}/>
+          <ListItem 
+            style={{display: 'block'}}
+            leftCheckbox={<Checkbox onCheck={this._onCheck.bind(this, activation)} />} 
+            rightIcon={ <FolderIcon />} 
+            initiallyOpen={true} 
+            key={activation.activation_id} 
+            primaryText={
+              <div className='layer-title-empty'>{activation.activation_id} - {activation.disaster_type.name} in {activation.region.name}</div>
+            }/>
         );
       });
     }
@@ -320,12 +338,25 @@ class AddActivationsModal extends React.Component {
       />);
     }
     var actions = [
-      <Button buttonType='Flat' primary={true} label={formatMessage(messages.addbutton)} onTouchTap={this.addActivations.bind(this)} />,
-      <Button buttonType='Flat' label={formatMessage(messages.closebutton)} onTouchTap={this.close.bind(this)} />
+      <FlatButton 
+        primary={true} 
+        label={formatMessage(messages.addbutton)} 
+        onTouchTap={this.addActivations.bind(this)} 
+        labelStyle={{color: CustomTheme.palette.textColor}}
+      />,
+      <FlatButton 
+        label={formatMessage(messages.closebutton)}
+        onTouchTap={this.close.bind(this)} 
+        labelStyle={{color: CustomTheme.palette.secondaryTextColor}}
+      />
     ];
     return (
       <Dialog className={classNames('sdk-component add-layer-modal', this.props.className)}  actions={actions} autoScrollBodyContent={true} modal={true} title={formatMessage(messages.title)} open={this.state.open} onRequestClose={this.close.bind(this)}>
-        <TextField floatingLabelText={formatMessage(messages.filtertitle)} onChange={this._onFilterChange.bind(this)} />
+        <TextField 
+          floatingLabelText={formatMessage(messages.filtertitle)} 
+          floatingLabelStyle={{color: CustomTheme.palette.primary3Color}} 
+          onChange={this._onFilterChange.bind(this)}
+        />
         {layers}
         {error}
       </Dialog>

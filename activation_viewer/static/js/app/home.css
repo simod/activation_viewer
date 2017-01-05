@@ -24,7 +24,7 @@ body{
     top: 84px;
     left: 40%;
     z-index: 100000;
-    color: #737373;
+    color: #989898;
     font-size: 20px;
     font-weight: 200;
     pointer-events: none;
@@ -57,7 +57,7 @@ body{
 }
 
 .activationsSearch div:nth-child(4) hr:nth-child(2){
-    border-top: none rgb(255, 166, 77) !important;
-    border-right: none rgb(255, 166, 77) !important;
-    border-bottom: 2px solid rgb(255, 166, 77) !important;
+    border-top: none rgb(250, 167, 63) !important;
+    border-right: none rgb(250, 167, 63) !important;
+    border-bottom: 2px solid rgb(250, 167, 63) !important;
 }

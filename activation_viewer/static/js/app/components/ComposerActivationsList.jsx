@@ -34,6 +34,7 @@ import {defineMessages, injectIntl, intlShape} from 'react-intl';
 import pureRender from 'pure-render-decorator';
 import Divider from 'material-ui/Divider';
 import 'boundless-sdk/components/LayerList.css';
+import CustomTheme from '../theme';
 
 
 const messages = defineMessages({
@@ -69,12 +70,12 @@ class ActivationsList extends React.Component {
     super(props);
     LayerStore.bindMap(this.props.map);
     this.state = {
-      muiTheme: context.muiTheme || getMuiTheme()
+      muiTheme: context.muiTheme || getMuiTheme(CustomTheme)
     };
     this.moveLayer = debounce(this.moveLayer, 100);
   }
   getChildContext() {
-    return {muiTheme: getMuiTheme()};
+    return {muiTheme: getMuiTheme(CustomTheme)};
   }
   componentWillMount() {
     this._onChangeCb = this._onChange.bind(this);
@@ -213,14 +214,31 @@ class ActivationsList extends React.Component {
     if (this.props.addLayer) {
       addLayer = (
           <article className="layer-list-add">
-          <Toolbar><ToolbarGroup><RaisedButton icon={<NoteAdd />} label={formatMessage(messages.addlayertext)} onTouchTap={this._showAddLayer.bind(this)} disableTouchRipple={true}/></ToolbarGroup></Toolbar>
-          <AddActivationsModal srsName={this.props.map.getView().getProjection().getCode()} sources={this.props.addLayer.sources} map={this.props.map} ref='addlayermodal'/>
+            <RaisedButton 
+              icon={<NoteAdd />} 
+              label={formatMessage(messages.addlayertext)} 
+              onTouchTap={this._showAddLayer.bind(this)} 
+              style={{
+                margin: '5px'
+              }}/>
+          <AddActivationsModal 
+            srsName={this.props.map.getView().getProjection().getCode()} 
+            sources={this.props.addLayer.sources} 
+            map={this.props.map} 
+            ref='addlayermodal'/>
           </article>
       );
     }
     return (
       <div ref='parent' className={classNames(divClass, this.props.className)}>
-        <Button tooltipPosition={this.props.tooltipPosition} buttonType='Action' mini={true} style={styles.root} className='layerlistbutton' tooltip={formatMessage(messages.layertitle)} onTouchTap={this._togglePanel.bind(this)}><LayersIcon /></Button>
+        <Button 
+          tooltipPosition={this.props.tooltipPosition} 
+          buttonType='Action' mini={true} 
+          style={styles.root} 
+          className='layerlistbutton' 
+          tooltip={formatMessage(messages.layertitle)} 
+          onTouchTap={this._togglePanel.bind(this)}><LayersIcon />
+        </Button>
         {addLayer}
         <div className='layer-tree-panel clearfix'>
           {tipLabel}
