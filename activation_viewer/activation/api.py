@@ -165,7 +165,7 @@ class ActivationFullResource(ModelResource):
     """Activation api"""
     map_sets = fields.ToManyField(MapSetResource, 'mapset_set', full=True)
     disaster_type = fields.ToOneField(DisasterTypeResource, 'disaster_type', full=True)
-    regions = fields.ToManyField(RegionResource, 'regions', full=True, null=True)
+    region = fields.ToOneField(RegionResource, 'region', full=True, null=True)
     keywords = fields.ToManyField(TagResource, 'keywords', null=True)
 
     def build_filters(self, filters={}):
@@ -212,12 +212,12 @@ class ActivationFullResource(ModelResource):
         authorization = ActAuthorization()
         filtering = {
             'disaster_type': ALL_WITH_RELATIONS,
-            'regions': ALL_WITH_RELATIONS,
+            'region': ALL_WITH_RELATIONS,
             'activation_id': ALL
         }
 
 class ActivationResource(ModelResource):
-    regions = fields.ToManyField(RegionResource, 'regions', full=True, null=True)
+    region = fields.ToOneField(RegionResource, 'region', full=True, null=True)
     disaster_type = fields.ToOneField(DisasterTypeResource, 'disaster_type', full=True)
     
     class Meta:
@@ -226,7 +226,7 @@ class ActivationResource(ModelResource):
         authorization = ActAuthorization()
         filtering = {
             'disaster_type': ALL_WITH_RELATIONS,
-            'regions': ALL_WITH_RELATIONS,
+            'region': ALL_WITH_RELATIONS,
             'activation_id': ALL
         }
 
@@ -250,7 +250,7 @@ class ActivationResource(ModelResource):
             filtered = filtered.filter(
                 Q(activation_id__icontains=q) |
                 Q(disaster_type__name__icontains=q) |
-                Q(regions__name__icontains=q))
+                Q(region__name__icontains=q))
         return filtered
 
 class ActFilteredResource(ModelResource):

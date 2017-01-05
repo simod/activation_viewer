@@ -26,7 +26,7 @@ class MapSet(models.Model):
     name = models.CharField(max_length=128)
     activation = models.ForeignKey('Activation')
     slug = models.SlugField()
-    layers = models.ManyToManyField(Layer, blank=True, null=True)
+    layers = models.ManyToManyField(Layer)
     bbox_x0 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
     bbox_x1 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
     bbox_y0 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
@@ -70,7 +70,7 @@ class Activation(models.Model):
     disaster_type = models.ForeignKey(DisasterType)
     event_time = models.DateTimeField('Event Time', blank=True, null=True)
     activation_time = models.DateTimeField('Activation Time', blank=True, null=True)
-    regions = models.ManyToManyField(Region, verbose_name='Affected Countries', blank=True, null=True)
+    region = models.ForeignKey(Region, verbose_name='Affected Country', blank=True, null=True)
     thumbnail_url = models.CharField(max_length=256, blank=True, null=True)
 
     def __unicode__(self):
