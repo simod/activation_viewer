@@ -100,7 +100,7 @@ class ActivationsList extends React.Component {
     for (var i = 0, ii = layers.length; i < ii; ++i) {
       var lyr = layers[i];
       if (lyr.get('act_id') && layerNodes.length > 0){
-        layerNodes.push(<Divider inset={true} key={'divider'} />);
+        layerNodes.push(<Divider inset={true} key={'divider' + i} />);
       }
       if (!this.props.filter || this.props.filter(lyr) === true) {
         layerNodes.push(me.getLayerNode(lyr, group, (ii - i) - 1));

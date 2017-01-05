@@ -170,6 +170,7 @@ html, body {
 
 #infoPanelContent{
   background-color: #303030;
-  height: 200px;
   border-top: 1px solid #BDBDBD;
+  width: 100%;
+  float: left;
 }

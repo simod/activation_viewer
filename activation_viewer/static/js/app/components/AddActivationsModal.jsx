@@ -27,6 +27,7 @@ import Checkbox from 'material-ui/Checkbox';
 import FolderIcon from 'material-ui/svg-icons/file/folder-open';
 import LayerIcon from 'material-ui/svg-icons/maps/layers';
 import util from 'boundless-sdk/util';
+import AppDispatcher from 'boundless-sdk/dispatchers/AppDispatcher';
 
 import classNames from 'classnames';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
@@ -248,6 +249,12 @@ class AddActivationsModal extends React.Component {
       });
       act_group.set('act_id', act_data.activation_id);
       map.addLayer(act_group);
+      AppDispatcher.dispatch({
+        action: {
+          type: 'add-activation',
+          activation: act_data
+       }
+      });
     }
 
     var failureCb = xmlhttp => {

@@ -5,13 +5,38 @@ import React, {Component, PropTypes} from 'react';
 import classNames from 'classnames';
 import FlatButton from 'material-ui/FlatButton';
 import CustomTheme from '../theme';
+import ActivationStore from '../stores/ActivationStore'
+import ActivationInfoSnippet from './ActivationInfoSnippet.jsx'
 
 class ActInfo extends Component {
+
+  constructor(){
+    super();
+    this.state = {
+      activations: []
+    }
+  }
+
+  componentWillUnmount(){
+    ActivationStore.removeChangeListener(this._onChangeCb);
+  }
+  
+  componentWillMount(){
+    this._onChangeCb = this._onChange.bind(this);
+    ActivationStore.addChangeListener(this._onChangeCb);
+    this._onChange();
+  }
+
+  _onChange() {
+    this.setState({activations: ActivationStore.getActivations()});
+  }
 
   render(){
     return (
       <div id={'infoPanelContent'}>
-        TEST!
+        {this.state.activations.map((activation) => (
+          <ActivationInfoSnippet key={activation.activation_id} activation={activation} />
+        ))}
       </div>
     )
   }

@@ -93,10 +93,21 @@ class Composer extends React.Component {
     
     return (
       <div id='content'>
-        <ViewerAppBar page={'composer'}/>
+        <ViewerAppBar page={'composer'} />
         <div className='row container'>
           <div className="col tabs" id="tabs-panel">
-            <ActivationsList className={'overlays'} filter={filterBaseLayersOut} showOnStart={true} addLayer={{sources: {list: AppConfig.LIST_ACTIVATIONS_URL, full: AppConfig.FULL_ACTIVATIONS_URL}}} showOpacity={true} showDownload={true} showGroupContent={true} showZoomTo={true} allowRemove={true} allowReordering={true} map={map} />
+            <ActivationsList 
+              className={'overlays'} 
+              filter={filterBaseLayersOut} 
+              showOnStart={true} 
+              addLayer={{sources: {list: AppConfig.LIST_ACTIVATIONS_URL, full: AppConfig.FULL_ACTIVATIONS_URL}}} 
+              showOpacity={true} 
+              showDownload={true} 
+              showGroupContent={true} 
+              showZoomTo={true} 
+              allowRemove={true} 
+              allowReordering={true} 
+              map={map} />
           </div>
           <div className="col maps">
             <MapPanel id='map' useHistory={false} map={map} />
