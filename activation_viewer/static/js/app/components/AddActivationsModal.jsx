@@ -198,29 +198,32 @@ class AddActivationsModal extends React.Component {
       
       act_data.map_sets.forEach(map_set => {
         let layers = new ol.Collection();
+
         map_set.layers.forEach(layer => {
-          layers.push(
-            new ol.layer.Tile({
-              title: layer.title,
-              source: new ol.source.XYZ({
-                url: layer.tms_url
-              }),
-              EX_GeographicBoundingBox: [
-                parseFloat(layer.bbox_x0), 
-                parseFloat(layer.bbox_y0), 
-                parseFloat(layer.bbox_x1), 
-                parseFloat(layer.bbox_y1)
-              ],
-              isRemovable: true,
-              extent: ol.proj.transformExtent([
-                parseFloat(layer.bbox_x0), 
-                parseFloat(layer.bbox_y0), 
-                parseFloat(layer.bbox_x1), 
-                parseFloat(layer.bbox_y1)], 
-                'EPSG:4326','EPSG:3857')
-            })
-          );
+          let the_layer = new ol.layer.Tile({
+            title: layer.title,
+            source: new ol.source.XYZ({
+              url: layer.tms_url
+            }),
+            EX_GeographicBoundingBox: [
+              parseFloat(layer.bbox_x0), 
+              parseFloat(layer.bbox_y0), 
+              parseFloat(layer.bbox_x1), 
+              parseFloat(layer.bbox_y1)
+            ],
+            isRemovable: true,
+            extent: ol.proj.transformExtent([
+              parseFloat(layer.bbox_x0), 
+              parseFloat(layer.bbox_y0), 
+              parseFloat(layer.bbox_x1), 
+              parseFloat(layer.bbox_y1)], 
+              'EPSG:4326','EPSG:3857')
+          });
+          the_layer.set('storeType', layer.storeType);
+          the_layer.set('typename', layer.typename);
+          layers.push(the_layer);
         });
+
         map_sets.push(
           new ol.layer.Group({
             title: map_set.name,

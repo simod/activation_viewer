@@ -131,7 +131,7 @@ const messages = defineMessages({
   zoombuttonlabel: {
     id: 'layerlist.zoombuttonlabel',
     description: 'Tooltip for the zoom to layer button',
-    defaultMessage: 'Zoom to layer'
+    defaultMessage: 'Zoom'
   },
   downloadbuttonlabel: {
     id: 'layerlist.downloadbuttonlabel',
@@ -155,8 +155,8 @@ const messages = defineMessages({
   },
   removebuttonlabel: {
     id: 'layerlist.removebuttonlabel',
-    description: 'Tooltip for the remove layer button',
-    defaultMessage: 'Remove layer'
+    description: 'Tooltip for the remove activation button',
+    defaultMessage: 'Remove activation'
   },
   editbuttonlabel: {
     id: 'layerlist.editbuttonlabel',
@@ -281,19 +281,17 @@ class LayerListItem extends React.Component {
     }
   }
   _download() {
-    var formatInfo = this.formats_[this.props.downloadFormat];
-    var format = formatInfo.format;
-    var layer = this.props.layer;
-    var source = layer.getSource();
-    if (source instanceof ol.source.Cluster) {
-      source = source.getSource();
+    let layer = this.props.layer;
+    let storeType = layer.get('storeType');
+    let dl = document.createElement('a');
+    if (storeType == 'dataStore'){
+      let url = DOWNLOAD_URL + 'wfs?format_options=charset%3AUTF-8&typename='+layer.get('typename')+'&outputFormat=SHAPE-ZIP&version=1.0.0&service=WFS&request=GetFeature';
+      dl.setAttribute('href', url);
+    }else if (storeType == 'coverageStore'){
+      let url = layer.getSource().getUrls()[0];
+      dl.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(url));
     }
-    var features = source.getFeatures();
-    var output = format.writeFeatures(features, {featureProjection: this.props.map.getView().getProjection()});
-    var dl = document.createElement('a');
-    var mimeType = formatInfo.mimeType;
-    dl.setAttribute('href', 'data:' + mimeType + ';charset=utf-8,' + encodeURIComponent(output));
-    dl.setAttribute('download', layer.get('title') + '.' + formatInfo.extension);
+    dl.setAttribute('download', layer.get('title'));
     dl.click();
   }
   _filter() {
@@ -383,7 +381,7 @@ class LayerListItem extends React.Component {
       zoomTo = <IconButton className='layer-list-item-zoom' style={iconStyle} onTouchTap={this._zoomTo.bind(this)} tooltip={formatMessage(messages.zoombuttonlabel)} tooltipPosition={'bottom-right'} tooltipStyles={tooltipStyle} disableTouchRipple={true}><ZoomInIcon /></IconButton>;
     }
     var download;
-    if (layer instanceof ol.layer.Vector && this.props.showDownload) {
+    if (this.props.showDownload && !(layer instanceof ol.layer.Group)) {
       download = (<IconButton className='layer-list-item-download' style={iconStyle} onTouchTap={this._download.bind(this)} tooltip={formatMessage(messages.downloadbuttonlabel)} tooltipPosition={'bottom-right'} tooltipStyles={tooltipStyle} disableTouchRipple={true}><DownloadIcon /></IconButton>);
     }
     var filter;
@@ -400,7 +398,7 @@ class LayerListItem extends React.Component {
       styling = (<IconButton style={iconStyle} className='layer-list-item-style' onTouchTap={this._style.bind(this)} tooltip={formatMessage(messages.stylingbuttonlabel)} tooltipPosition={'bottom-right'} tooltipStyles={tooltipStyle} disableTouchRipple={true}><StyleIcon /></IconButton>);
     }
     var remove;
-    if (this.props.allowRemove && layer.get('type') !== 'base' && layer.get('isRemovable') === true) {
+    if (this.props.allowRemove && layer.get('type') !== 'base' && layer.get('isRemovable') === true && layer.get('act_id')) {
       remove = (<IconButton style={iconStyle} className='layer-list-item-remove' onTouchTap={this._remove.bind(this)} tooltip={formatMessage(messages.removebuttonlabel)} tooltipPosition={'bottom-right'} tooltipStyles={tooltipStyle} disableTouchRipple={true}><DeleteIcon /></IconButton>);
     }
     var edit;
@@ -461,12 +459,12 @@ class LayerListItem extends React.Component {
           {input}
           {legend}   
           {table}
+          {zoomTo}
           {download}
           {filter}
           {label}
           {styling}
           {remove}
-          {zoomTo}
           {edit}
           {opacity}
           <span>
