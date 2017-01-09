@@ -1,5 +1,6 @@
 import AppDispatcher from 'boundless-sdk/dispatchers/AppDispatcher';
 import {EventEmitter} from 'events';
+import LayerConstants from 'boundless-sdk/constants/LayerConstants';
 
 
 class ActivationStore extends EventEmitter {
@@ -13,13 +14,14 @@ class ActivationStore extends EventEmitter {
     this.emitChange();
   }
 
-  removeActivation(activation){
-    this.activations.forEach(function(_activation, index){
-      if (_activation.activation_id === activation.activation_id){
-        this.activations.splice(index, 1);
+  removeActivation(activation_id){
+    let self = this;
+    self.activations.forEach(function(activation, index){
+      if (activation.activation_id === activation_id){
+        self.activations.splice(index, 1);
       }
     });
-    this.emitChange();
+    self.emitChange();
   }
 
   getActivations(){
@@ -45,10 +47,17 @@ export default _activationStore;
 
 AppDispatcher.register(function(payload){
   let action = payload.action;
-  if (action.type === 'add-activation'){
-    _activationStore.addActivation(action.activation);
-  }
-  if (action.type === 'remove-activation'){
-    _activationStore.removeActivation(action.activation)
+  switch (action.type) {
+    case 'add-activation':
+      _activationStore.addActivation(action.activation);
+      break;
+    case LayerConstants.REMOVE_LAYER:
+      let layer = action.layer;
+      if (layer.get('act_id')){
+        _activationStore.removeActivation(layer.get('act_id'));
+      }
+      break;
+    default:
+      break;
   }
 });

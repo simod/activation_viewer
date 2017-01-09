@@ -6,9 +6,10 @@ import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColu
 export default class ActivationInfoSnippet extends Component{
   render(){
     let activation = this.props.activation;
-    let date = new Date(activation.event_time)
-    return (
+    let event_time = new Date(activation.event_time);
+    let activation_time = new Date(activation.activation_time);
 
+    return (
       <Table selectable={false} wrapperStyle={{maxWidth: '500px', float: 'left', marginRight: '8px'}}>
         <TableHeader displaySelectAll={false}>
           <TableRow>
@@ -20,11 +21,18 @@ export default class ActivationInfoSnippet extends Component{
         <TableBody displayRowCheckbox={false}>
           <TableRow>
             <TableRowColumn style={{width: '100px'}}>Event time</TableRowColumn>
-            <TableRowColumn>{date.toString()}</TableRowColumn>
+            <TableRowColumn>{event_time.toString()}</TableRowColumn>
+          </TableRow>
+          <TableRow>
+            <TableRowColumn style={{width: '100px'}}>Activation time</TableRowColumn>
+            <TableRowColumn>{activation_time.toString()}</TableRowColumn>
+          </TableRow>
+          <TableRow>
+            <TableRowColumn style={{width: '100px'}}>Glide number</TableRowColumn>
+            <TableRowColumn>{activation.glide_number == '' ? 'Not available' : activation.glide_number}</TableRowColumn>
           </TableRow>
         </TableBody>
       </Table>
-
     )
   }
 }

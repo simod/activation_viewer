@@ -18,6 +18,8 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 import AppConfig from './constants/AppConfig.js'
 import ViewerAppBar from './components/ViewerAppBar.jsx';
 import ActInfoPanel from './components/ComposerActInfoPanel.jsx'
+import AppDispatcher from 'boundless-sdk/dispatchers/AppDispatcher';
+
 
 // Needed for onTouchTap
 // Can go away when react 1.0 release

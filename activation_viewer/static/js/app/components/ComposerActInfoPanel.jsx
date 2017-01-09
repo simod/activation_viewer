@@ -20,7 +20,7 @@ class ActInfo extends Component {
   componentWillUnmount(){
     ActivationStore.removeChangeListener(this._onChangeCb);
   }
-  
+
   componentWillMount(){
     this._onChangeCb = this._onChange.bind(this);
     ActivationStore.addChangeListener(this._onChangeCb);
@@ -48,7 +48,7 @@ export default class ActInfoPanel extends Component {
   constructor(props){
     super(props);
     this.state = {
-      show: false
+      show: true
     }
   }
 
@@ -62,7 +62,7 @@ export default class ActInfoPanel extends Component {
         <FlatButton
           id={'openInfoPanel'}
           primary={true} 
-          label={'Info Panel'}
+          label={'Toggle Info'}
           onTouchTap={this._togglePanel.bind(this)} 
           labelStyle={{color: CustomTheme.palette.textColor}}
           style={{
