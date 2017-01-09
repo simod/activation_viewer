@@ -61,3 +61,7 @@ body{
     border-right: none rgb(250, 167, 63) !important;
     border-bottom: 2px solid rgb(250, 167, 63) !important;
 }
+
+.snippetTitle{
+    cursor: pointer;
+}

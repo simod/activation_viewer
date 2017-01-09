@@ -25,7 +25,7 @@ body{
 /* end Dead Simple Grid */
 
 .loading-panel {
-  left: 50% !important;
+  left: calc(50% + 230px) !important;
   top: 45% !important;
 }
 .container {

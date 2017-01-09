@@ -311,7 +311,7 @@ class ActSnippet extends Component {
 
 
     let titleBar = (
-      <div key="titlebar" style={prepareStyles(styles.titleBar)}>
+      <div key="titlebar" className={'snippetTitle'} style={prepareStyles(styles.titleBar)} onClick={function(){window.location=AppConfig.COMPOSER_URL + '#' + activation.activation_id}}>
         <div style={prepareStyles(styles.titleWrap)}>
           <div style={prepareStyles(styles.title)}>{this.props.activation.activation_id}</div>
           <div style={prepareStyles(styles.subtitle)}>
