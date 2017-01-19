@@ -106,6 +106,11 @@ function getStyles(props, context) {
 }
 
 
+/*
+* A single snippet fo the home page activations grid. Each snippet renders it's own feature on the map controlling the 
+* hover effect on both the feature and the html component.
+*/
+
 class ActSnippet extends Component {
   constructor(props){
     super();
@@ -140,6 +145,8 @@ class ActSnippet extends Component {
     let features = this.props.interaction.getFeatures();
     let thisFeature = this.state.layer.getSource().getFeatures()[0];
     let self = this;
+
+    // Avoid multiple selection of the same feature
     if (features.getLength() == 0){
       features.push(thisFeature);
     }else{
@@ -154,6 +161,8 @@ class ActSnippet extends Component {
       });
     }
     this._selectComponent();
+
+    //  Animate over the selected feature
     let view = this.props.map.getView();
 
     let viewExtent = view.calculateExtent(this.props.map.getSize());

@@ -288,31 +288,12 @@ class LayerListItem extends React.Component {
       let url = DOWNLOAD_URL + 'wfs?format_options=charset%3AUTF-8&typename='+layer.get('typename')+'&outputFormat=SHAPE-ZIP&version=1.0.0&service=WFS&request=GetFeature';
       dl.setAttribute('href', url);
     }else if (storeType == 'coverageStore'){
-      let url = layer.getSource().getUrls()[0];
+      let url = 'TMS: ' + layer.getSource().getUrls()[0] + 
+        '\nWMS: http://localhost:8000/djmp/' + layer.get('mpId') + '/map/service';
       dl.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(url));
     }
     dl.setAttribute('download', layer.get('title'));
     dl.click();
-  }
-  _filter() {
-    if (this.props.onModalOpen) {
-      this.props.onModalOpen.call();
-    }
-    this.refs.filtermodal.getWrappedInstance().open();
-  }
-  _label() {
-    this.refs.labelmodal.getWrappedInstance().open();
-  }
-  _style() {
-    if (!this.props.layer.get('styleInfo')) {
-      var me = this;
-      WMSService.getStyles(this.props.layer.get('wfsInfo').url, this.props.layer, function(info) {
-        me.props.layer.set('styleInfo', info);
-        me.refs.stylemodal.getWrappedInstance().open();
-      }, undefined);
-    } else {
-      this.refs.stylemodal.getWrappedInstance().open();
-    }
   }
   _modifyLatLonBBOX(bbox) {
     bbox[0] = Math.max(-180, bbox[0]);
@@ -320,16 +301,6 @@ class LayerListItem extends React.Component {
     bbox[2] = Math.min(180, bbox[2]);
     bbox[3] = Math.min(85, bbox[3]);
     return bbox;
-  }
-  _showTable() {
-    this.setState({
-      tableOpen: true
-    });
-  }
-  _closeTable() {
-    this.setState({
-      tableOpen: false
-    });
   }
   _toggleNestedHandler() {
     this.setState({open: !this.state.open});
@@ -353,9 +324,6 @@ class LayerListItem extends React.Component {
   _remove() {
     LayerActions.removeLayer(this.props.layer, this.props.group);
   }
-  _edit() {
-    LayerActions.editLayer(this.props.layer);
-  }
   _changeOpacity(evt, value) {
     this.props.layer.setOpacity(value);
   }
@@ -369,41 +337,42 @@ class LayerListItem extends React.Component {
     var opacity;
     if (this.props.showOpacity && source && layer.get('type') !== 'base') {
       var val = layer.getOpacity();
-      opacity = (<Slider style={{width: '80%', 'marginLeft':'21px', 'marginTop':'-10px', 'marginBottom':'-38px'}} defaultValue={val} onChange={this._changeOpacity.bind(this)} />);
-    }
-    var table;
-    if (this.props.showTable && (this.props.layer instanceof ol.layer.Vector || this.props.layer.get('wfsInfo') !== undefined)) {
-      table = <IconButton className='layer-list-item-table' style={iconStyle} onTouchTap={this._showTable.bind(this)} tooltip={formatMessage(messages.tablebuttonlabel)} tooltipPosition={'bottom-right'} tooltipStyles={tooltipStyle} disableTouchRipple={true}><TableIcon /></IconButton>;
+      opacity = (<Slider 
+        style={{width: '80%', 'marginLeft':'21px', 'marginTop':'-10px', 'marginBottom':'-38px'}} 
+        defaultValue={val} 
+        onChange={this._changeOpacity.bind(this)} />);
     }
     var zoomTo;
-    // TODO add titles back for icon buttons
     if (layer.get('type') !== 'base' && layer.get('type') !== 'base-group' && ((source && source.getExtent) || layer.get('EX_GeographicBoundingBox')) && this.props.showZoomTo) {
-      zoomTo = <IconButton className='layer-list-item-zoom' style={iconStyle} onTouchTap={this._zoomTo.bind(this)} tooltip={formatMessage(messages.zoombuttonlabel)} tooltipPosition={'bottom-right'} tooltipStyles={tooltipStyle} disableTouchRipple={true}><ZoomInIcon /></IconButton>;
+      zoomTo = <IconButton 
+      className='layer-list-item-zoom' 
+      style={iconStyle} 
+      onTouchTap={this._zoomTo.bind(this)} 
+      tooltip={formatMessage(messages.zoombuttonlabel)} 
+      tooltipPosition={'top-left'}  
+      disableTouchRipple={true}><ZoomInIcon /></IconButton>;
     }
     var download;
     if (this.props.showDownload && !(layer instanceof ol.layer.Group)) {
-      download = (<IconButton className='layer-list-item-download' style={iconStyle} onTouchTap={this._download.bind(this)} tooltip={formatMessage(messages.downloadbuttonlabel)} tooltipPosition={'bottom-right'} tooltipStyles={tooltipStyle} disableTouchRipple={true}><DownloadIcon /></IconButton>);
-    }
-    var filter;
-    if (layer instanceof ol.layer.Vector && this.props.allowFiltering) {
-      filter = (<IconButton style={iconStyle} className='layer-list-item-filter' onTouchTap={this._filter.bind(this)} tooltip={formatMessage(messages.filterbuttonlabel)} tooltipPosition={'bottom-right'} tooltipStyles={tooltipStyle} disableTouchRipple={true}><FilterIcon /></IconButton>);
-    }
-    var label;
-    if (layer instanceof ol.layer.Vector && this.props.allowLabeling) {
-      label = (<IconButton style={iconStyle} className='layer-list-item-label' onTouchTap={this._label.bind(this)} tooltip={formatMessage(messages.labelbuttonlabel)} tooltipPosition={'bottom-right'} tooltipStyles={tooltipStyle} disableTouchRipple={true}><LabelIcon /></IconButton>);
-    }
-    var styling;
-    var canStyle = layer.get('wfsInfo') && this.props.allowStyling;
-    if (canStyle) {
-      styling = (<IconButton style={iconStyle} className='layer-list-item-style' onTouchTap={this._style.bind(this)} tooltip={formatMessage(messages.stylingbuttonlabel)} tooltipPosition={'bottom-right'} tooltipStyles={tooltipStyle} disableTouchRipple={true}><StyleIcon /></IconButton>);
+      download = (<IconButton 
+        className='layer-list-item-download' 
+        style={iconStyle} 
+        onTouchTap={this._download.bind(this)} 
+        tooltip={formatMessage(messages.downloadbuttonlabel)} 
+        tooltipPosition={'top-left'} 
+        tooltipStyles={tooltipStyle} 
+        disableTouchRipple={true}><DownloadIcon /></IconButton>);
     }
     var remove;
     if (this.props.allowRemove && layer.get('type') !== 'base' && layer.get('isRemovable') === true && layer.get('act_id')) {
-      remove = (<IconButton style={iconStyle} className='layer-list-item-remove' onTouchTap={this._remove.bind(this)} tooltip={formatMessage(messages.removebuttonlabel)} tooltipPosition={'bottom-right'} tooltipStyles={tooltipStyle} disableTouchRipple={true}><DeleteIcon /></IconButton>);
-    }
-    var edit;
-    if (this.props.allowEditing && layer.get('isWFST') === true) {
-      edit = (<IconButton style={iconStyle} onTouchTap={this._edit.bind(this)} className='layer-list-item-edit' tooltip={formatMessage(messages.editbuttonlabel)} tooltipPosition={'bottom-right'} tooltipStyles={tooltipStyle} disableTouchRipple={true}><EditIcon /></IconButton>);
+      remove = (<IconButton 
+        style={iconStyle} 
+        className='layer-list-item-remove' 
+        onTouchTap={this._remove.bind(this)} 
+        tooltip={formatMessage(messages.removebuttonlabel)} 
+        tooltipPosition={'top-left'} 
+        tooltipStyles={tooltipStyle} 
+        disableTouchRipple={true}><DeleteIcon /></IconButton>);
     }
     var input;
     if (layer.get('type') === 'base') {
@@ -411,24 +380,7 @@ class LayerListItem extends React.Component {
     } else {
       input = (<Checkbox style={{'display': 'inline-block', 'width': 'calc(100% - 146px)'}} checked={this.state.checked} label={this.props.title} labelStyle={this.props.layer.get('emptyTitle') ? {fontStyle: 'italic'} : undefined} onCheck={this._handleChange.bind(this)} disableTouchRipple={true}/>);
     }
-    var tableModal, labelModal, filterModal, styleModal;
-    if (this.props.layer instanceof ol.layer.Vector) {
-      labelModal = (<LabelModal {...this.props} layer={this.props.layer} ref='labelmodal' />);
-      filterModal = (<FilterModal {...this.props} layer={this.props.layer} ref='filtermodal' />);
-    }
-    if (canStyle) {
-      styleModal = (<StyleModal {...this.props} layer={this.props.layer} ref='stylemodal' />);
-    }
-    if (this.props.showTable) {
-      var actions = [
-        <Button buttonType='Flat' label={formatMessage(messages.closebutton)} onTouchTap={this._closeTable.bind(this)} />
-      ];
-      tableModal = (
-        <Dialog actions={actions} title={formatMessage(messages.tablemodaltitle)} open={this.state.tableOpen} onRequestClose={this._closeTable.bind(this)}>
-          <FeatureTable map={this.props.map} layer={this.props.layer} />
-        </Dialog>
-      );
-    }
+
     var legend;
     if (this.props.includeLegend && this.props.layer.getVisible() && ((this.props.layer instanceof ol.layer.Tile && this.props.layer.getSource() instanceof ol.source.TileWMS) ||
       (this.props.layer instanceof ol.layer.Image && this.props.layer.getSource() instanceof ol.source.ImageWMS))) {
@@ -439,8 +391,8 @@ class LayerListItem extends React.Component {
 
     let collapseElement = this.props.collapsible ? 
             this.state.open ?
-                         <IconButton style={{'height': 'auto', 'width': 'auto', 'padding': '0px'}} onTouchTap={this._toggleNestedHandler.bind(this)}><OpenIcon /></IconButton> :
-                         <IconButton style={{'height': 'auto', 'width': 'auto', 'padding': '0px'}} onTouchTap={this._toggleNestedHandler.bind(this)}><CloseIcon /></IconButton>
+               <IconButton style={{'height': 'auto', 'width': 'auto', 'padding': '0px'}} onTouchTap={this._toggleNestedHandler.bind(this)}><OpenIcon /></IconButton> :
+               <IconButton style={{'height': 'auto', 'width': 'auto', 'padding': '0px'}} onTouchTap={this._toggleNestedHandler.bind(this)}><CloseIcon /></IconButton>
             : null;
 
     return connectDragSource(connectDropTarget(
@@ -457,22 +409,10 @@ class LayerListItem extends React.Component {
         open={this.state.open}>
           {collapseElement}
           {input}
-          {legend}   
-          {table}
           {zoomTo}
           {download}
-          {filter}
-          {label}
-          {styling}
           {remove}
-          {edit}
           {opacity}
-          <span>
-            {filterModal}
-            {labelModal}
-            {styleModal}
-            {tableModal}
-          </span>
         </ListItem>
       </div>
     ));
@@ -480,9 +420,9 @@ class LayerListItem extends React.Component {
 }
 
 LayerListItem.propTypes = {
-  connectDragSource: React.PropTypes.func.isRequired,
-  connectDropTarget: React.PropTypes.func.isRequired,
-  moveLayer: React.PropTypes.func.isRequired,
+  connectDragSource: React.PropTypes.func,
+  connectDropTarget: React.PropTypes.func,
+  moveLayer: React.PropTypes.func,
   index: React.PropTypes.number.isRequired,
   /**
    * The map in which the layer of this item resides.

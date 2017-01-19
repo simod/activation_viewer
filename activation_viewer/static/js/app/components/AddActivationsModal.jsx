@@ -114,62 +114,96 @@ const messages = defineMessages({
 });
 
 /**
- * Modal window to add layers from a WMS or WFS service.
+ * Modal window to add activations from http json request
  */
 @pureRender
 class AddActivationsModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      newModalOpen: false,
       sources: this.props.sources,
       filter: null,
       error: false,
       errorOpen: false,
-      open: false,
-      layerInfo: null
+      open: false
     };
   }
   getChildContext() {
     return {muiTheme: getMuiTheme(CustomTheme)};
   }
+
   componentWillUnmount() {
     if (this._request) {
       this._request.abort();
     }
   }
+
   _initFromHash(){
+    // pre load activations if listed in the url's hash
     let hash = global.location.hash.replace('#', '');
     let activations = hash.split('/');
     activations.forEach(activation_id => {
       this._addActivation(activation_id)
     })
   }
+
+  _initFromSaved(actMapId){
+    // init the map from a json config
+    let self = this;
+    let failure = xmlhttp => {
+      delete self._request;
+      if (xmlhttp.status === 0) {
+        self._setError(formatMessage(messages.corserror));
+      } else {
+        self._setError(xmlhttp.status + ' ' + xmlhttp.statusText);
+      }
+    };
+    let success = xmlhttp => {
+      delete self._request;
+      let initial_config = JSON.parse(JSON.parse(xmlhttp.response).config);
+      // set map view
+      this.props.map.getView().setCenter(initial_config.center);
+      this.props.map.getView().setZoom(initial_config.zoom);
+
+      initial_config.activations.forEach(act_config =>{
+        this._addActivation(act_config.id, act_config.layers);
+      });
+    };
+    self.request = util.doGET('/api/act-maps/' + actMapId, success, failure);
+  }
+
   componentDidMount() {
-    if (global.location.hash !== ''){
+    let pathname = global.location.pathname.split('/');
+    if (pathname.length > 2 && parseInt(pathname[2])){
+      this._initFromSaved(parseInt(pathname[2]));
+      this.props.setSaved();
+    }
+    else if (global.location.hash !== ''){
       this._initFromHash();
     }
   }
+
   _getCaps() {
     var url = this.state.sources.list;
     var filter = this.state.filter || '';
     url = url + '?q=' + filter;
-    var me = this;
+    var self = this;
     const {formatMessage} = this.props.intl;
     var failureCb = function(xmlhttp) {
-      delete me._request;
+      delete self._request;
       if (xmlhttp.status === 0) {
-        me._setError(formatMessage(messages.corserror));
+        self._setError(formatMessage(messages.corserror));
       } else {
-        me._setError(xmlhttp.status + ' ' + xmlhttp.statusText);
+        self._setError(xmlhttp.status + ' ' + xmlhttp.statusText);
       }
     };
     var successCb = function(xmlhttp) {
-      delete me._request;
-      me.setState({actInfo: JSON.parse(xmlhttp.response)});
+      delete self._request;
+      self.setState({actInfo: JSON.parse(xmlhttp.response)});
     };
-    me._request = util.doGET(url, successCb, failureCb);
+    self._request = util.doGET(url, successCb, failureCb);
   }
+
   _setError(msg) {
     this.setState({
       errorOpen: true,
@@ -178,6 +212,7 @@ class AddActivationsModal extends React.Component {
       msg: msg
     });
   }
+
   _onFilterChange(proxy, value) {
     this.setState({filter: value});
   }
@@ -188,68 +223,86 @@ class AddActivationsModal extends React.Component {
     }
   }
 
-  _addActivation(activation_id) {
+  _addActivation(activation_id, initial_config=null) {
+    // Add a whole activation to the map, managing grouping in mapsets
     var map = this.props.map;
     var url = this.state.sources.full;
 
     var successCb = xmlhttp => {
       let act_data = JSON.parse(xmlhttp.response);
       let map_sets = new ol.Collection();
-      
+
       act_data.map_sets.forEach(map_set => {
         let layers = new ol.Collection();
 
         map_set.layers.forEach(layer => {
-          let the_layer = new ol.layer.Tile({
-            title: layer.title,
-            source: new ol.source.XYZ({
-              url: layer.tms_url
-            }),
-            EX_GeographicBoundingBox: [
-              parseFloat(layer.bbox_x0), 
-              parseFloat(layer.bbox_y0), 
-              parseFloat(layer.bbox_x1), 
-              parseFloat(layer.bbox_y1)
-            ],
-            isRemovable: true,
-            extent: ol.proj.transformExtent([
-              parseFloat(layer.bbox_x0), 
-              parseFloat(layer.bbox_y0), 
-              parseFloat(layer.bbox_x1), 
-              parseFloat(layer.bbox_y1)], 
-              'EPSG:4326','EPSG:3857')
-          });
-          the_layer.set('storeType', layer.storeType);
-          the_layer.set('typename', layer.typename);
-          layers.push(the_layer);
+          if (!initial_config || (initial_config && initial_config.hasOwnProperty(layer.id))){
+            var the_layer = new ol.layer.Tile({
+              title: layer.title,
+              source: new ol.source.XYZ({
+                url: layer.tms_url
+              }),
+              EX_GeographicBoundingBox: [
+                parseFloat(layer.bbox_x0),
+                parseFloat(layer.bbox_y0),
+                parseFloat(layer.bbox_x1),
+                parseFloat(layer.bbox_y1)
+              ],
+              isRemovable: true,
+              extent: ol.proj.transformExtent([
+                parseFloat(layer.bbox_x0),
+                parseFloat(layer.bbox_y0),
+                parseFloat(layer.bbox_x1),
+                parseFloat(layer.bbox_y1)],
+                'EPSG:4326','EPSG:3857')
+            });
+            // add some parameter that will be used in the layer list
+            the_layer.set('storeType', layer.storeType);
+            the_layer.set('typename', layer.typename);
+            the_layer.set('mpId', layer.id);
+          }
+
+          // Set layer initial config if available
+          if (initial_config && initial_config.hasOwnProperty(layer.id)){
+            let layer_conf = initial_config[layer.id];
+            the_layer.setOpacity(layer_conf.opacity);
+            // if there's the initial config then only load layers in the config
+            layers.insertAt(layer_conf.index, the_layer);
+          }else if(!initial_config){
+            // if no initial config then load the whole activation as it is
+            layers.push(the_layer);
+          }
         });
 
-        map_sets.push(
-          new ol.layer.Group({
-            title: map_set.name,
-            layers: layers,
-            EX_GeographicBoundingBox: [
-              parseFloat(map_set.bbox_x0), 
-              parseFloat(map_set.bbox_y0), 
-              parseFloat(map_set.bbox_x1), 
-              parseFloat(map_set.bbox_y1)
-            ],
-            isRemovable: true
-          })
-        );
+        if (layers.getLength() > 0){
+          map_sets.push(
+            new ol.layer.Group({
+              title: map_set.name,
+              layers: layers,
+              EX_GeographicBoundingBox: [
+                parseFloat(map_set.bbox_x0),
+                parseFloat(map_set.bbox_y0),
+                parseFloat(map_set.bbox_x1),
+                parseFloat(map_set.bbox_y1)
+              ],
+              isRemovable: true
+            })
+          );
+        }
       });
 
       let act_group = new ol.layer.Group({
         title: act_data.activation_id,
         layers: map_sets,
         EX_GeographicBoundingBox: [
-          parseFloat(act_data.bbox_x0), 
-          parseFloat(act_data.bbox_y0), 
-          parseFloat(act_data.bbox_x1), 
+          parseFloat(act_data.bbox_x0),
+          parseFloat(act_data.bbox_y0),
+          parseFloat(act_data.bbox_x1),
           parseFloat(act_data.bbox_y1)
         ],
         isRemovable: true
       });
+      // Set the Activation id in this group used for further handling in the layer list
       act_group.set('act_id', act_data.activation_id);
       map.addLayer(act_group);
       AppDispatcher.dispatch({
@@ -279,17 +332,18 @@ class AddActivationsModal extends React.Component {
       util.doGET(url + activation_id + '/', successCb, failureCb);
     }
   }
+
   _getActivationMarkup(actInfo) {
     var activations;
     if (actInfo.objects){
       activations = actInfo.objects.map(activation => {
         return (
-          <ListItem 
+          <ListItem
             style={{display: 'block'}}
-            leftCheckbox={<Checkbox onCheck={this._onCheck.bind(this, activation)} />} 
-            rightIcon={ <FolderIcon />} 
-            initiallyOpen={true} 
-            key={activation.activation_id} 
+            leftCheckbox={<Checkbox onCheck={this._onCheck.bind(this, activation)} />}
+            rightIcon={ <FolderIcon />}
+            initiallyOpen={true}
+            key={activation.activation_id}
             primaryText={
               <div className='layer-title-empty'>{activation.activation_id} - {activation.disaster_type.name} in {activation.region.name}</div>
             }/>
@@ -308,26 +362,28 @@ class AddActivationsModal extends React.Component {
       }
     }
   }
+
   open() {
     this._getCaps();
     this.setState({open: true});
   }
+
   close() {
     this.setState({open: false});
   }
+
   addActivations() {
     for (var i = 0, ii = this._checkedLayers.length; i < ii; ++i) {
       this._addActivation(this._checkedLayers[i].activation_id);
     }
   }
+
   _handleRequestClose() {
     this.setState({
       errorOpen: false
     });
   }
-  closeNewServer() {
-    this.setState({newModalOpen: false});
-  }  
+
   render() {
     this._checkedLayers = [];
     const {formatMessage} = this.props.intl;
@@ -348,23 +404,23 @@ class AddActivationsModal extends React.Component {
       />);
     }
     var actions = [
-      <FlatButton 
-        primary={true} 
-        label={formatMessage(messages.addbutton)} 
-        onTouchTap={this.addActivations.bind(this)} 
+      <FlatButton
+        primary={true}
+        label={formatMessage(messages.addbutton)}
+        onTouchTap={this.addActivations.bind(this)}
         labelStyle={{color: CustomTheme.palette.textColor}}
       />,
-      <FlatButton 
+      <FlatButton
         label={formatMessage(messages.closebutton)}
-        onTouchTap={this.close.bind(this)} 
+        onTouchTap={this.close.bind(this)}
         labelStyle={{color: CustomTheme.palette.secondaryTextColor}}
       />
     ];
     return (
       <Dialog className={classNames('sdk-component add-layer-modal', this.props.className)}  actions={actions} autoScrollBodyContent={true} modal={true} title={formatMessage(messages.title)} open={this.state.open} onRequestClose={this.close.bind(this)}>
-        <TextField 
-          floatingLabelText={formatMessage(messages.filtertitle)} 
-          floatingLabelStyle={{color: CustomTheme.palette.primary3Color}} 
+        <TextField
+          floatingLabelText={formatMessage(messages.filtertitle)}
+          floatingLabelStyle={{color: CustomTheme.palette.primary3Color}}
           onChange={this._onFilterChange.bind(this)}
         />
         {layers}
@@ -397,7 +453,15 @@ AddActivationsModal.propTypes = {
   /**
    * i18n message strings. Provided through the application through context.
    */
-  intl: intlShape.isRequired
+  intl: intlShape.isRequired,
+  /*
+  * Initial config for layers
+  */
+  initial_config: React.PropTypes.object,
+  /*
+  * Function used to propagate the saved flag of the map
+  */
+  setSaved: React.PropTypes.func
 };
 
 AddActivationsModal.childContextTypes = {

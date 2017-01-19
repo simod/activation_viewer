@@ -27,6 +27,7 @@ import AddActivationsModal from './AddActivationsModal.jsx';
 import RaisedButton from 'material-ui/RaisedButton';
 import Button from 'boundless-sdk/components/Button';
 import NoteAdd from 'material-ui/svg-icons/action/note-add';
+import ContentSave from 'material-ui/svg-icons/content/save';
 import {List} from 'material-ui/List';
 import LayersIcon from 'material-ui/svg-icons/maps/layers';
 import {Toolbar, ToolbarGroup} from 'material-ui/Toolbar';
@@ -51,7 +52,12 @@ const messages = defineMessages({
   addlayertext: {
     id: 'layerlist.addlayertext',
     description: 'Text for Add activations button',
-    defaultMessage: ' Add Activation '
+    defaultMessage: 'Add Activation'
+  },
+  savemaptext: {
+    id: 'layerlist.savemap',
+    description: 'Text for save map',
+    defaultMessage: 'Save Map'
   }
 });
 
@@ -70,7 +76,9 @@ class ActivationsList extends React.Component {
     super(props);
     LayerStore.bindMap(this.props.map);
     this.state = {
-      muiTheme: context.muiTheme || getMuiTheme(CustomTheme)
+      muiTheme: context.muiTheme || getMuiTheme(CustomTheme),
+      initial_config: this.props.initial_config,
+      saved: false
     };
     this.moveLayer = debounce(this.moveLayer, 100);
   }
@@ -142,6 +150,7 @@ class ActivationsList extends React.Component {
     this._modalOpen = false;
   }
   getLayerNode(lyr, group, idx) {
+    //  Render layer list items, they differ if groups or not
     if (lyr.get('id') === undefined) {
       lyr.set('id', LayerIdService.generateId());
     }
@@ -149,34 +158,34 @@ class ActivationsList extends React.Component {
       if (lyr instanceof ol.layer.Group) {
         var children = this.props.showGroupContent ? this.renderLayerGroup(lyr) : [];
         return (
-          <LayerListItem 
-          index={idx} 
-          moveLayer={this.moveLayer} 
-          {...this.props} 
-          allowReordering={false} 
-          onModalClose={this._onModalClose.bind(this)} 
-          onModalOpen={this._onModalOpen.bind(this)} 
-          key={lyr.get('id')} 
-          group={group} 
-          layer={lyr} 
-          nestedItems={children} 
-          title={lyr.get('title')} 
+          <LayerListItem
+          index={idx}
+          moveLayer={this.moveLayer}
+          {...this.props}
+          allowReordering={false}
+          onModalClose={this._onModalClose.bind(this)}
+          onModalOpen={this._onModalOpen.bind(this)}
+          key={lyr.get('id')}
+          group={group}
+          layer={lyr}
+          nestedItems={children}
+          title={lyr.get('title')}
           disableTouchRipple={true}
           open={true}
           collapsible={true}/>
         );
       } else {
         return (
-          <LayerListItem 
-          index={idx} 
-          moveLayer={this.moveLayer} 
-          {...this.props} 
-          onModalClose={this._onModalClose.bind(this)} 
-          onModalOpen={this._onModalOpen.bind(this)} 
-          key={lyr.get('id')} 
-          layer={lyr} 
-          group={group} 
-          title={lyr.get('title')} 
+          <LayerListItem
+          index={idx}
+          moveLayer={this.moveLayer}
+          {...this.props}
+          onModalClose={this._onModalClose.bind(this)}
+          onModalOpen={this._onModalOpen.bind(this)}
+          key={lyr.get('id')}
+          layer={lyr}
+          group={group}
+          title={lyr.get('title')}
           disableTouchRipple={true}
           open={true}
           collapsible={false}/>
@@ -199,6 +208,99 @@ class ActivationsList extends React.Component {
   moveLayer(dragIndex, hoverIndex, layer, group) {
     LayerActions.moveLayer(dragIndex, hoverIndex, layer, group);
   }
+  _doPOST(url, data, success, failure, scope, csrf, contentType, put) {
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open((put ? 'PUT' : 'POST'), url, true);
+    xmlhttp.setRequestHeader('Content-Type', contentType ? contentType : 'text/xml');
+    xmlhttp.setRequestHeader('X-CSRFToken', csrf);
+    xmlhttp.onreadystatechange = function() {
+      if (xmlhttp.readyState === 4) {
+        if (xmlhttp.status === 200 || xmlhttp.status === 201) {
+          success.call(scope, xmlhttp);
+        } else {
+          failure.call(scope, xmlhttp);
+        }
+      }
+    };
+    xmlhttp.send(data);
+    return xmlhttp;
+  }
+  _getMapState() {
+   /* Serialize the state of the map
+   * center: the center of the map's view
+   * zoom: current zoom of the map's view
+   * activations: array of the activations on the map containning information
+   *  of their layers. Only the layers are counted and not the mapsets as they
+   *  will be loaded anyway and have no parameters
+   */
+   let map = this.props.map;
+
+   let map_state = {
+     center: map.getView().getCenter(),
+     zoom: map.getView().getZoom(),
+     activations: []
+   };
+
+   let activations = LayerStore.getState().layers;
+   // Loop over activations (instance of Grops) to get config
+   activations.forEach(act_data => {
+    if (act_data instanceof ol.layer.Group){
+     let activation = {
+      id: act_data.get('act_id'),
+      layers: {}
+     }
+     // Loop over mapsets, we noly need layers config
+     act_data.get('layers').forEach(mapset => {
+      // Loop over layers
+      mapset.get('layers').forEach((layer, index) => {
+       // Push layer config in activation
+       activation.layers[layer.get('mpId')] = {
+        opacity: layer.getOpacity(),
+        index: index
+       }
+      });
+      // Push activation config in map_state
+      map_state.activations.push(activation);
+     });
+    }
+   });
+   return map_state;
+  }
+  _saveMap() {
+    let self = this;
+    // Get map state, serialize in Json and send to the server
+    let map_state = this._getMapState();
+
+    // If the map is already saved, do a PUT request
+    let is_put = this.state.saved ? true: false
+
+    let url = is_put ? '/api/act-maps/' + global.location.pathname.split('/')[2] : '/api/act-maps/';
+    let csrf = document.cookie.split(';')[1].split('=')[1];
+    this._doPOST(url,
+     JSON.stringify({config: JSON.stringify(map_state)}),
+     function(xmlhttp){
+      if (!is_put){
+       // update the url with the newly created id
+       global.history.replaceState({}, '', global.location.pathname + '/' + JSON.parse(xmlhttp.response).id);
+       self._setSaved();
+      }
+      self.props.showSave();
+     },
+     function(xmlhttp){
+       self.props.showErr();
+
+     },
+     this,
+     csrf,
+    'application/json',
+     is_put
+   )
+  }
+  _setSaved(){
+   this.setState({
+    saved: true
+   })
+  }
   render() {
     const {formatMessage} = this.props.intl;
     const styles = this.getStyles();
@@ -214,29 +316,39 @@ class ActivationsList extends React.Component {
     if (this.props.addLayer) {
       addLayer = (
           <article className="layer-list-add">
-            <RaisedButton 
-              icon={<NoteAdd />} 
-              label={formatMessage(messages.addlayertext)} 
-              onTouchTap={this._showAddLayer.bind(this)} 
+            <RaisedButton
+              icon={<NoteAdd />}
+              label={formatMessage(messages.addlayertext)}
+              onTouchTap={this._showAddLayer.bind(this)}
               style={{
                 margin: '5px'
               }}/>
-          <AddActivationsModal 
-            srsName={this.props.map.getView().getProjection().getCode()} 
-            sources={this.props.addLayer.sources} 
-            map={this.props.map} 
-            ref='addlayermodal'/>
+            <RaisedButton
+              icon={<ContentSave />}
+              label={formatMessage(messages.savemaptext)}
+              onTouchTap={this._saveMap.bind(this)}
+              style={{
+                margin: '5px'
+              }}/>
+            <AddActivationsModal
+              srsName={this.props.map.getView().getProjection().getCode()}
+              sources={this.props.addLayer.sources}
+              map={this.props.map}
+              ref='addlayermodal'
+              initial_config={this.state.initial_config}
+              setSaved={this._setSaved.bind(this)}/>
           </article>
       );
     }
+
     return (
       <div ref='parent' className={classNames(divClass, this.props.className)}>
-        <Button 
-          tooltipPosition={this.props.tooltipPosition} 
-          buttonType='Action' mini={true} 
-          style={styles.root} 
-          className='layerlistbutton' 
-          tooltip={formatMessage(messages.layertitle)} 
+        <Button
+          tooltipPosition={this.props.tooltipPosition}
+          buttonType='Action' mini={true}
+          style={styles.root}
+          className='layerlistbutton'
+          tooltip={formatMessage(messages.layertitle)}
           onTouchTap={this._togglePanel.bind(this)}><LayersIcon />
         </Button>
         {addLayer}
@@ -333,7 +445,15 @@ ActivationsList.propTypes = {
   /**
   * i18n message strings. Provided through the application through context.
   */
-  intl: intlShape.isRequired
+  intl: intlShape.isRequired,
+  /**
+  * Function to show a snackbar message that map is saved
+  */
+  showSave: React.PropTypes.func,
+  /**
+  * Function to show a snackbar message that map save errored
+  */
+  showErr: React.PropTypes.func
 };
 
 ActivationsList.defaultProps = {

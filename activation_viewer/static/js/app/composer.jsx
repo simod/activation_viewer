@@ -15,15 +15,16 @@ import AddLayer from 'boundless-sdk/components/AddLayer';
 import RaisedButton from 'material-ui/RaisedButton';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import injectTapEventPlugin from 'react-tap-event-plugin';
-import AppConfig from './constants/AppConfig.js'
+import AppConfig from './constants/AppConfig.js';
 import ViewerAppBar from './components/ViewerAppBar.jsx';
 import ActInfoPanel from './components/ComposerActInfoPanel.jsx'
 import AppDispatcher from 'boundless-sdk/dispatchers/AppDispatcher';
+import Snackbar from 'material-ui/Snackbar';
 
 
 // Needed for onTouchTap
 // Can go away when react 1.0 release
-// Check this repo: 
+// Check this repo:
 // https://github.com/zilverline/react-tap-event-plugin
 injectTapEventPlugin();
 
@@ -86,38 +87,96 @@ var filterBaseLayersOut = lyr => {
 };
 
 class Composer extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+     saveOpen: false,
+     errorOpen: false
+    }
+  }
+
   getChildContext() {
     return {
       muiTheme: getMuiTheme(CustomTheme)
     };
   }
+
+  _hideSaveMsg() {
+    this.setState({
+      saveOpen: false
+    });
+  }
+
+  _showSaveMsg() {
+   this.setState({
+     saveOpen: true
+   });
+  }
+
+  _hideErrMsg() {
+    this.setState({
+      errorOpen: false
+    });
+  }
+
+  _showErrMsg() {
+   this.setState({
+     errorOpen: true
+   });
+  }
+
   render() {
-    
+    let save_msg;
+    if (this.state.saveOpen){
+     save_msg = (<Snackbar
+       autoHideDuration={3000}
+       style={{transitionProperty : 'none'}}
+       bodyStyle={{lineHeight: '24px', height: 'auto'}}
+       open={this.state.saveOpen}
+       message={'Map correctly saved'}
+       onRequestClose={this._hideSaveMsg.bind(this)}
+     />)
+    }
+    let error_msg;
+    if (this.state.errorOpen){
+     error_msg = (<Snackbar
+       autoHideDuration={3000}
+       style={{transitionProperty : 'none'}}
+       bodyStyle={{lineHeight: '24px', height: 'auto'}}
+       open={this.state.saveOpen}
+       message={'Ops, something went wrong in saving the map'}
+       onRequestClose={this._hideErrMsg.bind(this)}
+     />)
+    }
     return (
       <div id='content'>
         <ViewerAppBar page={'composer'} />
         <div className='row container'>
           <div className="col tabs" id="tabs-panel">
-            <ActivationsList 
-              className={'overlays'} 
-              filter={filterBaseLayersOut} 
-              showOnStart={true} 
-              addLayer={{sources: {list: AppConfig.LIST_ACTIVATIONS_URL, full: AppConfig.FULL_ACTIVATIONS_URL}}} 
-              showOpacity={true} 
-              showDownload={true} 
-              showGroupContent={true} 
-              showZoomTo={true} 
-              allowRemove={true} 
-              allowReordering={true} 
-              map={map} />
+            <ActivationsList
+              className={'overlays'}
+              filter={filterBaseLayersOut}
+              showOnStart={true}
+              addLayer={{sources: {list: AppConfig.LIST_ACTIVATIONS_URL, full: AppConfig.FULL_ACTIVATIONS_URL}}}
+              showOpacity={true}
+              showDownload={true}
+              showGroupContent={true}
+              showZoomTo={true}
+              allowRemove={true}
+              allowReordering={true}
+              map={map}
+              showSave={this._showSaveMsg.bind(this)}
+              showError={this._showErrMsg.bind(this)}/>
           </div>
           <div className="col maps">
             <MapPanel id='map' useHistory={false} map={map} />
             <LoadingPanel map={map} />
-            <ActivationsList className={'baselayers'} filter={filterBaseLayersIn} map={map} />
+            <ActivationsList className={'baselayers'} filter={filterBaseLayersIn} map={map}/>
             <div id='home-button'><HomeButton map={map} /></div>
             <div id='zoom-buttons'><Zoom map={map} /></div>
           </div>
+          {save_msg}
+          {error_msg}
           <ActInfoPanel />
         </div>
       </div>

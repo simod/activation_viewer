@@ -21,9 +21,9 @@
   "author": "simod",
   "license": "Apache-2.0",
   "dependencies": {
-    "boundless-sdk": "^0.10.8",
+    "boundless-sdk": "^0.10.15",
     "fetch": "^1.1.0",
-    "material-ui": "^0.16.4",
+    "material-ui": "0.16.4",
     "ol3-cesium": "3.9.4",
     "openlayers": "3.20.0",
     "query-string": "^4.2.3",

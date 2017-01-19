@@ -63,6 +63,7 @@ export default class LatestActivations extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState){
+    // Compare the previous state of the query to detemine whether to issue another request or not
     if(JSON.stringify(prevState.query) != JSON.stringify(this.state.query)){
       this._doQuery();
     }
@@ -84,32 +85,33 @@ export default class LatestActivations extends React.Component {
       }
     });
     
-  return (
-    <div id="latest_activations" style={styles.root}>
-      <TextField
-          hintText="Search"
-          floatingLabelText="Search"
-          onChange={this._onSearch}
-          className={'activationsSearch'}
-          floatingLabelFocusStyle={{'color': 'rgba(255, 166, 77, 1)'}}
-        />
-      <GridList
-        cellHeight={180}
-        cols={4}
-        padding={20}
-        style={styles.gridList}
-      >
-        {this.state.activations.map((activation) => (
-          <ActSnippet
-            key={activation.activation_id}
-            activation={activation}
-            map={this.props.map}
-            interaction={selectInteraction}
-          > 
-          <img src={activation.thumbnail_url} />
-          </ActSnippet>
-        ))}
-      </GridList>
-    </div>
-  )}
+    return (
+      <div id="latest_activations" style={styles.root}>
+        <TextField
+            hintText="Search"
+            floatingLabelText="Search"
+            onChange={this._onSearch}
+            className={'activationsSearch'}
+            floatingLabelFocusStyle={{'color': 'rgba(255, 166, 77, 1)'}}
+          />
+        <GridList
+          cellHeight={180}
+          cols={4}
+          padding={20}
+          style={styles.gridList}
+        >
+          {this.state.activations.map((activation) => (
+            <ActSnippet
+              key={activation.activation_id}
+              activation={activation}
+              map={this.props.map}
+              interaction={selectInteraction}
+            > 
+            <img src={activation.thumbnail_url} />
+            </ActSnippet>
+          ))}
+        </GridList>
+      </div>
+    )
+  }
 }

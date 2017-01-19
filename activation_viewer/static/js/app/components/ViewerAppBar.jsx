@@ -11,9 +11,7 @@ export default class ViewerAppBar extends React.Component{
   render() {
     const appBarMenu = (
       <Tabs inkBarStyle={{'backgroundColor': 'rgba(255, 166, 77, 1)'}} className={'appBarMenu'} value={this.state.activeTab}>
-        <Tab label='Activations' value={'activations'} className={'appBarTab'} href='/activations'>
-        </Tab>
-        <Tab label='Maps' value={'maps'} className={'appBarTab'} href='/maps'>
+        <Tab label='Activations' value={'activations'} className={'appBarTab'} href='/'>
         </Tab>
         <Tab label='Map Composer' value={'composer'} className={'appBarTab'} href='/composer'>
         </Tab>

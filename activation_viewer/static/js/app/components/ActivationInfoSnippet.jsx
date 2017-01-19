@@ -2,6 +2,9 @@ import ReactDOM from 'react-dom';
 import React, {Component, PropTypes} from 'react';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 
+/*
+* Describes the activation metadata table into the map composer.
+*/
 
 export default class ActivationInfoSnippet extends Component{
   render(){
