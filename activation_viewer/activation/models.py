@@ -60,7 +60,7 @@ class MapSet(models.Model):
 
 class Activation(models.Model):
     """Activation model"""
-    
+
     activation_id = models.CharField(max_length=7, unique=True, primary_key=True)
     bbox_x0 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
     bbox_x1 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
@@ -156,7 +156,13 @@ class Activation(models.Model):
 
 class ActivationMaps(models.Model):
     """Store information about saved maps such as layers order, opacity and activations"""
-    pass
+    config = models.CharField(max_length=4000, null=True)
+
+    class Meta:
+        verbose_name_plural = 'Activation maps'
+
+    def __unicode__(self):
+        return '%s' % self.pk
 
 
 class ExternalLayer(models.Model):

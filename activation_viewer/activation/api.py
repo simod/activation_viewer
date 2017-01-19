@@ -9,6 +9,7 @@ from tastypie.authorization import DjangoAuthorization
 from tastypie.exceptions import Unauthorized
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie.serializers import Serializer
+from tastypie.throttle import BaseThrottle
 from django.core.serializers.json import DjangoJSONEncoder
 from guardian.shortcuts import get_objects_for_user
 from taggit.models import Tag
@@ -16,7 +17,8 @@ from taggit.models import Tag
 from geonode.api.api import CountJSONSerializer, RegionResource, TagResource
 from geonode.layers.models import Layer
 
-from .models import Activation, DisasterType, MapSet
+from .models import Activation, DisasterType, MapSet, ActivationMaps
+
 
 class DtypeSerializer(CountJSONSerializer):
     """Disaster type serializer"""
@@ -42,23 +44,24 @@ class ActAuthorization(DjangoAuthorization):
         return object_list.filter(activation_id__in=permitted_ids)
 
     def read_detail(self, object_list, bundle):
-        return bundle.request.user.has_perm(
-            'view_activation',
-            bundle.obj)
+        # return bundle.request.user.has_perm(
+        #     'view_activation',
+        #     bundle.obj)
+        return True
 
     def create_list(self, object_list, bundle):
         # TODO implement if needed
         raise Unauthorized()
 
     def create_detail(self, object_list, bundle):
-        raise Unauthorized()
+        return True
 
     def update_list(self, object_list, bundle):
         # TODO implement if needed
         raise Unauthorized()
 
     def update_detail(self, object_list, bundle):
-        raise Unauthorized()
+        return True
 
     def delete_list(self, object_list, bundle):
         # TODO implement if needed
@@ -172,7 +175,7 @@ class ActivationFullResource(ModelResource):
         orm_filters = super(ActivationFullResource, self).build_filters(filters)
         if 'extent' in filters:
             orm_filters.update({'extent': filters['extent']})
-        
+
         return orm_filters
 
     def apply_filters(self, request, applicable_filters):
@@ -219,7 +222,7 @@ class ActivationFullResource(ModelResource):
 class ActivationResource(ModelResource):
     region = fields.ToOneField(RegionResource, 'region', full=True, null=True)
     disaster_type = fields.ToOneField(DisasterTypeResource, 'disaster_type', full=True)
-    
+
     class Meta:
         queryset = Activation.objects.distinct().order_by('-activation_time')
         resource_name = 'activations'
@@ -234,7 +237,7 @@ class ActivationResource(ModelResource):
         orm_filters = super(ActivationResource, self).build_filters(filters)
         if 'q' in filters:
             orm_filters.update({'q': filters['q']})
-        
+
         return orm_filters
 
     def apply_filters(self, request, applicable_filters):
@@ -316,3 +319,14 @@ class ActTagResource(ActFilteredResource):
             'slug': ALL,
         }
         serializer = ActKWSerializer()
+
+
+class ActMapResource(ModelResource):
+
+    class Meta:
+        queryset = ActivationMaps.objects.all()
+        resource_name = 'act-maps'
+        allowed_methods = ['get', 'post', 'put']
+        throttle = BaseThrottle(throttle_at=10, timeframe=1800)
+        authorization = ActAuthorization()
+        always_return_data = True
