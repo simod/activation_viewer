@@ -28,6 +28,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Button from 'boundless-sdk/components/Button';
 import NoteAdd from 'material-ui/svg-icons/action/note-add';
 import ContentSave from 'material-ui/svg-icons/content/save';
+import ContentCopy from 'material-ui/svg-icons/content/content-copy';
 import {List} from 'material-ui/List';
 import LayersIcon from 'material-ui/svg-icons/maps/layers';
 import {Toolbar, ToolbarGroup} from 'material-ui/Toolbar';
@@ -57,7 +58,12 @@ const messages = defineMessages({
   savemaptext: {
     id: 'layerlist.savemap',
     description: 'Text for save map',
-    defaultMessage: 'Save Map'
+    defaultMessage: 'Save'
+  },
+  savemapcopytext: {
+    id: 'layerlist.savemapcopy',
+    description: 'Text for save map copy',
+    defaultMessage: 'Copy'
   }
 });
 
@@ -266,13 +272,13 @@ class ActivationsList extends React.Component {
    });
    return map_state;
   }
-  _saveMap() {
+  _saveMap(copy) {
     let self = this;
     // Get map state, serialize in Json and send to the server
     let map_state = this._getMapState();
 
     // If the map is already saved, do a PUT request
-    let is_put = this.state.saved ? true: false
+    let is_put = copy ? false : this.state.saved;
 
     let url = is_put ? '/api/act-maps/' + global.location.pathname.split('/')[2] : '/api/act-maps/';
     let csrf = document.cookie.split(';')[1].split('=')[1];
@@ -281,14 +287,14 @@ class ActivationsList extends React.Component {
      function(xmlhttp){
       if (!is_put){
        // update the url with the newly created id
-       global.history.replaceState({}, '', global.location.pathname + '/' + JSON.parse(xmlhttp.response).id);
+       global.history.replaceState({}, '',
+        '/' + global.location.pathname.split('/')[1] + '/' + JSON.parse(xmlhttp.response).id);
        self._setSaved();
       }
       self.props.showSave();
      },
      function(xmlhttp){
        self.props.showErr();
-
      },
      this,
      csrf,
@@ -326,7 +332,14 @@ class ActivationsList extends React.Component {
             <RaisedButton
               icon={<ContentSave />}
               label={formatMessage(messages.savemaptext)}
-              onTouchTap={this._saveMap.bind(this)}
+              onTouchTap={this._saveMap.bind(this, false)}
+              style={{
+                margin: '5px'
+              }}/>
+            <RaisedButton
+              icon={<ContentCopy />}
+              label={formatMessage(messages.savemapcopytext)}
+              onTouchTap={this._saveMap.bind(this, true)}
               style={{
                 margin: '5px'
               }}/>

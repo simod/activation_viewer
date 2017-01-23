@@ -174,3 +174,14 @@ html, body {
   width: 100%;
   float: left;
 }
+
+.layer-tools{
+  float: right;
+}
+
+.layer-tools-content > div{
+  overflow-y: hidden !important;
+  overflow-x: hidden !important;
+  width: 'auto';
+  padding: 10px;
+}

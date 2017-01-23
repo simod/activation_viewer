@@ -4,34 +4,39 @@ body{
 }
 
 #map {
-    height: 464px;
+    height: 50%;
+    min-height: 300px;
+    max-height: 640px;
     margin-top: -64px;
 }
 
 #ec-logo{
     position: absolute;
     top: 64px;
-    left: 0;
-    background: rgba(166, 166, 166, .5) url('http://localhost:8000/static/img/ec_logo_neg.png') no-repeat 5px 0;
+    background: rgba(166, 166, 166, .5) url('http://localhost:8000/static/img/ec_logo_neg.png') no-repeat 24px 5px;
     width: 296px;
-    height: 84px;
+    height: 90px;
     z-index: 100000;
     pointer-events: none;
+    padding-right: 48px;
 }
 
 #title{
     position: absolute;
     top: 84px;
-    left: 40%;
+    left: 60%;
     z-index: 100000;
     color: #989898;
     font-size: 20px;
     font-weight: 200;
     pointer-events: none;
+    padding: 24px;
 }
 
 #latest_activations{
     margin-top: 10px;
+    padding-top: 24px;
+    padding: 14px;
 }
 
 .act_snippet_selected{
@@ -41,8 +46,7 @@ body{
 }
 
 .activationsSearch{
-    position: absolute !important;
-    top: 421px;
+    margin-top: -67px;
     background-color: rgba(255, 255, 255, 0.55) !important;
     height: 43px !important;
     border-radius: 3px 3px 0 0;

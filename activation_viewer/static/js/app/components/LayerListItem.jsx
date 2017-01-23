@@ -14,35 +14,21 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {DragSource, DropTarget} from 'react-dnd';
 import ol from 'openlayers';
-import Dialog from 'material-ui/Dialog';
 import Button from 'boundless-sdk/components/Button';
-import FeatureTable from 'boundless-sdk/components/FeatureTable';
-import FilterModal from 'boundless-sdk/components/FilterModal';
 import classNames from 'classnames';
-import LabelModal from 'boundless-sdk/components/LabelModal';
 import StyleModal from 'boundless-sdk/components/StyleModal';
 import LayerActions from 'boundless-sdk/actions/LayerActions';
-import WMSService from 'boundless-sdk/services/WMSService';
-import Slider from 'material-ui/Slider';
 import Checkbox from 'material-ui/Checkbox';
 import {ListItem} from 'material-ui/List';
 import {RadioButton} from 'material-ui/RadioButton';
 import IconButton from 'material-ui/IconButton';
 import OpenIcon from 'material-ui/svg-icons/navigation/expand-less';
 import CloseIcon from 'material-ui/svg-icons/navigation/expand-more';
-import DownloadIcon from 'material-ui/svg-icons/file/file-download';
-import ZoomInIcon from 'material-ui/svg-icons/action/zoom-in';
-import FilterIcon from 'material-ui/svg-icons/content/filter-list';
-import LabelIcon from 'material-ui/svg-icons/content/text-format';
-import StyleIcon from 'material-ui/svg-icons/image/brush';
-import DeleteIcon from 'material-ui/svg-icons/action/delete';
-import EditIcon from 'material-ui/svg-icons/editor/mode-edit';
-import TableIcon from 'material-ui/svg-icons/action/view-list';
-import WMSLegend from 'boundless-sdk/components/WMSLegend';
 import {defineMessages, injectIntl, intlShape} from 'react-intl';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import pureRender from 'pure-render-decorator';
 import CustomTheme from '../theme';
+import LayerTools from './LayerTools.jsx'
 
 const layerListItemSource = {
   canDrag(props, monitor) {
@@ -177,7 +163,7 @@ const messages = defineMessages({
 class LayerListItem extends React.Component {
   constructor(props) {
     super(props);
-    
+
     this.formats_ = {
       GeoJSON: {
         format: new ol.format.GeoJSON(),
@@ -288,7 +274,7 @@ class LayerListItem extends React.Component {
       let url = DOWNLOAD_URL + 'wfs?format_options=charset%3AUTF-8&typename='+layer.get('typename')+'&outputFormat=SHAPE-ZIP&version=1.0.0&service=WFS&request=GetFeature';
       dl.setAttribute('href', url);
     }else if (storeType == 'coverageStore'){
-      let url = 'TMS: ' + layer.getSource().getUrls()[0] + 
+      let url = 'TMS: ' + layer.getSource().getUrls()[0] +
         '\nWMS: http://localhost:8000/djmp/' + layer.get('mpId') + '/map/service';
       dl.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(url));
     }
@@ -331,57 +317,35 @@ class LayerListItem extends React.Component {
     const {connectDragSource, connectDropTarget} = this.props;
     const layer = this.props.layer;
     const source = layer.getSource ? layer.getSource() : undefined;
-    const iconStyle = {'paddingTop':'0px', 'paddingBottom':'0px', 'float': 'right', 'height': 'auto'};
-    const tooltipStyle = {'top':'22px'};
-    const {formatMessage} = this.props.intl;
-    var opacity;
-    if (this.props.showOpacity && source && layer.get('type') !== 'base') {
-      var val = layer.getOpacity();
-      opacity = (<Slider 
-        style={{width: '80%', 'marginLeft':'21px', 'marginTop':'-10px', 'marginBottom':'-38px'}} 
-        defaultValue={val} 
-        onChange={this._changeOpacity.bind(this)} />);
-    }
-    var zoomTo;
-    if (layer.get('type') !== 'base' && layer.get('type') !== 'base-group' && ((source && source.getExtent) || layer.get('EX_GeographicBoundingBox')) && this.props.showZoomTo) {
-      zoomTo = <IconButton 
-      className='layer-list-item-zoom' 
-      style={iconStyle} 
-      onTouchTap={this._zoomTo.bind(this)} 
-      tooltip={formatMessage(messages.zoombuttonlabel)} 
-      tooltipPosition={'top-left'}  
-      disableTouchRipple={true}><ZoomInIcon /></IconButton>;
-    }
-    var download;
-    if (this.props.showDownload && !(layer instanceof ol.layer.Group)) {
-      download = (<IconButton 
-        className='layer-list-item-download' 
-        style={iconStyle} 
-        onTouchTap={this._download.bind(this)} 
-        tooltip={formatMessage(messages.downloadbuttonlabel)} 
-        tooltipPosition={'top-left'} 
-        tooltipStyles={tooltipStyle} 
-        disableTouchRipple={true}><DownloadIcon /></IconButton>);
-    }
-    var remove;
-    if (this.props.allowRemove && layer.get('type') !== 'base' && layer.get('isRemovable') === true && layer.get('act_id')) {
-      remove = (<IconButton 
-        style={iconStyle} 
-        className='layer-list-item-remove' 
-        onTouchTap={this._remove.bind(this)} 
-        tooltip={formatMessage(messages.removebuttonlabel)} 
-        tooltipPosition={'top-left'} 
-        tooltipStyles={tooltipStyle} 
-        disableTouchRipple={true}><DeleteIcon /></IconButton>);
-    }
-    var input;
+
+    let showOpacity =  (this.props.showOpacity && source && layer.get('type') !== 'base');
+    let allowZoomTo = (layer.get('type') !== 'base' && layer.get('type') !== 'base-group'
+      && ((source && source.getExtent) || layer.get('EX_GeographicBoundingBox')) && this.props.showZoomTo);
+    let allowDownload = (this.props.showDownload && !(layer instanceof ol.layer.Group));
+    let allowRemove = (this.props.allowRemove && layer.get('type') !== 'base' && layer.get('isRemovable') === true
+      && layer.get('act_id'));
+
+    let layerTools = (
+      <LayerTools
+        showOpacity={showOpacity}
+        opacity={layer.getOpacity()}
+        changeOpacity={this._changeOpacity.bind(this)}
+        allowZoomTo={allowZoomTo}
+        zoomTo={this._zoomTo.bind(this)}
+        allowDownload={allowDownload}
+        download={this._download.bind(this)}
+        allowRemove={allowRemove}
+        remove={this._remove.bind(this)}
+        ></LayerTools>
+    );
+    let input;
     if (layer.get('type') === 'base') {
       input = (<RadioButton disabled={this.state.disabled} checked={this.state.checked} label={this.props.title} value={this.props.title} onCheck={this._handleChange.bind(this)} disableTouchRipple={true}/>);
     } else {
       input = (<Checkbox style={{'display': 'inline-block', 'width': 'calc(100% - 146px)'}} checked={this.state.checked} label={this.props.title} labelStyle={this.props.layer.get('emptyTitle') ? {fontStyle: 'italic'} : undefined} onCheck={this._handleChange.bind(this)} disableTouchRipple={true}/>);
     }
 
-    var legend;
+    let legend;
     if (this.props.includeLegend && this.props.layer.getVisible() && ((this.props.layer instanceof ol.layer.Tile && this.props.layer.getSource() instanceof ol.source.TileWMS) ||
       (this.props.layer instanceof ol.layer.Image && this.props.layer.getSource() instanceof ol.source.ImageWMS))) {
       legend = <WMSLegend layer={this.props.layer} />;
@@ -389,7 +353,7 @@ class LayerListItem extends React.Component {
     // When the layer is an activation reduce the bottom padding
     let innerDivStyle = this.props.layer.get('act_id') == undefined ? {'paddingTop':'8px','paddingBottom':'0px'} : {'paddingTop':'20px','paddingBottom':'0px'};
 
-    let collapseElement = this.props.collapsible ? 
+    let collapseElement = this.props.collapsible ?
             this.state.open ?
                <IconButton style={{'height': 'auto', 'width': 'auto', 'padding': '0px'}} onTouchTap={this._toggleNestedHandler.bind(this)}><OpenIcon /></IconButton> :
                <IconButton style={{'height': 'auto', 'width': 'auto', 'padding': '0px'}} onTouchTap={this._toggleNestedHandler.bind(this)}><CloseIcon /></IconButton>
@@ -397,22 +361,19 @@ class LayerListItem extends React.Component {
 
     return connectDragSource(connectDropTarget(
       <div>
-        <ListItem 
-        className={classNames({'sdk-component': true, 'layer-list-item': true}, this.props.className)} 
-        innerDivStyle={innerDivStyle} 
-        autoGenerateNestedIndicator={false} 
-        primaryText={input ? undefined : this.props.title} 
-        nestedItems={this.props.nestedItems} 
-        nestedListStyle={{'marginLeft':'40px'}} 
-        initiallyOpen={true} 
+        <ListItem
+        className={classNames({'sdk-component': true, 'layer-list-item': true}, this.props.className)}
+        innerDivStyle={innerDivStyle}
+        autoGenerateNestedIndicator={false}
+        primaryText={input ? undefined : this.props.title}
+        nestedItems={this.props.nestedItems}
+        nestedListStyle={{'marginLeft':'40px'}}
+        initiallyOpen={true}
         disableTouchRipple={true}
         open={this.state.open}>
           {collapseElement}
           {input}
-          {zoomTo}
-          {download}
-          {remove}
-          {opacity}
+          {layerTools}
         </ListItem>
       </div>
     ));
@@ -513,7 +474,7 @@ LayerListItem.propTypes = {
    */
   open: React.PropTypes.bool.isRequired,
   /**
-   * is collapsible? 
+   * is collapsible?
    */
    collapsible: React.PropTypes.bool.isRequired
 };

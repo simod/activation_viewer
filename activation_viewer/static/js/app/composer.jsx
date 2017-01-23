@@ -130,10 +130,10 @@ class Composer extends React.Component {
     if (this.state.saveOpen){
      save_msg = (<Snackbar
        autoHideDuration={3000}
-       style={{transitionProperty : 'none'}}
-       bodyStyle={{lineHeight: '24px', height: 'auto'}}
+       bodyStyle={{lineHeight: '24px', height: 'auto', maxWidth: '150px', minWidth: '0'}}
+       style={{zIndex: 100000, marginLeft: '50px'}}
        open={this.state.saveOpen}
-       message={'Map correctly saved'}
+       message={'Map correctly saved Share the current url'}
        onRequestClose={this._hideSaveMsg.bind(this)}
      />)
     }
@@ -141,8 +141,8 @@ class Composer extends React.Component {
     if (this.state.errorOpen){
      error_msg = (<Snackbar
        autoHideDuration={3000}
-       style={{transitionProperty : 'none'}}
-       bodyStyle={{lineHeight: '24px', height: 'auto'}}
+       bodyStyle={{lineHeight: '24px', height: 'auto', maxWidth: '150px', minWidth: '0'}}
+       style={{zIndex: 100000}}
        open={this.state.saveOpen}
        message={'Ops, something went wrong in saving the map'}
        onRequestClose={this._hideErrMsg.bind(this)}

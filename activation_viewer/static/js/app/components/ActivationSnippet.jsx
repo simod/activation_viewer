@@ -3,6 +3,7 @@ import FlatButton from 'material-ui/FlatButton';
 import ol from 'openlayers';
 import Popover from 'material-ui/Popover';
 import AppConfig from '../constants/AppConfig.js';
+import MapsPlace from 'material-ui/svg-icons/maps/place';
 
 var featureSelectedColors = {
   fill: 'rgba(250, 167, 63, 0.6)',
@@ -107,7 +108,7 @@ function getStyles(props, context) {
 
 
 /*
-* A single snippet fo the home page activations grid. Each snippet renders it's own feature on the map controlling the 
+* A single snippet fo the home page activations grid. Each snippet renders it's own feature on the map controlling the
 * hover effect on both the feature and the html component.
 */
 
@@ -161,6 +162,10 @@ class ActSnippet extends Component {
       });
     }
     this._selectComponent();
+  }
+
+  _flyTo(){
+    let self = this;
 
     //  Animate over the selected feature
     let view = this.props.map.getView();
@@ -170,10 +175,10 @@ class ActSnippet extends Component {
 
     if (ol.extent.containsExtent(viewExtent, layerExtent)){
 
-      view.fit(this._getActivationGeometry(), 
-        this.props.map.getSize(), 
+      view.fit(this._getActivationGeometry(),
+        this.props.map.getSize(),
         {
-          maxZoom: 10, 
+          maxZoom: 10,
           center: ol.extent.getCenter(self._getActivationGeometry().getExtent()),
           duration: 300
         }
@@ -188,7 +193,7 @@ class ActSnippet extends Component {
 
       setTimeout(function(){
         view.animate({
-          duration: 800, 
+          duration: 800,
           center: ol.extent.getCenter(layerExtent)
         });
       }, 100);
@@ -337,8 +342,9 @@ class ActSnippet extends Component {
         <div key="viewerButtonContainer" id='viewerButton' style={prepareStyles(styles.viewerButton)}>
           <FlatButton
             labelStyle={styles.viewerButtonLabel}
-            label="Open map"
-            href={AppConfig.COMPOSER_URL + '#' + activation.activation_id} />
+            icon={<MapsPlace />}
+            onClick={this._flyTo.bind(this)}
+            style={{minWidth: '50px'}} />
         </div>
         )
     }
