@@ -318,15 +318,17 @@ class LayerListItem extends React.Component {
     const layer = this.props.layer;
     const source = layer.getSource ? layer.getSource() : undefined;
 
-    let showOpacity =  (this.props.showOpacity && source && layer.get('type') !== 'base');
+    let showOpacity = (this.props.showOpacity && source && layer.get('type') !== 'base');
     let allowZoomTo = (layer.get('type') !== 'base' && layer.get('type') !== 'base-group'
       && ((source && source.getExtent) || layer.get('EX_GeographicBoundingBox')) && this.props.showZoomTo);
     let allowDownload = (this.props.showDownload && !(layer instanceof ol.layer.Group));
-    let allowRemove = (this.props.allowRemove && layer.get('type') !== 'base' && layer.get('isRemovable') === true
-      && layer.get('act_id'));
+    let allowRemove = (this.props.allowRemove && layer.get('type') !== 'base' && layer.get('isRemovable')
+      && layer.get('act_id') !== undefined);
 
-    let layerTools = (
-      <LayerTools
+    let layerTools;
+
+    if (layer.get('type') !== 'base' && layer.get('type') !== 'base-group'){
+      layerTools = (<LayerTools
         showOpacity={showOpacity}
         opacity={layer.getOpacity()}
         changeOpacity={this._changeOpacity.bind(this)}
@@ -336,8 +338,9 @@ class LayerListItem extends React.Component {
         download={this._download.bind(this)}
         allowRemove={allowRemove}
         remove={this._remove.bind(this)}
-        ></LayerTools>
-    );
+        ></LayerTools>)
+    }
+
     let input;
     if (layer.get('type') === 'base') {
       input = (<RadioButton disabled={this.state.disabled} checked={this.state.checked} label={this.props.title} value={this.props.title} onCheck={this._handleChange.bind(this)} disableTouchRipple={true}/>);

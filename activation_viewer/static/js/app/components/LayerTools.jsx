@@ -102,13 +102,20 @@ export default class LayerTools extends React.Component{
 }
 
 LayerTools.propTypes = {
-  allowZoomTo: React.PropTypes.bool.isRequired,
-  showOpacity: React.PropTypes.bool.isRequired,
-  allowRemove: React.PropTypes.bool.isRequired,
-  allowDownload: React.PropTypes.bool.isRequired,
+  allowZoomTo: React.PropTypes.bool,
+  showOpacity: React.PropTypes.bool,
+  allowRemove: React.PropTypes.bool,
+  allowDownload: React.PropTypes.bool,
   download: React.PropTypes.func,
   remove: React.PropTypes.func,
   zoomTo: React.PropTypes.func,
   opacity: React.PropTypes.number,
   changeOpacity: React.PropTypes.func
 }
+
+LayerTools.defaultProps = {
+  allowZoomTo: false,
+  showOpacity: false,
+  allowRemove: false,
+  allowDownload: false
+};

@@ -179,6 +179,10 @@ html, body {
   float: right;
 }
 
+.layer-tools-content{
+  border: 1px solid rgb(166, 166, 166);
+}
+
 .layer-tools-content > div{
   overflow-y: hidden !important;
   overflow-x: hidden !important;
