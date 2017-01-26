@@ -3,7 +3,7 @@ import FlatButton from 'material-ui/FlatButton';
 import ol from 'openlayers';
 import Popover from 'material-ui/Popover';
 import AppConfig from '../constants/AppConfig.js';
-import MapsPlace from 'material-ui/svg-icons/maps/place';
+import ZoomInIcon from 'material-ui/svg-icons/action/zoom-in';
 
 var featureSelectedColors = {
   fill: 'rgba(250, 167, 63, 0.6)',
@@ -342,7 +342,7 @@ class ActSnippet extends Component {
         <div key="viewerButtonContainer" id='viewerButton' style={prepareStyles(styles.viewerButton)}>
           <FlatButton
             labelStyle={styles.viewerButtonLabel}
-            icon={<MapsPlace />}
+            icon={<ZoomInIcon />}
             onClick={this._flyTo.bind(this)}
             style={{minWidth: '50px'}} />
         </div>

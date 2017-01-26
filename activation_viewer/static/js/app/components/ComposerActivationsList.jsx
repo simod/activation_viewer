@@ -194,7 +194,8 @@ class ActivationsList extends React.Component {
           title={lyr.get('title')}
           disableTouchRipple={true}
           open={true}
-          collapsible={false}/>
+          collapsible={false}
+          className={'overlay-layer'}/>
         );
       }
     }
