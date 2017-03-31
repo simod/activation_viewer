@@ -7,8 +7,8 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0007_auto_20160915_0944'),
-        ('layers', '0004_auto_20161212_0248'),
+        ('base', '0025_auto_20170329_0310'),
+        ('layers', '24_to_26'),
     ]
 
     operations = [
@@ -33,7 +33,11 @@ class Migration(migrations.Migration):
             name='ActivationMaps',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('config', models.CharField(max_length=4000, null=True)),
             ],
+            options={
+                'verbose_name_plural': 'Activation maps',
+            },
         ),
         migrations.CreateModel(
             name='DisasterType',
@@ -64,7 +68,7 @@ class Migration(migrations.Migration):
                 ('bbox_y0', models.DecimalField(null=True, max_digits=19, decimal_places=10, blank=True)),
                 ('bbox_y1', models.DecimalField(null=True, max_digits=19, decimal_places=10, blank=True)),
                 ('activation', models.ForeignKey(to='activation.Activation')),
-                ('layers', models.ManyToManyField(to='layers.Layer', null=True, blank=True)),
+                ('layers', models.ManyToManyField(to='layers.Layer')),
             ],
             options={
                 'verbose_name_plural': 'Map Sets',
@@ -78,7 +82,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='activation',
-            name='regions',
-            field=models.ManyToManyField(to='base.Region', null=True, verbose_name=b'Affected Countries', blank=True),
+            name='region',
+            field=models.ForeignKey(verbose_name=b'Affected Country', blank=True, to='base.Region', null=True),
         ),
     ]
