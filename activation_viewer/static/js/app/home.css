@@ -4,9 +4,9 @@ body{
 }
 
 #map {
-    height: 50%;
-    min-height: 300px;
-    max-height: 640px;
+    height: 40%;
+    min-height: 200px;
+    max-height: 400px;
     margin-top: -64px;
 }
 

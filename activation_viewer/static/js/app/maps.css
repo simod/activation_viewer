@@ -1,0 +1,8 @@
+body{
+    margin: 0;
+    font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.appBar{
+    background-image: url('http://localhost:8000/static/img/app-bar-back-orange.png');
+}

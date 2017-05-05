@@ -45,8 +45,17 @@ exports.startServer = function(entryPoint) {
     packageCache: {}
   }).transform(globalOl, {global: true});
 
+  var b_maps = browserify({
+    entries: ['./maps.jsx'],
+    debug: true,
+    plugin: [watchify],
+    cache: {},
+    packageCache: {}
+  }).transform(globalOl, {global: true});
+
   var homeOutFile = './build/home-debug.js';
   var composerOutFile = './build/composer-debug.js';
+  var mapsOutFile = './build/maps-debug.js';
   var childProcess;
 
   b_home.on('update', function bundle(onError) {
@@ -90,6 +99,27 @@ exports.startServer = function(entryPoint) {
       process.exit(1);
     } else {
       fs.writeFile(composerOutFile, buf, 'utf-8');
+    }
+  });
+
+  b_maps.on('update', function bundle(onError) {
+    var stream = b_maps.bundle();
+    if (onError) {
+      stream.on('error', function(err) {
+        console.log(err.message);
+        childProcess.kill('SIGINT');
+        process.exit(1);
+      });
+    }
+    stream.pipe(fs.createWriteStream(mapsOutFile));
+  });
+
+  b_maps.bundle(function(err, buf) {
+    if (err) {
+      console.error(err.message);
+      process.exit(1);
+    } else {
+      fs.writeFile(mapsOutFile, buf, 'utf-8');
     }
   });
 };

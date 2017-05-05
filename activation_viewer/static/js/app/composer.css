@@ -28,31 +28,39 @@ body{
   left: calc(50% + 230px) !important;
   top: 45% !important;
 }
+
 .container {
   height: calc(100% - 64px);
 }
+
 #content {
   width: 100%;
   height:  100%;
   position: fixed;
   bottom: 0px;
 }
+
 .maps {
   height: 100%;
-  width: 70%;
+  width: calc(100% - 403px);
+  min-width: 300px;
 }
+
 .tabs {
   height: 100%;
-  width: 30%;
+  max-width: 403px;
   top: 0px;
   left: 0px;
 }
+
 .tabs > div {
   height: 100%;
 }
+
 .tabs > div > div:last-child {
   height: calc(100% - 46px);
 }
+
 .tabs > div > div:last-child > div{
   height: 100%;
 }
@@ -83,6 +91,7 @@ html, body {
   padding: 0;
   margin: 0;
 }
+
 #map {
   background-color: #BDBDBD;
   height: 100%;
@@ -90,7 +99,6 @@ html, body {
 
 .overlays {
   height: 100%;
-  max-width: none !important;
   position: relative !important;
   top: 0em !important;
   right: 0em !important;
@@ -102,6 +110,14 @@ html, body {
 
 .layer-list-item.overlay-layer{
   padding-bottom: 8px !important;
+}
+
+.layer-list-item.overlay-layer label{
+  width: auto !important;
+}
+
+.layer-list-item.overlay-layer > div > div{
+  width: auto !important;
 }
 
 .overlays .layer-tree-panel {

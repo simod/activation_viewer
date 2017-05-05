@@ -15,11 +15,13 @@ export default class ViewerAppBar extends React.Component{
         </Tab>
         <Tab label='Map Composer' value={'composer'} className={'appBarTab'} href='/composer'>
         </Tab>
+        <Tab label='Maps' value={'maps'} className={'appBarTab'} href='/maps'>
+        </Tab>
       </Tabs>
     );
     return (
-      <AppBar className={'appBar'} 
-          title='Copernicus EMS Activation Viewer' 
+      <AppBar className={'appBar'}
+          title='Copernicus EMS Activation Viewer'
           onTitleTouchTap={() => window.location = '/'}
           showMenuIconButton={false}
           children={appBarMenu} />

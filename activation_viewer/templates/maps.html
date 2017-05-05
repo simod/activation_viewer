@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="keywords" content="copernicus ems, copernicus, maps, European Commission, JRC, emergency, crisis, activation viewer" />
+    <meta name="Description" content="European Commission Copernicus EMS Activation Viewer" />
+    <meta name="Creator" content="JRC">
+    <meta http-equiv="Content-Language" content="en">
+    <meta name="Classification" content="26">
+    <meta name="Date" content="10/09/2016">
+    <meta name="viewport" content="width=device-width">
+
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Intl.~locale.en,Object.assign"></script>
+    {% if DEBUG_REACT %}
+    <link rel="stylesheet" type="text/css" href="http://localhost:3000/maps.css">
+    <link rel="stylesheet" type="text/css" href="http://localhost:3000/site.css">
+    {% else %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}maps.css">
+    {% endif %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/css/components.min.css">
+
+    <title>{{ SITE_NAME }}</title>
+</head>
+<body>
+    <div id="main">
+
+    </div>
+    <script type="text/javascript">
+        ACTIVATIONS_MAPS_API = '{% url 'api_dispatch_list' api_name='api' resource_name='act-maps' %}';
+    </script>
+    {% if DEBUG_REACT %}
+    <script src="http://localhost:3000/loader.js"></script>
+    <script src="http://localhost:3000/build/maps-debug.js"></script>
+    {% else %}
+    <script src="{{ STATIC_URL }}maps.js"></script>
+    {% endif %}
+</body>
+</html>

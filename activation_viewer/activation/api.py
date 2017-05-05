@@ -328,5 +328,5 @@ class ActMapResource(ModelResource):
         resource_name = 'act-maps'
         allowed_methods = ['get', 'post', 'put']
         throttle = BaseThrottle(throttle_at=10, timeframe=1800)
-        authorization = ActAuthorization()
+        authorization = DjangoAuthorization()
         always_return_data = True
