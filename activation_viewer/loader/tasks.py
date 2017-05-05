@@ -10,12 +10,13 @@ from celery.task import task
 from celery import chain, group
 from celery.utils.log import get_task_logger
 from mapproxy.seed import seeder
+from billiard import Process
 from geonode.base.models import Region
 from geonode.layers.utils import upload
 from geonode.layers.models import Layer
 from geonode.people.models import Profile
 from geonode.contrib.mp.models import Tileset
-from geonode.geoserver.helpers import gs_catalog, create_gs_thumbnail
+from geonode.geoserver.helpers import gs_catalog, create_gs_thumbnail, cascading_delete
 from djmp.helpers import generate_confs
 from activation_viewer.activation.models import Activation, MapSet, DisasterType
 
@@ -147,6 +148,7 @@ def saveToGeonode(payload):
         gs_layer = gs_catalog.get_layer(name=uploaded_name)
         geom_type = uploaded_name.split('_')[-1]
         gs_style = gs_catalog.get_style(name=settings.EMS_STYLES[geom_type])
+
         if not gs_style:
             #let's make sure the style is there
             gs_catalog.create_style('act_viewer_%s' % geom_type, getSld(geom_type))
@@ -154,6 +156,7 @@ def saveToGeonode(payload):
         gs_layer.default_style = gs_style
         gs_catalog.save(gs_layer)
         gs_catalog.reload()
+
     saved_layer = Layer.objects.get(name=uploaded_name)
     payload['mapset'].layers.add(saved_layer)
 
@@ -163,20 +166,31 @@ def saveToGeonode(payload):
 
 @task(name='loader.seed_layer', queue='loader')
 def seedLayer(layername):
+    layer = Layer.objects.get(name=layername)
+
     try:
-        tileset = Tileset.objects.get(layer_name=Layer.objects.get(name=layername).typename)
+        tileset = Tileset.objects.get(layer_name=layer.typename)
     except Tileset.DoesNotExist:
         logger.error('Cannot find tileset for layer %s' % layername)
         return
+
     logger.debug('starting seeding for layer %s' % layername)
     mp_conf, seed_conf = generate_confs(tileset)
-    seeder.seed(tasks=seed_conf.seeds())
     print '__SEED %s' % layername
-    return layername
+    seed_process = Process(daemon=False, target=seeder.seed,
+                    kwargs={
+                        'tasks': seed_conf.seeds(['tileset_seed']),
+                        'concurrency': int(getattr(settings, 'MAPPROXY_CONCURRENCY', 1)),
+                    })
+    seed_process.start()
+    return {'layer': layer, 'tileset_id': '%s' % tileset.id}
 
 
 @task(name='loader.delete_from_gs', queue='loader')
-def deleteFromGeoserver(typename):
-    print '__DELETE %s' % typename
-    gs_catalog.delete(gs_catalog.get_layer(typename))
-    gs_catalog.delete(gs_catalog.get_style(typename))
+def deleteFromGeoserver(payload):
+    while os.path.exists(os.path.join(settings.TILESET_CACHE_DIRECTORY, payload['tileset_id'], 'tile_locks')):
+        continue
+    print '__DELETE %s' % payload['layer'].typename
+
+    cascading_delete(gs_catalog, layer.typename)
+    gs_catalog.delete(gs_catalog.get_style(payload['layer'].name))

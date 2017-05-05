@@ -119,7 +119,6 @@ TILESET_CACHE_DIRECTORY = 'cache/layers'
 
 CELERY_DISABLE_RATE_LIMITS = False
 CELERY_ALWAYS_EAGER = False
-CELERYD_CONCURRENCY = 3
 
 CELERY_QUEUES = [
     Queue('loader', routing_key='loader')

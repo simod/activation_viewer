@@ -24,5 +24,6 @@ setup(
     zip_safe=False,
     install_requires=[
         'pysftp==0.2.9',
+        'django-kombu==0.9.4',
     ]
 )
