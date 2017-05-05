@@ -72,6 +72,7 @@ class Activation(models.Model):
     activation_time = models.DateTimeField('Activation Time', blank=True, null=True)
     region = models.ForeignKey(Region, verbose_name='Affected Country', blank=True, null=True)
     thumbnail_url = models.CharField(max_length=256, blank=True, null=True)
+    public = models.BooleanField()
 
     def __unicode__(self):
         return '%s, %s' % (self.activation_id, self.disaster_type)

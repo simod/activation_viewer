@@ -37,17 +37,22 @@ class DtypeSerializer(CountJSONSerializer):
 class ActAuthorization(DjangoAuthorization):
     """Activation Authorization"""
     def read_list(self, object_list, bundle):
-        permitted_ids = get_objects_for_user(
-            bundle.request.user,
-            'activation.view_activation')
-
-        return object_list.filter(activation_id__in=permitted_ids)
+        # permitted_ids = get_objects_for_user(
+        #     bundle.request.user,
+        #     'activation.view_activation')
+        if bundle.request.user.is_superuser:
+            return True
+        else:
+            return object_list.filter(public=True)
 
     def read_detail(self, object_list, bundle):
         # return bundle.request.user.has_perm(
         #     'view_activation',
         #     bundle.obj)
-        return True
+        if bundle.request.user.is_superuser:
+            return True
+        else:
+            return bundle.obj.public
 
     def create_list(self, object_list, bundle):
         # TODO implement if needed
@@ -75,16 +80,20 @@ class MpAuthorization(DjangoAuthorization):
     """Map set Authorization"""
 
     def read_list(self, object_list, bundle):
-        permitted_ids = get_objects_for_user(
-            bundle.request.user,
-            'activation.view_mapset')
+        # permitted_ids = get_objects_for_user(
+        #     bundle.request.user,
+        #     'activation.view_mapset')
 
-        return object_list.filter(id__in=permitted_ids)
+        if bundle.request.user.is_superuser:
+            return object_list
+        else:
+            return object_list.filter(activation__public=True)
 
     def read_detail(self, object_list, bundle):
-        return bundle.request.user.has_perm(
-            'view_mapset',
-            bundle.obj)
+        if bundle.request.user.is_superuser:
+            return True
+        else:
+            return bundle.obj.activation.public
 
     def create_list(self, object_list, bundle):
         # TODO implement if needed
@@ -161,7 +170,7 @@ class MapSetResource(ModelResource):
     class Meta:
         queryset = MapSet.objects.all()
         resource_name = 'mapsets'
-        authorization = ActAuthorization()
+        authorization = MpAuthorization()
 
 
 class ActivationFullResource(ModelResource):
@@ -255,6 +264,7 @@ class ActivationResource(ModelResource):
                 Q(disaster_type__name__icontains=q) |
                 Q(region__name__icontains=q))
         return filtered
+
 
 class ActFilteredResource(ModelResource):
     """ Activation faceting resource"""
