@@ -103,7 +103,7 @@ INSTALLED_APPS = INSTALLED_APPS + (
 ROOT_URLCONF = 'activation_viewer.urls'
 
 DEBUG = True
-DEBUG_REACT = True
+DEBUG_REACT = False
 
 ALLOWED_HOSTS = ['localhost:8000',]
 

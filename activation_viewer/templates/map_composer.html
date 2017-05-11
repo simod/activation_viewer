@@ -10,29 +10,25 @@
     <meta name="viewport" content="width=device-width">
 
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Intl.~locale.en,Object.assign"></script>
-    {% if DEBUG_REACT %}
-    <link rel="stylesheet" type="text/css" href="http://localhost:3000/composer.css">
-    <link rel="stylesheet" type="text/css" href="http://localhost:3000/site.css">
-    {% else %}
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}composer.css">
-    {% endif %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/composer.css">
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/site.css">
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/css/components.min.css">
-    
+
     <title>{{ SITE_NAME }}</title>
 </head>
 <body>
     <div id="main">
-        
+
     </div>
     <script type="text/javascript">
         ACTIVATIONS_API = '{% url 'api_dispatch_list' api_name='api' resource_name='activations' %}';
-        DOWNLOAD_URL = 'http://localhost:8080/geoserver/';
+        DOWNLOAD_URL = '{{ GEOSERVER_BASE_URL }}';
     </script>
     {% if DEBUG_REACT %}
     <script src="http://localhost:3000/loader.js"></script>
     <script src="http://localhost:3000/build/composer-debug.js"></script>
     {% else %}
-    <script src=""></script>
+    <script src="{{ STATIC_URL }}js/app/dist/composer.js"></script>
     {% endif %}
 </body>
 </html>

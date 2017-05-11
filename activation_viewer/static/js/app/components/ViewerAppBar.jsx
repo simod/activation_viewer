@@ -15,8 +15,8 @@ export default class ViewerAppBar extends React.Component{
         </Tab>
         <Tab label='Map Composer' value={'composer'} className={'appBarTab'} href='/composer'>
         </Tab>
-        <Tab label='Maps' value={'maps'} className={'appBarTab'} href='/maps'>
-        </Tab>
+        {/* <Tab label='Maps' value={'maps'} className={'appBarTab'} href='/maps'>
+         </Tab>*/}
       </Tabs>
     );
     return (
