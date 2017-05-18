@@ -41,7 +41,7 @@ class ActAuthorization(DjangoAuthorization):
         #     bundle.request.user,
         #     'activation.view_activation')
         if bundle.request.user.is_superuser:
-            return True
+            return object_list
         else:
             return object_list.filter(public=True)
 
