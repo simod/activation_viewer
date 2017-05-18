@@ -13,7 +13,7 @@ body{
 #ec-logo{
     position: absolute;
     top: 64px;
-    background: rgba(166, 166, 166, .5) url('http://localhost:8000/static/img/ec_logo_neg.png') no-repeat 24px 5px;
+    background: rgba(166, 166, 166, .5) url('/static/img/ec_logo_neg.png') no-repeat 24px 5px;
     width: 296px;
     height: 90px;
     z-index: 100000;
