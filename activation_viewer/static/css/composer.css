@@ -4,7 +4,7 @@ body{
 }
 
 .appBar{
-    background-image: url('http://localhost:8000/static/img/app-bar-back-orange.png');
+    background-image: url('/static/img/app-bar-back-orange.png');
 }
 
 /* Dead Simple Grid (c) 2015 Vladimir Agafonkin */
