@@ -157,7 +157,7 @@ class Activation(models.Model):
 
 class ActivationMaps(models.Model):
     """Store information about saved maps such as layers order, opacity and activations"""
-    config = models.CharField(max_length=20000, null=True)
+    config = models.CharField(max_length=100000, null=True)
 
     class Meta:
         verbose_name_plural = 'Activation maps'
