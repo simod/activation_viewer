@@ -42,13 +42,13 @@ body{
 
 .maps {
   height: 100%;
-  width: calc(100% - 403px);
+  width: calc(100% - 430px);
   min-width: 300px;
 }
 
 .tabs {
   height: 100%;
-  max-width: 403px;
+  max-width: 430px;
   top: 0px;
   left: 0px;
 }
