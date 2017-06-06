@@ -283,11 +283,11 @@ class ActivationsList extends React.Component {
 
     let url = is_put ? '/api/act-maps/' + global.location.pathname.split('/')[2] : '/api/act-maps/';
     let csrf;
-    document.cookie.split(';').foreach(cookie => {
+    for (let cookie in document.cookie.split(';')) {
       if (cookie.indexOf('csrftoken') !== -1){
         csrf = cookie.split('=')[1];
       }
-    });
+    };
     this._doPOST(url,
      JSON.stringify({config: JSON.stringify(map_state)}),
      function(xmlhttp){
