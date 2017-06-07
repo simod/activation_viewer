@@ -266,9 +266,9 @@ class ActivationsList extends React.Component {
         index: index
        }
       });
-      // Push activation config in map_state
-      map_state.activations.push(activation);
      });
+     // Push activation config in map_state
+     map_state.activations.push(activation);
     }
    });
    return map_state;
