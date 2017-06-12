@@ -6,10 +6,11 @@ from django.db.models import Q, Count
 from tastypie.resources import ModelResource
 from tastypie import fields
 from tastypie.authorization import DjangoAuthorization
-from tastypie.exceptions import Unauthorized
+from tastypie.exceptions import Unauthorized, ImmediateHttpResponse
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie.serializers import Serializer
-from tastypie.throttle import BaseThrottle
+from tastypie.throttle import CacheThrottle
+from tastypie.http import HttpTooManyRequests
 from django.core.serializers.json import DjangoJSONEncoder
 from guardian.shortcuts import get_objects_for_user
 from taggit.models import Tag
@@ -337,6 +338,20 @@ class ActMapResource(ModelResource):
         queryset = ActivationMaps.objects.all()
         resource_name = 'act-maps'
         allowed_methods = ['get', 'post', 'put']
-        throttle = BaseThrottle(throttle_at=10, timeframe=1800)
+        throttle = CacheThrottle(600)
+        post_throttle = CacheThrottle(3, timeframe=60)
         authorization = DjangoAuthorization()
         always_return_data = True
+
+    def throttle_check(self, request):
+       """Override throttle check to throttle differently on GET and POST.
+       """
+       identifier = self._meta.authentication.get_identifier(request)
+
+       if request.method == 'POST':
+           if self._meta.post_throttle.should_be_throttled(identifier):
+               raise ImmediateHttpResponse(
+                   response=HttpTooManyRequests())
+
+       else:
+           return super(ActMapResource, self).throttle_check(request)

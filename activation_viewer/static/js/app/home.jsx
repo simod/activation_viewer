@@ -54,7 +54,7 @@ class App extends React.Component {
         <div id="ec-logo"></div>
         <div id="title">
           <p>The Activation Viewer helps to use,
-          share and consume the vector data and raster tiles of aerial imagery produced within the Copernicus Emergency Management Service.</p>
+          share and consume the vector data and raster tiles of aerial imagery produced within the Copernicus Emergency Management Service Rapid Mapping.</p>
           <p>This platform belongs to the European Commission, Disaster Risk Management Unit.</p>
         </div>
         <MapPanel id='map' map={map} useHistory={false} />
