@@ -300,7 +300,7 @@ class ActivationsList extends React.Component {
       self.props.showSave();
      },
      function(xmlhttp){
-       self.props.showErr();
+       self.props.showError();
      },
      this,
      csrf,
@@ -472,7 +472,7 @@ ActivationsList.propTypes = {
   /**
   * Function to show a snackbar message that map save errored
   */
-  showErr: React.PropTypes.func
+  showError: React.PropTypes.func
 };
 
 ActivationsList.defaultProps = {

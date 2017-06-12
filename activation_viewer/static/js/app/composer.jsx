@@ -142,9 +142,9 @@ class Composer extends React.Component {
      error_msg = (<Snackbar
        autoHideDuration={3000}
        bodyStyle={{lineHeight: '24px', height: 'auto', maxWidth: '150px', minWidth: '0'}}
-       style={{zIndex: 100000}}
-       open={this.state.saveOpen}
-       message={'Ops, something went wrong in saving the map'}
+       style={{zIndex: 100000, marginLeft: '50px'}}
+       open={this.state.errorOpen}
+       message={'Too many requests'}
        onRequestClose={this._hideErrMsg.bind(this)}
      />)
     }

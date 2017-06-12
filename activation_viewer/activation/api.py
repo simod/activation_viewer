@@ -9,7 +9,7 @@ from tastypie.authorization import DjangoAuthorization
 from tastypie.exceptions import Unauthorized, ImmediateHttpResponse
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie.serializers import Serializer
-from tastypie.throttle import CacheThrottle
+from tastypie.throttle import CacheDBThrottle
 from tastypie.http import HttpTooManyRequests
 from django.core.serializers.json import DjangoJSONEncoder
 from guardian.shortcuts import get_objects_for_user
@@ -338,8 +338,8 @@ class ActMapResource(ModelResource):
         queryset = ActivationMaps.objects.all()
         resource_name = 'act-maps'
         allowed_methods = ['get', 'post', 'put']
-        throttle = CacheThrottle(600)
-        post_throttle = CacheThrottle(3, timeframe=60)
+        throttle = CacheDBThrottle(600)
+        post_throttle = CacheDBThrottle(3, timeframe=60)
         authorization = DjangoAuthorization()
         always_return_data = True
 
