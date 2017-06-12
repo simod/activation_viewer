@@ -177,7 +177,7 @@ class ActivationsList extends React.Component {
           nestedItems={children}
           title={lyr.get('title')}
           disableTouchRipple={true}
-          open={true}
+          open={lyr.get('act_id') ? true : false}
           collapsible={true}/>
         );
       } else {

@@ -8,7 +8,7 @@ body{
 
 .appBar h1{
   cursor: pointer;
-  max-width: 450px;
+  max-width: 500px;
   color:  rgb(189, 189, 189) !important;
 }
 
@@ -18,7 +18,7 @@ body{
 
 .appBarMenu > div{
   background-color: rgba(0, 151, 167, 0) !important;
- 
+
 }
 
 .appBarTab{
