@@ -271,11 +271,11 @@ class LayerListItem extends React.Component {
     let storeType = layer.get('storeType');
     let dl = document.createElement('a');
     if (storeType == 'dataStore'){
-      let url = DOWNLOAD_URL + 'wfs?format_options=charset%3AUTF-8&typename='+layer.get('typename')+'&outputFormat=SHAPE-ZIP&version=1.0.0&service=WFS&request=GetFeature';
+      let url = GEOSERVER_URL + 'wfs?format_options=charset%3AUTF-8&typename='+layer.get('typename')+'&outputFormat=SHAPE-ZIP&version=1.0.0&service=WFS&request=GetFeature';
       dl.setAttribute('href', url);
     }else if (storeType == 'coverageStore'){
       let url = 'TMS: ' + layer.getSource().getUrls()[0] +
-        '\nWMS: http://localhost:8000/djmp/' + layer.get('mpId') + '/map/service';
+        '\nWMS: ' + SITE_URL + 'djmp/' + layer.get('mpId') + '/map/service';
       dl.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(url));
     }
     dl.setAttribute('download', layer.get('title'));
