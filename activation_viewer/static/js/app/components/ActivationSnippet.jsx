@@ -165,7 +165,8 @@ class ActSnippet extends Component {
     this._selectComponent();
   }
 
-  _flyTo(){
+  _flyTo(e){
+    e.stopPropagation();
     let self = this;
 
     //  Animate over the selected feature
