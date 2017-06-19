@@ -291,15 +291,17 @@ class AddActivationsModal extends React.Component {
         }
       });
 
+      let act_extent = [
+        parseFloat(act_data.bbox_x0),
+        parseFloat(act_data.bbox_y0),
+        parseFloat(act_data.bbox_x1),
+        parseFloat(act_data.bbox_y1)
+      ];
+
       let act_group = new ol.layer.Group({
         title: act_data.activation_id,
         layers: map_sets,
-        EX_GeographicBoundingBox: [
-          parseFloat(act_data.bbox_x0),
-          parseFloat(act_data.bbox_y0),
-          parseFloat(act_data.bbox_x1),
-          parseFloat(act_data.bbox_y1)
-        ],
+        EX_GeographicBoundingBox: act_extent,
         isRemovable: true
       });
       // Set the Activation id in this group used for further handling in the layer list
@@ -311,6 +313,8 @@ class AddActivationsModal extends React.Component {
           activation: act_data
        }
       });
+      let view = map.getView();
+      view.fit(ol.proj.transformExtent(act_extent, 'EPSG:4326', view.getProjection()), map.getSize());
     }
 
     var failureCb = xmlhttp => {

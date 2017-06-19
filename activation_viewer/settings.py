@@ -120,9 +120,9 @@ TILESET_CACHE_DIRECTORY = 'cache/layers'
 CELERY_DISABLE_RATE_LIMITS = False
 CELERY_ALWAYS_EAGER = False
 
-CELERY_QUEUES = [
-    Queue('loader', routing_key='loader')
-]
+# CELERY_QUEUES = [
+#     Queue('loader', routing_key='loader')
+# ]
 
 COPERNICUS_FTP = {
     'url': 'ftp://xxx.xxx.xxx.xxx',
