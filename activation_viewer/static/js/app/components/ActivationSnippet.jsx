@@ -117,6 +117,7 @@ class ActSnippet extends Component {
     super();
     this.onMouseEnterHandler = this.onMouseEnterHandler.bind(this);
     this.onMouseLeaveHandler = this.onMouseLeaveHandler.bind(this);
+    this.onSnippetclick = this.onSnippetclick.bind(this);
     this.state = {
       selectClass: ''
     };
@@ -216,6 +217,10 @@ class ActSnippet extends Component {
       }
     });
     this._deselectComponent();
+  }
+
+  onSnippetclick(){
+    window.location=AppConfig.COMPOSER_URL + '#' + this.props.activation.activation_id;
   }
 
   _selectComponent(){
@@ -371,6 +376,7 @@ class ActSnippet extends Component {
       style: prepareStyles(mergedRootStyles),
       onMouseEnter: this.onMouseEnterHandler,
       onMouseLeave: this.onMouseLeaveHandler,
+      onClick: this.onSnippetclick,
       className: this.state.selectClass,
       ...other,
     };
