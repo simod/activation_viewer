@@ -270,6 +270,7 @@ class LayerListItem extends React.Component {
     let layer = this.props.layer;
     let storeType = layer.get('storeType');
     let dl = document.createElement('a');
+    document.body.appendChild(dl);
     if (storeType == 'dataStore'){
       let url = GEOSERVER_URL + 'wfs?format_options=charset%3AUTF-8&typename='+layer.get('typename')+'&outputFormat=SHAPE-ZIP&version=1.0.0&service=WFS&request=GetFeature';
       dl.setAttribute('href', url);
