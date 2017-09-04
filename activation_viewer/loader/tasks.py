@@ -16,7 +16,7 @@ from geonode.layers.utils import upload
 from geonode.layers.models import Layer
 from geonode.people.models import Profile
 from geonode.contrib.mp.models import Tileset
-from geonode.geoserver.helpers import gs_catalog, create_gs_thumbnail, cascading_delete
+from geonode.geoserver.helpers import gs_catalog, create_gs_thumbnail
 from djmp.helpers import generate_confs
 from activation_viewer.activation.models import Activation, MapSet, DisasterType
 
@@ -119,8 +119,7 @@ def getChain(layer_name, filenames, dirpath, mapset):
     return chain(
         zipShp.s(layer_name, filenames, dirpath, mapset),
         saveToGeonode.s(),
-        seedLayer.s(),
-        deleteFromGeoserver.s()
+        seedLayer.s()
         )
 
 
@@ -184,13 +183,3 @@ def seedLayer(layername):
                     })
     seed_process.start()
     return {'layer': layer, 'tileset_id': '%s' % tileset.id}
-
-
-@task(name='loader.delete_from_gs', queue='loader')
-def deleteFromGeoserver(payload):
-    while os.path.exists(os.path.join(settings.TILESET_CACHE_DIRECTORY, payload['tileset_id'], 'tile_locks')):
-        continue
-    print '__DELETE %s' % payload['layer'].typename
-
-    cascading_delete(gs_catalog, layer.typename)
-    gs_catalog.delete(gs_catalog.get_style(payload['layer'].name))
