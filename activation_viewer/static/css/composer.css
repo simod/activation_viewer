@@ -116,8 +116,8 @@ html, body {
   width: auto !important;
 }
 
-.layer-list-item.overlay-layer > div > div{
-  width: auto !important;
+.layer-list-item.overlay-layer>div{
+  padding: 8px 8px 0 16px !important;
 }
 
 .overlays .layer-tree-panel {
@@ -199,6 +199,10 @@ html, body {
   float: right;
 }
 
+.layer-tools button{
+  width: 30px !important;
+}
+
 .layer-tools-content{
   border: 1px solid rgb(166, 166, 166);
 }
@@ -208,4 +212,9 @@ html, body {
   overflow-x: hidden !important;
   width: 'auto';
   padding: 10px;
+}
+
+.layer-tools-popover{
+  float: right;
+  padding-left: 12px;
 }

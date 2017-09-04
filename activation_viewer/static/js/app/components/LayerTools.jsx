@@ -5,6 +5,7 @@ import DownloadIcon from 'material-ui/svg-icons/file/file-download';
 import ZoomInIcon from 'material-ui/svg-icons/action/zoom-in';
 import DeleteIcon from 'material-ui/svg-icons/action/delete';
 import Popover from 'material-ui/Popover/Popover';
+import Menu from 'material-ui/Menu';
 import Slider from 'material-ui/Slider';
 import FlatButton from 'material-ui/FlatButton';
 import ActionSettings from 'material-ui/svg-icons/action/settings'
@@ -74,9 +75,9 @@ export default class LayerTools extends React.Component{
         tooltipStyles={tooltipStyle}
         disableTouchRipple={true}><DeleteIcon /></IconButton>);
     }
-
-    return (
-      <span className='layer-tools'>
+    let popover;
+    if (this.props.showOpacity){
+      popover = (<span className="layer-tools-popover">
         <FlatButton
           onTouchTap={this.handleTouchTap.bind(this)}
           icon={<ActionSettings />}
@@ -91,11 +92,16 @@ export default class LayerTools extends React.Component{
           onRequestClose={this.handleRequestClose.bind(this)}
           className={'layer-tools-content'}
         >
-          {zoomTo}
-          {download}
-          {remove}
-          {opacity}
+            {download}
+            {opacity}
         </Popover>
+      </span>);
+    }
+    return (
+      <span className='layer-tools'>
+        {zoomTo}
+        {remove}
+        {popover}
       </span>
     )
   }

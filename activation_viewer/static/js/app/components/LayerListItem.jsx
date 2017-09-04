@@ -346,7 +346,7 @@ class LayerListItem extends React.Component {
     if (layer.get('type') === 'base') {
       input = (<RadioButton disabled={this.state.disabled} checked={this.state.checked} label={this.props.title} value={this.props.title} onCheck={this._handleChange.bind(this)} disableTouchRipple={true}/>);
     } else {
-      input = (<Checkbox style={{'display': 'inline-block', 'width': 'calc(100% - 50px)'}} checked={this.state.checked} label={this.props.title} labelStyle={this.props.layer.get('emptyTitle') ? {fontStyle: 'italic'} : undefined} onCheck={this._handleChange.bind(this)} disableTouchRipple={true}/>);
+      input = (<Checkbox style={{'display': 'inline-block', 'width': 'calc(100% - 85px)'}} checked={this.state.checked} label={this.props.title} labelStyle={this.props.layer.get('emptyTitle') ? {fontStyle: 'italic'} : undefined} onCheck={this._handleChange.bind(this)} disableTouchRipple={true}/>);
     }
 
     let legend;
