@@ -259,7 +259,7 @@ class AddActivationsModal extends React.Component {
             // add some parameter that will be used in the layer list
             the_layer.set('storeType', layer.storeType);
             the_layer.set('typename', layer.typename);
-            the_layer.set('mpId', layer.id);
+            the_layer.set('djmpId', layer.djmp_id);
           }
 
           // Set layer initial config if available

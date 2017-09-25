@@ -261,7 +261,7 @@ class ActivationsList extends React.Component {
       // Loop over layers
       mapset.get('layers').forEach((layer, index) => {
        // Push layer config in activation
-       activation.layers[layer.get('mpId')] = {
+       activation.layers[layer.get('djmpId')] = {
         opacity: layer.getOpacity(),
         index: index
        }

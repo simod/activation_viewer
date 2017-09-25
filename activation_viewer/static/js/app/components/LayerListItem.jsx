@@ -276,7 +276,7 @@ class LayerListItem extends React.Component {
       dl.setAttribute('href', url);
     }else if (storeType == 'coverageStore'){
       let url = 'TMS: ' + layer.getSource().getUrls()[0] +
-        '\r\nWMS: ' + SITE_URL + 'djmp/' + layer.get('mpId') + '/map/service';
+        '\r\nWMS: ' + SITE_URL + 'djmp/' + layer.get('djmpId') + '/map/service';
       dl.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(url));
     }
     dl.setAttribute('download', layer.get('title'));

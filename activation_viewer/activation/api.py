@@ -17,6 +17,7 @@ from taggit.models import Tag
 
 from geonode.api.api import CountJSONSerializer, RegionResource, TagResource
 from geonode.layers.models import Layer
+from djmp.models import Tileset
 
 from .models import Activation, DisasterType, MapSet, ActivationMaps
 
@@ -122,9 +123,13 @@ class ActLayerResource(ModelResource):
     """Light layer api for activations"""
 
     tms_url = fields.CharField()
+    djmp_id = fields.IntegerField()
 
     def dehydrate_tms_url(self, bundle):
         return bundle.obj.link_set.get(name='Tiles').url
+
+    def dehydrate_djmp_id(self, bundle):
+        return Tileset.objects.get(layer_name=bundle.obj.typename).pk
 
     class Meta:
         queryset = Layer.objects.order_by('-storeType')
