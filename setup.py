@@ -24,5 +24,9 @@ setup(
     zip_safe=False,
     install_requires=[
         'pysftp==0.2.9',
+        'djmp',
+    ],
+    dependency_links=[
+        'git+ssh://git@github.com/terranodo/django-mapproxy#egg=djmp',
     ]
 )
