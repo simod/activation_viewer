@@ -97,7 +97,7 @@ INSTALLED_APPS = INSTALLED_APPS + (
     'geonode.contrib.mp',
     'djmp',
     'activation_viewer.loader',
-    'djkombu')
+    )
 
 # Location of url mappings
 ROOT_URLCONF = 'activation_viewer.urls'
@@ -111,11 +111,12 @@ SITEURL = "http://localhost:8000/"
 
 #USE_DISK_CACHE = True
 
-#TILESET_CACHE_URL = ''
+
 
 CACHE_ZOOM_START = 15
 CACHE_ZOOM_STOP = 18
 TILESET_CACHE_DIRECTORY = 'cache/layers'
+TILESET_CACHE_URL = 'cache'
 
 CELERY_DISABLE_RATE_LIMITS = False
 CELERY_ALWAYS_EAGER = False
