@@ -27,6 +27,6 @@ setup(
         'djmp',
     ],
     dependency_links=[
-        'git+ssh://git@github.com/terranodo/django-mapproxy#egg=djmp',
+        'git+http://git@github.com/terranodo/django-mapproxy#egg=djmp',
     ]
 )
