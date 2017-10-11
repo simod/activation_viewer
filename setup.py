@@ -22,11 +22,4 @@ setup(
     packages=['activation_viewer',],
     include_package_data=True,
     zip_safe=False,
-    install_requires=[
-        'pysftp==0.2.9',
-        'djmp',
-    ],
-    dependency_links=[
-        'git+http://git@github.com/terranodo/django-mapproxy#egg=djmp',
-    ]
 )

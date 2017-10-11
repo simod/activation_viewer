@@ -1,0 +1,2 @@
+git+http://git@github.com/terranodo/django-mapproxy
+pysftp==0.2.9
