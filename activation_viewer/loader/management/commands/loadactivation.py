@@ -30,7 +30,7 @@ class Command(BaseCommand):
             dest='disaster_type',
             help='The disaster type'))
 
-    def handle(self, **options):
+    def handle(self, *args, **options):
         code = options.get('activation_code')
         region = options.get('region')
         disaster_type = options.get('disaster_type')
