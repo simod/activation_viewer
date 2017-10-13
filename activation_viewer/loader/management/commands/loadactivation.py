@@ -14,19 +14,19 @@ class Command(BaseCommand):
         make_option(
             '-c',
             '--code',
-            action='store_true',
+            type="string",
             dest='activation_code',
             help='Actiovation\'s code'),
         make_option(
             '-r',
             '--region',
-            action='store_true',
+            type="string",
             dest='region',
             help='Activation\'s region'),
         make_option(
             '-t',
             '--type',
-            action='store_true',
+            type="string",
             dest='disaster_type',
             help='The disaster type'))
 
