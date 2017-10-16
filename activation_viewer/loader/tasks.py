@@ -30,13 +30,7 @@ logger = get_task_logger(__name__)
 def listNotHiddenFolders(path):
     return [ f for f in os.listdir(path) if not f.startswith('.') ]
 
-def dictChunks(data, size=settings.CONCURRENT_LAYER_LOAD_PROCESSES):
-    it = iter(data)
-    for i in xrange(0, len(data), size):
-        yield {k:data[k] for k in islice(it, size)}
-
-
-@task(name='loader.get_activation', queue='loader')
+@task(name='loader.get_activation', queue='loader', max_retries=3)
 def getActivation(activation_code, disaster_type, region, download_only=False, load_only= False):
     if not load_only:
         with pysftp.Connection(settings.COPERNICUS_FTP['url'], username=settings.COPERNICUS_FTP['user'],
@@ -71,15 +65,20 @@ def getActivation(activation_code, disaster_type, region, download_only=False, l
         loadActivation.delay(activation_code, disaster_type, region)
 
 
-@task(name='loader.load_activation', queue='loader')
+@task(name='loader.load_activation', queue='loader', max_retries=3)
 def loadActivation(activation_code, disaster_type, region):
     activation_path = os.path.join(settings.ACTIVATIONS_DOWNLOAD_PATH, settings.SFTP_DATA_FOLDER, activation_code)
 
     activation, __ = Activation.objects.get_or_create(
         activation_id = activation_code,
         disaster_type = DisasterType.objects.get_or_create(name=disaster_type, slug=slugify(disaster_type))[0],
-        region = Region.objects.get(name__iexact=region)
+        region = Region.objects.get(name__iexact=region),
+        public = False
         )
+
+    # make sure the zip files folder exists
+    if not os.path.exists(settings.ZIPFILE_LOCATION):
+        os.makedirs(settings.ZIPFILE_LOCATION)
 
     # loop over AOIs and create a MapSet for each of them
     for aoi in listNotHiddenFolders(activation_path):
@@ -104,18 +103,11 @@ def loadActivation(activation_code, disaster_type, region):
                         else:
                             files_dict[layer_name] = [filename]
 
-                    # make sure the zip files folder exists
-                    if not os.path.exists(settings.ZIPFILE_LOCATION):
-                        os.makedirs(settings.ZIPFILE_LOCATION)
-
-                    # manually chunk the dict and send parallel chains per chunk
-                    for layers_dict in dictChunks(files_dict):
-                        group(
-                            getChain(layer_name, filenames, dirpath, mapset) for layer_name, filenames in layers_dict.items()
-                            ).apply_async()
+                    for layers_dict in files_dict.items():
+                        getChain(layers_dict[0], layers_dict[1], dirpath, mapset).apply_async()
 
 
-def getChain(layer_name, filenames, dirpath, mapset):
+def getChain(layer_name, filenames, dirpath, mapset, max_retries=3):
     return chain(
         zipShp.s(layer_name, filenames, dirpath, mapset),
         saveToGeonode.s(),
@@ -123,7 +115,7 @@ def getChain(layer_name, filenames, dirpath, mapset):
         )
 
 
-@task(name='loader.zip_shp', queue='loader')
+@task(name='loader.zip_shp', queue='loader', max_retries=3)
 def zipShp(layer_name, files, dirpath, mapset):
     print '__ZIP %s ' % layer_name
     zipfile_name = os.path.join(settings.ZIPFILE_LOCATION, layer_name + '.zip')
@@ -135,7 +127,7 @@ def zipShp(layer_name, files, dirpath, mapset):
             'mapset': mapset}
 
 
-@task(name='loader.save_to_geonode', queue='loader')
+@task(name='loader.save_to_geonode', queue='loader', max_retries=3)
 def saveToGeonode(payload):
     admin = Profile.objects.filter(is_superuser=True).first()
     logger.debug('Uploading layer %s to geonode' % payload['zip_name'])
@@ -163,7 +155,7 @@ def saveToGeonode(payload):
     return uploaded_name
 
 
-@task(name='loader.seed_layer', queue='loader')
+@task(name='loader.seed_layer', queue='loader', max_retries=3)
 def seedLayer(layername):
     layer = Layer.objects.get(name=layername)
 

@@ -21,6 +21,7 @@
 # Django settings for the GeoNode project.
 import os
 from geonode.settings import *
+from kombu import Queue
 #
 # General Django development settings
 #
@@ -96,8 +97,7 @@ INSTALLED_APPS = INSTALLED_APPS + (
     'activation_viewer.activation',
     'geonode.contrib.mp',
     'djmp',
-    'activation_viewer.loader',
-    )
+    'activation_viewer.loader')
 
 # Location of url mappings
 ROOT_URLCONF = 'activation_viewer.urls'
@@ -111,19 +111,18 @@ SITEURL = "http://localhost:8000/"
 
 #USE_DISK_CACHE = True
 
-
+#TILESET_CACHE_URL = ''
 
 CACHE_ZOOM_START = 15
 CACHE_ZOOM_STOP = 18
 TILESET_CACHE_DIRECTORY = 'cache/layers'
-TILESET_CACHE_URL = 'cache'
 
 CELERY_DISABLE_RATE_LIMITS = False
 CELERY_ALWAYS_EAGER = False
 
-# CELERY_QUEUES = [
-#     Queue('loader', routing_key='loader')
-# ]
+CELERY_QUEUES = [
+     Queue('loader', routing_key='loader')
+]
 
 COPERNICUS_FTP = {
     'url': 'ftp://xxx.xxx.xxx.xxx',
