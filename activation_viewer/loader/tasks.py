@@ -133,7 +133,11 @@ def saveToGeonode(payload):
     logger.debug('Uploading layer %s to geonode' % payload['zip_name'])
 
     # use overwrite to make sure if a layer exists it gets updated
-    uploaded_name = upload(payload['zip_name'], admin, overwrite=True)[0]['name']
+    uploaded = upload(payload['zip_name'], admin, overwrite=True)[0]
+    if uploaded['status'] == 'failed':
+        return "Failed layer %s with traceback %s " % (payload['zip_name'], uploaded['traceback'])
+    else:
+        uploaded_name = uploaded['name']
 
     if any(s in payload['zip_name'] for s in ['_point', '_line', '_poly']):
         gs_layer = gs_catalog.get_layer(name=uploaded_name)
