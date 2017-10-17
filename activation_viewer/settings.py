@@ -130,6 +130,12 @@ COPERNICUS_FTP = {
     'password': ''
 }
 
+EMS_STYLES = {
+    'p': 'act_viewer_p',
+    'l': 'act_viewer_l',
+    'a': 'act_viewer_a'
+}
+
 ACTIVATIONS_DOWNLOAD_PATH = ''
 
 CONCURRENT_LAYER_LOAD_PROCESSES = 3

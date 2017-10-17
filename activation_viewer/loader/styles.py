@@ -3,7 +3,7 @@ def getSld(geom_type):
     return styles[geom_type]
 
 styles = {
-'line':
+'l':
 """<?xml version="1.0" encoding="ISO-8859-1"?>
 <StyledLayerDescriptor version="1.0.0"
   xsi:schemaLocation="http://www.opengis.net/sld http://schemas.opengis.net/sld/1.0.0/StyledLayerDescriptor.xsd"
@@ -29,7 +29,7 @@ styles = {
   </NamedLayer>
 </StyledLayerDescriptor>""",
 
-'point':
+'p':
 """<?xml version="1.0" encoding="ISO-8859-1"?>
 <StyledLayerDescriptor version="1.0.0"
   xsi:schemaLocation="http://www.opengis.net/sld http://schemas.opengis.net/sld/1.0.0/StyledLayerDescriptor.xsd"
@@ -61,7 +61,7 @@ styles = {
   </NamedLayer>
 </StyledLayerDescriptor>""",
 
-'poly':
+'a':
 """<?xml version="1.0" encoding="ISO-8859-1"?>
 <StyledLayerDescriptor version="1.0.0"
   xsi:schemaLocation="http://www.opengis.net/sld http://schemas.opengis.net/sld/1.0.0/StyledLayerDescriptor.xsd"

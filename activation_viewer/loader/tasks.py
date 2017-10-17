@@ -135,11 +135,11 @@ def saveToGeonode(payload):
     # use overwrite to make sure if a layer exists it gets updated
     uploaded = upload(payload['zip_name'], admin, overwrite=True)[0]
     if uploaded['status'] == 'failed':
-        return "Failed layer %s with traceback %s " % (payload['zip_name'], uploaded['traceback'])
+        raise Exception("Failed layer %s with error %s " % (payload['zip_name'], uploaded['error']))
     else:
         uploaded_name = uploaded['name']
 
-    if any(s in payload['zip_name'] for s in ['_point', '_line', '_poly']):
+    if any(s in payload['zip_name'] for s in ['_a', '_p', '_l']):
         gs_layer = gs_catalog.get_layer(name=uploaded_name)
         geom_type = uploaded_name.split('_')[-1]
         gs_style = gs_catalog.get_style(name=settings.EMS_STYLES[geom_type])
