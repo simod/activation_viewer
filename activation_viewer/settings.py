@@ -138,8 +138,6 @@ EMS_STYLES = {
 
 ACTIVATIONS_DOWNLOAD_PATH = ''
 
-CONCURRENT_LAYER_LOAD_PROCESSES = 3
-
 OGC_SERVER['default']['datastore'] = 'datastore'
 
 from geonode.contrib.mp.settings import *

@@ -9,8 +9,6 @@ from django.utils.text import slugify
 from celery.task import task
 from celery import chain, group
 from celery.utils.log import get_task_logger
-from mapproxy.seed import seeder
-from billiard import Process
 from geonode.base.models import Region
 from geonode.layers.utils import upload
 from geonode.layers.models import Layer
@@ -19,11 +17,16 @@ from geonode.contrib.mp.models import Tileset
 from geonode.geoserver.helpers import gs_catalog, create_gs_thumbnail
 from djmp.helpers import generate_confs
 from activation_viewer.activation.models import Activation, MapSet, DisasterType
+from activation_viewer.loader import seeder
 
 from .styles import getSld
 
+
 # list of folders to be excluded from download
-EXCLUDE_FROM_DOWNLOAD = ['RASTER', '00AEM']
+FOLDERS_EXCLUDE_FROM_DOWNLOAD = ['RASTER', '00AEM']
+
+# list of folders to be excluded from download
+FILES_EXCLUDE_FROM_DOWNLOAD = ['VECTOR.zip', 'source']
 
 logger = get_task_logger(__name__)
 
@@ -49,12 +52,12 @@ def getActivation(activation_code, disaster_type, region, download_only=False, l
                     logger.debug('Downloading %s' % fullpath)
 
                     # if is a file then fetch it locally, respecting the same folder structure
-                    if sftp.isfile(fullpath) and not 'VECTOR.zip' in fullpath:
+                    if sftp.isfile(fullpath) and not any(name in fullpath for name in FILES_EXCLUDE_FROM_DOWNLOAD):
                         download_path = os.path.join(settings.ACTIVATIONS_DOWNLOAD_PATH, folder)
                         if not os.path.exists(download_path):
                             os.makedirs(download_path)
                         sftp.get(fullpath, os.path.join(settings.ACTIVATIONS_DOWNLOAD_PATH, fullpath))
-                    elif sftp.isdir(fullpath) and element not in EXCLUDE_FROM_DOWNLOAD:
+                    elif sftp.isdir(fullpath) and element not in FOLDERS_EXCLUDE_FROM_DOWNLOAD:
                         folderWalker(fullpath)
 
             walkdir = os.path.join(settings.SFTP_DATA_FOLDER, activation_code)
@@ -150,7 +153,7 @@ def saveToGeonode(payload):
             gs_style = gs_catalog.get_style(name=settings.EMS_STYLES[geom_type])
         gs_layer.default_style = gs_style
         gs_catalog.save(gs_layer)
-        gs_catalog.reload()
+        # gs_catalog.reload()
 
     saved_layer = Layer.objects.get(name=uploaded_name)
     payload['mapset'].layers.add(saved_layer)
@@ -171,11 +174,7 @@ def seedLayer(layername):
 
     logger.debug('starting seeding for layer %s' % layername)
     mp_conf, seed_conf = generate_confs(tileset)
-    print '__SEED %s' % layername
-    seed_process = Process(daemon=False, target=seeder.seed,
-                    kwargs={
-                        'tasks': seed_conf.seeds(['tileset_seed']),
-                        'concurrency': int(getattr(settings, 'MAPPROXY_CONCURRENCY', 1)),
-                    })
-    seed_process.start()
+
+    seeder.seed(seed_conf.seeds(['tileset_seed']))
+
     return {'layer': layer, 'tileset_id': '%s' % tileset.id}
