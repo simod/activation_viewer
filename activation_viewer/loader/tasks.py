@@ -22,12 +22,6 @@ from activation_viewer.loader import seeder
 from .styles import getSld
 
 
-# list of folders to be excluded from download
-FOLDERS_EXCLUDE_FROM_DOWNLOAD = ['RASTER', '00AEM']
-
-# list of folders to be excluded from download
-FILES_EXCLUDE_FROM_DOWNLOAD = ['VECTOR.zip', 'source']
-
 logger = get_task_logger(__name__)
 
 def listNotHiddenFolders(path):
@@ -36,8 +30,8 @@ def listNotHiddenFolders(path):
 @task(name='loader.get_activation', queue='loader', max_retries=3)
 def getActivation(activation_code, disaster_type, region, download_only=False, load_only= False):
     if not load_only:
-        with pysftp.Connection(settings.COPERNICUS_FTP['url'], username=settings.COPERNICUS_FTP['user'],
-            password=settings.COPERNICUS_FTP['password']) as sftp:
+        with pysftp.Connection(settings.AW_COPERNICUS_FTP['url'], username=settings.AW_COPERNICUS_FTP['user'],
+            password=settings.AW_COPERNICUS_FTP['password']) as sftp:
 
             def folderWalker(folder):
                 elements = sftp.listdir(folder)
@@ -52,15 +46,15 @@ def getActivation(activation_code, disaster_type, region, download_only=False, l
                     logger.debug('Downloading %s' % fullpath)
 
                     # if is a file then fetch it locally, respecting the same folder structure
-                    if sftp.isfile(fullpath) and not any(name in fullpath for name in FILES_EXCLUDE_FROM_DOWNLOAD):
-                        download_path = os.path.join(settings.ACTIVATIONS_DOWNLOAD_PATH, folder)
+                    if sftp.isfile(fullpath) and not any(name in fullpath for name in settings.AW_FILES_EXCLUDE_FROM_DOWNLOAD):
+                        download_path = os.path.join(settings.AW_ACTIVATIONS_DOWNLOAD_PATH, folder)
                         if not os.path.exists(download_path):
                             os.makedirs(download_path)
-                        sftp.get(fullpath, os.path.join(settings.ACTIVATIONS_DOWNLOAD_PATH, fullpath))
-                    elif sftp.isdir(fullpath) and element not in FOLDERS_EXCLUDE_FROM_DOWNLOAD:
+                        sftp.get(fullpath, os.path.join(settings.AW_ACTIVATIONS_DOWNLOAD_PATH, fullpath))
+                    elif sftp.isdir(fullpath) and element not in settings.AW_FOLDERS_EXCLUDE_FROM_DOWNLOAD:
                         folderWalker(fullpath)
 
-            walkdir = os.path.join(settings.SFTP_DATA_FOLDER, activation_code)
+            walkdir = os.path.join(settings.AW_SFTP_DATA_FOLDER, activation_code)
             logger.debug('Downloading the %s folder' % walkdir)
             folderWalker(walkdir)
 
@@ -70,7 +64,7 @@ def getActivation(activation_code, disaster_type, region, download_only=False, l
 
 @task(name='loader.load_activation', queue='loader', max_retries=3)
 def loadActivation(activation_code, disaster_type, region):
-    activation_path = os.path.join(settings.ACTIVATIONS_DOWNLOAD_PATH, settings.SFTP_DATA_FOLDER, activation_code)
+    activation_path = os.path.join(settings.AW_ACTIVATIONS_DOWNLOAD_PATH, settings.AW_SFTP_DATA_FOLDER, activation_code)
 
     activation, __ = Activation.objects.get_or_create(
         activation_id = activation_code,
@@ -80,8 +74,8 @@ def loadActivation(activation_code, disaster_type, region):
         )
 
     # make sure the zip files folder exists
-    if not os.path.exists(settings.ZIPFILE_LOCATION):
-        os.makedirs(settings.ZIPFILE_LOCATION)
+    if not os.path.exists(settings.AW_ZIPFILE_LOCATION):
+        os.makedirs(settings.AW_ZIPFILE_LOCATION)
 
     # loop over AOIs and create a MapSet for each of them
     for aoi in listNotHiddenFolders(activation_path):
@@ -121,7 +115,7 @@ def getChain(layer_name, filenames, dirpath, mapset, max_retries=3):
 @task(name='loader.zip_shp', queue='loader', max_retries=3)
 def zipShp(layer_name, files, dirpath, mapset):
     print '__ZIP %s ' % layer_name
-    zipfile_name = os.path.join(settings.ZIPFILE_LOCATION, layer_name + '.zip')
+    zipfile_name = os.path.join(settings.AW_ZIPFILE_LOCATION, layer_name + '.zip')
     the_zip = zipfile.ZipFile(zipfile_name, 'w')
     for item in files:
         the_zip.write(os.path.join(dirpath, item), item)
@@ -150,7 +144,7 @@ def saveToGeonode(payload):
         if not gs_style:
             #let's make sure the style is there
             gs_catalog.create_style('act_viewer_%s' % geom_type, getSld(geom_type))
-            gs_style = gs_catalog.get_style(name=settings.EMS_STYLES[geom_type])
+            gs_style = gs_catalog.get_style(name=settings.AW_EMS_STYLES[geom_type])
         gs_layer.default_style = gs_style
         gs_catalog.save(gs_layer)
         # gs_catalog.reload()
