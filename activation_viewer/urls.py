@@ -17,7 +17,7 @@ api.register(ActMapResource())
 
 urlpatterns = patterns('',
     url(r'^/?$',
-       TemplateView.as_view(template_name='index_new.html'),
+       TemplateView.as_view(template_name='viewer_index.html'),
        name='home'),
     url(r'^composer/?',
        TemplateView.as_view(template_name='map_composer.html'),
