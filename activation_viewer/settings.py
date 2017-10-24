@@ -144,7 +144,7 @@ AW_ZIPFILE_LOCATION = ''
 AW_FOLDERS_EXCLUDE_FROM_DOWNLOAD = ['RASTER', '00AEM']
 
 # list of folders to be excluded from download
-AW_FILES_EXCLUDE_FROM_DOWNLOAD = ['VECTOR.zip', 'source', 'sensor_metadata_a']
+AW_FILES_EXCLUDE_FROM_DOWNLOAD = ['VECTOR.zip', 'source', 'sensor_metadata_a', 'area_of_interest']
 
 OGC_SERVER['default']['datastore'] = 'datastore'
 
