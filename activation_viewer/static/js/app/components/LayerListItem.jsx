@@ -196,7 +196,9 @@ class LayerListItem extends React.Component {
     this.setState({disabled: !evt.target.getVisible()});
   }
   _enableGroupEvents(evt) {
-    this.setState({checked: evt.target.getVisible()});
+    if (!evt.target.getVisible()){
+      this.setState({checked: evt.target.getVisible()});
+    }
   }
   componentWillUnmount() {
     this.props.layer.un('change:visible', this._changeLayerVisible, this);
@@ -244,6 +246,9 @@ class LayerListItem extends React.Component {
       this.props.layer.setVisible(true);
     } else {
       this.props.layer.setVisible(visible);
+      if (this.props.layer instanceof ol.layer.Group == false && visible){
+        this.props.group.setVisible(true);
+      }
       if (this.props.layer instanceof ol.layer.Group) {
         if (this.props.layer.get('type') === 'base-group') {
           if (visible === false) {
@@ -345,8 +350,10 @@ class LayerListItem extends React.Component {
     let input;
     if (layer.get('type') === 'base') {
       input = (<RadioButton disabled={this.state.disabled} checked={this.state.checked} label={this.props.title} value={this.props.title} onCheck={this._handleChange.bind(this)} disableTouchRipple={true}/>);
-    } else {
+    } else if(!layer.get('act_id')){
       input = (<Checkbox style={{'display': 'inline-block', 'width': 'calc(100% - 85px)'}} checked={this.state.checked} label={this.props.title} labelStyle={this.props.layer.get('emptyTitle') ? {fontStyle: 'italic'} : undefined} onCheck={this._handleChange.bind(this)} disableTouchRipple={true}/>);
+    } else{
+      input = (<div style={{'display': 'inline-block'}}><label style={{'position': 'relative', 'top': '-5px'}}>{this.props.title}</label></div>);
     }
 
     let legend;
