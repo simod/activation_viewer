@@ -25,6 +25,7 @@ def resource_urls(request):
     """Global values to pass to templates"""
     defaults = dict(
         DEBUG_REACT=settings.DEBUG_REACT,
+        AW_ZIPFILE_LOCATION=settings.AW_ZIPFILE_LOCATION,
     )
 
     return defaults
