@@ -16,7 +16,7 @@ from geonode.people.models import Profile
 from geonode.contrib.mp.models import Tileset
 from geonode.geoserver.helpers import gs_catalog, create_gs_thumbnail
 from djmp.helpers import generate_confs
-from activation_viewer.activation.models import Activation, MapSet, DisasterType
+from activation_viewer.activation.models import Activation, MapSet, DisasterType, MapSetLayer
 from activation_viewer.loader import seeder
 
 from .styles import getSld
@@ -114,15 +114,29 @@ def getChain(layer_name, filenames, dirpath, mapset, max_retries=3):
 
 @task(name='loader.zip_shp', queue='loader', max_retries=3)
 def zipShp(layer_name, files, dirpath, mapset):
-    print '__ZIP %s ' % layer_name
-    zipfile_name = os.path.join(settings.AW_ZIPFILE_LOCATION, layer_name + '.zip')
-    the_zip = zipfile.ZipFile(zipfile_name, 'w')
+    zipfile_path = os.path.join(settings.AW_ZIPFILE_LOCATION, layer_name + '.zip')
+    the_zip = zipfile.ZipFile(zipfile_path, 'w')
     for item in files:
         the_zip.write(os.path.join(dirpath, item), item)
     the_zip.close()
-    return {'zip_name': zipfile_name,
+    return {'zipfile_path': zipfile_path,
+            'zip_name': layer_name,
             'mapset': mapset}
 
+def createMapSetLayer(layer, zip_name):
+    """Creates a MapSetLayer down from a GeoNode saved layer and the name of the zipfile"""
+    layer_def = zip_name.split('_')
+    code, aoi, map_type, v = [layer_def.pop(0) for i in range(4)]
+    geom_type = layer_def.pop(-1)
+    title = ' '.join([i.capitalize() for i in layer_def])
+    msLayer, created = MapSetLayer.objects.get_or_create(
+        layer = layer,
+        map_type = map_type,
+        version = v,
+        title = title,
+        zip_name = zip_name
+    )
+    return msLayer
 
 @task(name='loader.save_to_geonode', queue='loader', max_retries=3)
 def saveToGeonode(payload):
@@ -130,7 +144,7 @@ def saveToGeonode(payload):
     logger.debug('Uploading layer %s to geonode' % payload['zip_name'])
 
     # use overwrite to make sure if a layer exists it gets updated
-    uploaded = upload(payload['zip_name'], admin, overwrite=True)[0]
+    uploaded = upload(payload['zipfile_path'], admin, overwrite=True)[0]
     if uploaded['status'] == 'failed':
         raise Exception("Failed layer %s with error %s " % (payload['zip_name'], uploaded['error']))
     else:
@@ -138,19 +152,21 @@ def saveToGeonode(payload):
 
     if any(s in payload['zip_name'] for s in ['_a', '_p', '_l']):
         gs_layer = gs_catalog.get_layer(name=uploaded_name)
-        geom_type = uploaded_name.split('_')[-1]
+        geom_type = payload['zip_name'].split('_')[-1]
         gs_style = gs_catalog.get_style(name=settings.AW_EMS_STYLES[geom_type])
 
         if not gs_style:
             #let's make sure the style is there
-            gs_catalog.create_style('act_viewer_%s' % geom_type, getSld(geom_type))
-            gs_style = gs_catalog.get_style(name=settings.AW_EMS_STYLES[geom_type])
+            style_name = 'act_viewer_%s' % geom_type
+            gs_catalog.create_style(style_name, getSld(geom_type))
+            gs_style = gs_catalog.get_style(name=style_name)
         gs_layer.default_style = gs_style
         gs_catalog.save(gs_layer)
         # gs_catalog.reload()
 
     saved_layer = Layer.objects.get(name=uploaded_name)
-    payload['mapset'].layers.add(saved_layer)
+    mapSetLayer = createMapSetLayer(saved_layer, payload['zip_name'])
+    payload['mapset'].layers.add(mapSetLayer)
 
     #create_gs_thumbnail(saved_layer, overwrite=True)
     return uploaded_name

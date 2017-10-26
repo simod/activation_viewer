@@ -16,10 +16,9 @@ from guardian.shortcuts import get_objects_for_user
 from taggit.models import Tag
 
 from geonode.api.api import CountJSONSerializer, RegionResource, TagResource
-from geonode.layers.models import Layer
 from djmp.models import Tileset
 
-from .models import Activation, DisasterType, MapSet, ActivationMaps
+from .models import Activation, DisasterType, MapSet, ActivationMaps, MapSetLayer
 
 
 class DtypeSerializer(CountJSONSerializer):
@@ -124,29 +123,25 @@ class ActLayerResource(ModelResource):
 
     tms_url = fields.CharField()
     djmp_id = fields.IntegerField()
+    typename = fields.CharField()
+    storeType = fields.CharField()
 
     def dehydrate_tms_url(self, bundle):
-        return bundle.obj.link_set.get(name='Tiles').url
+        return bundle.obj.layer.link_set.get(name='Tiles').url
 
     def dehydrate_djmp_id(self, bundle):
-        return Tileset.objects.get(layer_name=bundle.obj.typename).pk
+        return Tileset.objects.get(layer_name=bundle.obj.layer.typename).pk
+
+    def dehydrate_typename(self, bundle):
+        return bundle.obj.layer.typename
+
+    def dehydrate_storeType(self, bundle):
+        return bundle.obj.layer.storeType
 
     class Meta:
-        queryset = Layer.objects.order_by('-storeType')
+        queryset = MapSetLayer.objects.order_by('-layer__storeType')
         resource_name = 'actlayers'
-        excludes = ['abstract', 'abstract_en', 'charset',
-                    'constraints_other', 'constraints_other_en', 'csw_anytext',
-                    'csw_insert_date', 'csw_mdsource', 'csw_schema',
-                    'csw_type', 'csw_typename', 'csw_wkt_geometry',
-                    'data_quality_statement', 'data_quality_statement_en', 'date',
-                    'date_type', 'distribution_description', 'distribution_description_en',
-                    'edition', 'featured',
-                    'is_published', 'language', 'maintenance_frequency',
-                    'metadata_uploaded', 'metadata_xml', 'popular_count',
-                    'purpose', 'purpose_en', 'rating',
-                    'share_count', 'supplemental_information', 'supplemental_information_en',
-                    'temporal_extent_end', 'temporal_extent_start', 'uuid',
-                    ]
+
 
 
 class DisasterTypeResource(ModelResource):

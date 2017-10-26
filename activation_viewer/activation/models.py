@@ -12,6 +12,9 @@ from geonode.layers.models import Layer
 from geonode.base.models import Region
 
 
+MPLAYERTYPES = [['REF', 'Reference'], ['DEL', 'Delineation'], ['GRA', 'Grading']]
+
+
 class DisasterType(models.Model):
     """Disaster types"""
     name = models.CharField(max_length=128)
@@ -21,12 +24,23 @@ class DisasterType(models.Model):
         return self.name
 
 
+class MapSetLayer(models.Model):
+    layer = models.OneToOneField(Layer)
+    map_type = models.CharField(max_length=30, blank=True, null=True, choices=MPLAYERTYPES)
+    title = models.CharField(max_length=256)
+    version = models.CharField(max_length=5, blank=True, null=True)
+    zip_name = models.CharField(max_length=256, blank=True, null=True)
+
+    def __unicode__(self):
+        return '%s %s, %s' % (self.title, self.map_type, self.version)
+
+
 class MapSet(models.Model):
     """MapSet"""
     name = models.CharField(max_length=128)
     activation = models.ForeignKey('Activation')
     slug = models.SlugField()
-    layers = models.ManyToManyField(Layer)
+    layers = models.ManyToManyField(MapSetLayer, blank=True, null=True)
     bbox_x0 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
     bbox_x1 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
     bbox_y0 = models.DecimalField(max_digits=19, decimal_places=10, blank=True, null=True)
@@ -36,14 +50,14 @@ class MapSet(models.Model):
         x0 = x1 = y0 = y1 = 0
         layers = self.layers.all()
         for i in range(layers.count()):
-            layer = layers[i]
+            ms_layer = layers[i]
             if i == 0:
-                x0, x1, y0, y1 = layer.bbox_x0, layer.bbox_x1, layer.bbox_y0, layer.bbox_y1
+                x0, x1, y0, y1 = ms_layer.layer.bbox_x0, ms_layer.layer.bbox_x1, ms_layer.layer.bbox_y0, ms_layer.layer.bbox_y1
             else:
-                if layer.bbox_x0 < x0: x0 = layer.bbox_x0
-                if layer.bbox_x1 > x1: x1 = layer.bbox_x1
-                if layer.bbox_y0 < y0: y0 = layer.bbox_y0
-                if layer.bbox_y1 > y1: y1 = layer.bbox_y1
+                if ms_layer.layer.bbox_x0 < x0: x0 = ms_layer.layer.bbox_x0
+                if ms_layer.layer.bbox_x1 > x1: x1 = ms_layer.layer.bbox_x1
+                if ms_layer.layer.bbox_y0 < y0: y0 = ms_layer.layer.bbox_y0
+                if ms_layer.layer.bbox_y1 > y1: y1 = ms_layer.layer.bbox_y1
 
         MapSet.objects.filter(id=self.id).update(bbox_x0=x0, bbox_x1=x1, bbox_y0=y0, bbox_y1=y1)
 
