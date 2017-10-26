@@ -153,13 +153,14 @@ def saveToGeonode(payload):
     if any(s in payload['zip_name'] for s in ['_a', '_p', '_l']):
         gs_layer = gs_catalog.get_layer(name=uploaded_name)
         geom_type = payload['zip_name'].split('_')[-1]
-        gs_style = gs_catalog.get_style(name=settings.AW_EMS_STYLES[geom_type])
+        style_name = 'act_viewer_%s' % geom_type
+        gs_style = gs_catalog.get_style(name=style_name)
 
         if not gs_style:
             #let's make sure the style is there
-            style_name = 'act_viewer_%s' % geom_type
             gs_catalog.create_style(style_name, getSld(geom_type))
             gs_style = gs_catalog.get_style(name=style_name)
+
         gs_layer.default_style = gs_style
         gs_catalog.save(gs_layer)
         # gs_catalog.reload()
