@@ -125,6 +125,10 @@ class ActLayerResource(ModelResource):
     djmp_id = fields.IntegerField()
     typename = fields.CharField()
     storeType = fields.CharField()
+    bbox_x0 = fields.FloatField()
+    bbox_x1 = fields.FloatField()
+    bbox_y0 = fields.FloatField()
+    bbox_y1 = fields.FloatField()
 
     def dehydrate_tms_url(self, bundle):
         return bundle.obj.layer.link_set.get(name='Tiles').url
@@ -137,6 +141,18 @@ class ActLayerResource(ModelResource):
 
     def dehydrate_storeType(self, bundle):
         return bundle.obj.layer.storeType
+
+    def dehydrate_bbox_x0(self, bundle):
+        return bundle.obj.layer.bbox_x0
+
+    def dehydrate_bbox_x1(self, bundle):
+        return bundle.obj.layer.bbox_x1
+
+    def dehydrate_bbox_y0(self, bundle):
+        return bundle.obj.layer.bbox_y0
+
+    def dehydrate_bbox_y1(self, bundle):
+        return bundle.obj.layer.bbox_y1
 
     class Meta:
         queryset = MapSetLayer.objects.order_by('-layer__storeType')
