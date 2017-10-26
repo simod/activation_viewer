@@ -140,6 +140,8 @@ AW_ACTIVATIONS_DOWNLOAD_PATH = ''
 
 AW_ZIPFILE_LOCATION = ''
 
+AW_ZIPFILE_URL = ''
+
 # list of folders to be excluded from download
 AW_FOLDERS_EXCLUDE_FROM_DOWNLOAD = ['RASTER', '00AEM']
 

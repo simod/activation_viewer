@@ -277,7 +277,7 @@ class LayerListItem extends React.Component {
     let dl = document.createElement('a');
     document.body.appendChild(dl);
     if (storeType == 'dataStore'){
-      let url = AW_ZIPFILE_LOCATION + '/' + layer.get('typename').split(':')[1] + '.zip';
+      let url = AW_ZIPFILE_URL + '/' + layer.get('typename').split(':')[1] + '.zip';
       dl.setAttribute('href', url);
     }else if (storeType == 'coverageStore'){
       let url = 'TMS: ' + layer.getSource().getUrls()[0] +
