@@ -114,7 +114,7 @@ def getChain(layer_name, filenames, dirpath, mapset, max_retries=3):
 
 @task(name='loader.zip_shp', queue='loader', max_retries=3)
 def zipShp(layer_name, files, dirpath, mapset):
-    zipfile_path = os.path.join(settings.AW_ZIPFILE_LOCATION, layer_name + '.zip')
+    zipfile_path = os.path.join(settings.AW_ZIPFILE_LOCATION, layer_name.lower() + '.zip')
     the_zip = zipfile.ZipFile(zipfile_path, 'w')
     for item in files:
         the_zip.write(os.path.join(dirpath, item), item)
@@ -128,7 +128,7 @@ def createMapSetLayer(layer, zip_name):
     layer_def = zip_name.split('_')
     code, aoi, map_type, v = [layer_def.pop(0) for i in range(4)]
     geom_type = layer_def.pop(-1)
-    title = ' '.join([i.capitalize() for i in layer_def])
+    title = '%s %s' % (' '.join([i.capitalize() for i in layer_def]), map_type)
     msLayer, created = MapSetLayer.objects.get_or_create(
         layer = layer,
         map_type = map_type,
