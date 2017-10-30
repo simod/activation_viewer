@@ -3,7 +3,7 @@ def getSld(geom_type):
     return styles[geom_type]
 
 styles = {
-'l':
+'Grading_l':
 """<?xml version="1.0" encoding="ISO-8859-1"?>
 <StyledLayerDescriptor version="1.0.0"
   xsi:schemaLocation="http://www.opengis.net/sld http://schemas.opengis.net/sld/1.0.0/StyledLayerDescriptor.xsd"
@@ -11,15 +11,52 @@ styles = {
   xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
   <NamedLayer>
-    <Name>act_viewer_line</Name>
+    <Name>Transport grading line</Name>
+  """ Grading lines consist in lines with the trhee grading classes and their colors red, orange and yellow"""
     <UserStyle>
-      <Title>A dark orange line style</Title>
+      <Title>Transport grading line style</Title>
       <FeatureTypeStyle>
         <Rule>
-          <Title>dark orange line</Title>
+          <Title>Destroyed</Title>
+          <Filter>
+            <PropertyIsEqualTo>
+              <PropertyName>damage_gra</PropertyName>
+              <Literal>Destroyed</Literal>
+            </PropertyIsEqualTo>
+          </Filter>
           <LineSymbolizer>
             <Stroke>
-              <CssParameter name="stroke">#ff9900</CssParameter>
+              <CssParameter name="stroke">#F5293E</CssParameter>
+            </Stroke>
+          </LineSymbolizer>
+        </Rule>
+        
+        <Rule>
+          <Title>Damaged</Title>
+          <Filter>
+            <PropertyIsEqualTo>
+              <PropertyName>damage_gra</PropertyName>
+              <Literal>Damaged</Literal>
+            </PropertyIsEqualTo>
+          </Filter>
+          <LineSymbolizer>
+            <Stroke>
+              <CssParameter name="stroke">#F7A902</CssParameter>
+            </Stroke>
+          </LineSymbolizer>
+        </Rule>
+        
+        <Rule>
+          <Title>Probably damaged</Title>
+          <Filter>
+            <PropertyIsEqualTo>
+              <PropertyName>damage_gra</PropertyName>
+              <Literal>Probably damaged</Literal>
+            </PropertyIsEqualTo>
+          </Filter>
+          <LineSymbolizer>
+            <Stroke>
+              <CssParameter name="stroke">#ffffb7</CssParameter>
             </Stroke>
           </LineSymbolizer>
         </Rule>
@@ -29,13 +66,13 @@ styles = {
   </NamedLayer>
 </StyledLayerDescriptor>""",
 
-'Building_grading_p':
+'Grading_p':
 """<?xml version="1.0" encoding="ISO-8859-1"?>
 <StyledLayerDescriptor version="1.0.0"
   xsi:schemaLocation="http://www.opengis.net/sld http://schemas.opengis.net/sld/1.0.0/StyledLayerDescriptor.xsd"
   xmlns="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc"
   xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-""" Building grading points consist in squared point white outline and filled with the correspondent color red, orange and yellow"""
+""" Grading points consist in squared point white outline and filled with the correspondent color red, orange and yellow"""
   <NamedLayer>
     <Name>Building point grading</Name>
     <UserStyle>
@@ -121,7 +158,7 @@ styles = {
   </NamedLayer>
 </StyledLayerDescriptor>""",
 
-'fire_grading_a':
+'Filled_polygons_grading_a':
 """<?xml version="1.0" encoding="ISO-8859-1"?>
 <StyledLayerDescriptor version="1.0.0"
   xsi:schemaLocation="http://www.opengis.net/sld http://schemas.opengis.net/sld/1.0.0/StyledLayerDescriptor.xsd"
@@ -129,11 +166,11 @@ styles = {
   xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
   <NamedLayer>
-    <Name>Fire_grading</Name>
+    <Name>Filled_polygon_grading</Name>
     <UserStyle>
       <Title>Only filled polygons</Title>
       <FeatureTypeStyle>
-""" Grading for fires consists in three grades symbolized by filled polygons with no outline red, orange and yellow"""       
+""" Grading with filled polygons consist in three grades symbolized by filled polygons with no outline red, orange and yellow"""       
         <Rule>
           <Title>Destroyed</Title>
           <Filter>
@@ -187,7 +224,7 @@ styles = {
   </NamedLayer>
 </StyledLayerDescriptor>""",
 
-'building_block_grading_a':
+'Not_filled_polygon_grading_a':
 """<?xml version="1.0" encoding="ISO-8859-1"?>
 <StyledLayerDescriptor version="1.0.0"
   xsi:schemaLocation="http://www.opengis.net/sld http://schemas.opengis.net/sld/1.0.0/StyledLayerDescriptor.xsd"
@@ -195,11 +232,11 @@ styles = {
   xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
   <NamedLayer>
-    <Name>Building_grading</Name>
+    <Name>Not_filled_poly_grading</Name>
     <UserStyle>
       <Title>Only outlined polygons</Title>
       <FeatureTypeStyle>
-""" Building grading consists in three grades symbolized by not filled polygons red, orange and yellow"""      
+""" Consists in three grades symbolized by not filled polygons red, orange and yellow"""      
         <Rule>
           <Title>Destroyed</Title>
           <Filter>
