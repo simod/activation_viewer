@@ -12,7 +12,7 @@ styles = {
 
   <NamedLayer>
     <Name>Transport grading line</Name>
-  """ Grading lines consist in lines with the trhee grading classes and their colors red, orange and yellow"""
+  "Grading lines consist in lines with the trhee grading classes and their colors red, orange and yellow"
     <UserStyle>
       <Title>Transport grading line style</Title>
       <FeatureTypeStyle>
@@ -72,7 +72,7 @@ styles = {
   xsi:schemaLocation="http://www.opengis.net/sld http://schemas.opengis.net/sld/1.0.0/StyledLayerDescriptor.xsd"
   xmlns="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc"
   xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-""" Grading points consist in squared point white outline and filled with the correspondent color red, orange and yellow"""
+" Grading points consist in squared point white outline and filled with the correspondent color red, orange and yellow"
   <NamedLayer>
     <Name>Building point grading</Name>
     <UserStyle>
@@ -170,7 +170,7 @@ styles = {
     <UserStyle>
       <Title>Only filled polygons</Title>
       <FeatureTypeStyle>
-""" Grading with filled polygons consist in three grades symbolized by filled polygons with no outline red, orange and yellow"""       
+" Grading with filled polygons consist in three grades symbolized by filled polygons with no outline red, orange and yellow"       
         <Rule>
           <Title>Destroyed</Title>
           <Filter>
@@ -236,7 +236,7 @@ styles = {
     <UserStyle>
       <Title>Only outlined polygons</Title>
       <FeatureTypeStyle>
-""" Consists in three grades symbolized by not filled polygons red, orange and yellow"""      
+" Consists in three grades symbolized by not filled polygons red, orange and yellow"      
         <Rule>
           <Title>Destroyed</Title>
           <Filter>
@@ -302,7 +302,7 @@ styles = {
     <UserStyle>
       <Title>Blue polygons</Title>
       <FeatureTypeStyle>
-""" Flooded area is defined by a blue polygon, outline and fill the same blue  """      
+"Flooded area is defined by a blue polygon, outline and fill the same blue"      
         <Rule>
           <Title>Flooded area</Title>
           <PolygonSymbolizer>
