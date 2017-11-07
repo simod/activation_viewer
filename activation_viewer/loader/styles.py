@@ -3,7 +3,7 @@ def getSld(geom_type):
     return styles[geom_type]
 
 styles = {
-'Grading_l':
+'grading_l':
 """<?xml version="1.0" encoding="ISO-8859-1"?>
 <StyledLayerDescriptor version="1.0.0"
   xsi:schemaLocation="http://www.opengis.net/sld http://schemas.opengis.net/sld/1.0.0/StyledLayerDescriptor.xsd"
@@ -66,7 +66,7 @@ styles = {
   </NamedLayer>
 </StyledLayerDescriptor>""",
 
-'Grading_p':
+'grading_p':
 """<?xml version="1.0" encoding="ISO-8859-1"?>
 <StyledLayerDescriptor version="1.0.0"
   xsi:schemaLocation="http://www.opengis.net/sld http://schemas.opengis.net/sld/1.0.0/StyledLayerDescriptor.xsd"
@@ -158,7 +158,7 @@ styles = {
   </NamedLayer>
 </StyledLayerDescriptor>""",
 
-'Filled_polygons_grading_a':
+'fill_poly_grading_a':
 """<?xml version="1.0" encoding="ISO-8859-1"?>
 <StyledLayerDescriptor version="1.0.0"
   xsi:schemaLocation="http://www.opengis.net/sld http://schemas.opengis.net/sld/1.0.0/StyledLayerDescriptor.xsd"
@@ -224,7 +224,7 @@ styles = {
   </NamedLayer>
 </StyledLayerDescriptor>""",
 
-'Not_filled_polygon_grading_a':
+'poly_grading_a':
 """<?xml version="1.0" encoding="ISO-8859-1"?>
 <StyledLayerDescriptor version="1.0.0"
   xsi:schemaLocation="http://www.opengis.net/sld http://schemas.opengis.net/sld/1.0.0/StyledLayerDescriptor.xsd"
