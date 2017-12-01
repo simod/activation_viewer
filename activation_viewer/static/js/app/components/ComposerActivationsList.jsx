@@ -256,7 +256,7 @@ class ActivationsList extends React.Component {
       id: act_data.get('act_id'),
       layers: {}
      }
-     // Loop over mapsets, we noly need layers config
+     // Loop over mapsets, we only need layers config
      act_data.get('layers').forEach(mapset => {
       // Loop over layers
       mapset.get('layers').forEach((layer, index) => {

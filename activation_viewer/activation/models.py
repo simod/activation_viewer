@@ -25,6 +25,7 @@ class DisasterType(models.Model):
 
 
 class MapSetLayer(models.Model):
+    """Link a mapset with a GeoNode layer adding metadata"""
     layer = models.OneToOneField(Layer)
     map_type = models.CharField(max_length=30, blank=True, null=True, choices=MPLAYERTYPES)
     title = models.CharField(max_length=256)
