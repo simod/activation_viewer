@@ -1,6 +1,9 @@
 
-def getSld(geom_type):
-    return styles[geom_type]
+def getSldName(geom_type, map_type, data_type):
+    if map_type == 'GRA':
+        return 'grading_%s' % geom_type
+    else:
+        return styles[geom_type]
 
 styles = {
 'grading_l':
@@ -30,7 +33,7 @@ styles = {
             </Stroke>
           </LineSymbolizer>
         </Rule>
-        
+
         <Rule>
           <Title>Damaged</Title>
           <Filter>
@@ -45,7 +48,7 @@ styles = {
             </Stroke>
           </LineSymbolizer>
         </Rule>
-        
+
         <Rule>
           <Title>Probably damaged</Title>
           <Filter>
@@ -96,13 +99,13 @@ styles = {
                 <Stroke>
                   <CssParameter name="stroke">#fcfcfc</CssParameter>
                   <CssParameter name="stroke-width">0.5</CssParameter>
-                </Stroke>  
+                </Stroke>
               </Mark>
               <Size>6</Size>
             </Graphic>
           </PointSymbolizer>
         </Rule>
-        
+
         <Rule>
           <Title>Damaged</Title>
           <Filter>
@@ -121,7 +124,7 @@ styles = {
                 <Stroke>
                   <CssParameter name="stroke">#fcfcfc</CssParameter>
                   <CssParameter name="stroke-width">0.5</CssParameter>
-                </Stroke>  
+                </Stroke>
               </Mark>
               <Size>6</Size>
             </Graphic>
@@ -146,13 +149,13 @@ styles = {
                 <Stroke>
                   <CssParameter name="stroke">#fcfcfc</CssParameter>
                   <CssParameter name="stroke-width">0.5</CssParameter>
-                </Stroke>  
+                </Stroke>
               </Mark>
               <Size>6</Size>
             </Graphic>
           </PointSymbolizer>
         </Rule>
-        
+
       </FeatureTypeStyle>
     </UserStyle>
   </NamedLayer>
@@ -170,7 +173,7 @@ styles = {
     <UserStyle>
       <Title>Only filled polygons</Title>
       <FeatureTypeStyle>
-" Grading with filled polygons consist in three grades symbolized by filled polygons with no outline red, orange and yellow"       
+" Grading with filled polygons consist in three grades symbolized by filled polygons with no outline red, orange and yellow"
         <Rule>
           <Title>Destroyed</Title>
           <Filter>
@@ -186,7 +189,7 @@ styles = {
             </Fill>
           </PolygonSymbolizer>
         </Rule>
-       
+
         <Rule>
           <Title>Damaged</Title>
           <Filter>
@@ -202,7 +205,7 @@ styles = {
             </Fill>
           </PolygonSymbolizer>
         </Rule>
-        
+
         <Rule>
           <Title>Probably damaged</Title>
           <Filter>
@@ -236,7 +239,7 @@ styles = {
     <UserStyle>
       <Title>Only outlined polygons</Title>
       <FeatureTypeStyle>
-" Consists in three grades symbolized by not filled polygons red, orange and yellow"      
+" Consists in three grades symbolized by not filled polygons red, orange and yellow"
         <Rule>
           <Title>Destroyed</Title>
           <Filter>
@@ -249,10 +252,10 @@ styles = {
             <Stroke>
               <CssParameter name="stroke">#F5293E</CssParameter>
               <CssParameter name="stroke-width">0.5</CssParameter>
-            </Stroke>  
+            </Stroke>
           </PolygonSymbolizer>
         </Rule>
-       
+
         <Rule>
           <Title>Damaged</Title>
           <Filter>
@@ -265,10 +268,10 @@ styles = {
             <Stroke>
               <CssParameter name="stroke">#F7A902</CssParameter>
               <CssParameter name="stroke-width">0.5</CssParameter>
-            </Stroke>  
+            </Stroke>
           </PolygonSymbolizer>
         </Rule>
-        
+
         <Rule>
           <Title>Probably damaged</Title>
           <Filter>
@@ -302,7 +305,7 @@ styles = {
     <UserStyle>
       <Title>Blue polygons</Title>
       <FeatureTypeStyle>
-"Flooded area is defined by a blue polygon, outline and fill the same blue"      
+"Flooded area is defined by a blue polygon, outline and fill the same blue"
         <Rule>
           <Title>Flooded area</Title>
           <PolygonSymbolizer>
@@ -313,7 +316,7 @@ styles = {
             <Stroke>
               <CssParameter name="stroke">#2DE2F0</CssParameter>
               <CssParameter name="stroke-width">0.5</CssParameter>
-            </Stroke>  
+            </Stroke>
           </PolygonSymbolizer>
         </Rule>
 
@@ -321,5 +324,5 @@ styles = {
     </UserStyle>
   </NamedLayer>
 </StyledLayerDescriptor>"""
-    
+
 }

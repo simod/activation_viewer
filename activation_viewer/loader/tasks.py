@@ -19,7 +19,7 @@ from djmp.helpers import generate_confs
 from activation_viewer.activation.models import Activation, MapSet, DisasterType, MapSetLayer
 from activation_viewer.loader import seeder
 
-from .styles import getSld
+from .styles import getSldName, styles
 
 
 logger = get_task_logger(__name__)
@@ -152,13 +152,14 @@ def saveToGeonode(payload):
 
     if any(s in payload['zip_name'] for s in ['_a', '_p', '_l']):
         gs_layer = gs_catalog.get_layer(name=uploaded_name)
-        geom_type = payload['zip_name'].split('_')[-1]
-        style_name = 'act_viewer_%s' % geom_type
+        layer_params = payload['zip_name'].split('_')
+        geom_type, map_type, data_type = layer_params[-1], layer_params[3], layer_params[-2]
+        style_name = getSldName(geom_type, map_type, data_type)
         gs_style = gs_catalog.get_style(name=style_name)
 
         if not gs_style:
             #let's make sure the style is there
-            gs_catalog.create_style(style_name, getSld(geom_type))
+            gs_catalog.create_style(style_name, styles(style_name))
             gs_style = gs_catalog.get_style(name=style_name)
 
         gs_layer.default_style = gs_style
