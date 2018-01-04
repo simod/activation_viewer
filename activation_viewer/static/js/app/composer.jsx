@@ -119,10 +119,22 @@ class Composer extends React.Component {
     });
   }
 
-  _showErrMsg() {
+  _showErrMsg(text) {
    this.setState({
-     errorOpen: true
+     errorOpen: true,
+     errorText: text
    });
+  }
+
+  getErrorMsg() {
+    return (<Snackbar
+      autoHideDuration={3000}
+      bodyStyle={{lineHeight: '24px', height: 'auto', maxWidth: '150px', minWidth: '0'}}
+      style={{zIndex: 100000, marginLeft: '50px'}}
+      open={this.state.errorOpen}
+      message={this.state.errorText}
+      onRequestClose={this._hideErrMsg.bind(this)}
+    />)
   }
 
   render() {
@@ -139,14 +151,7 @@ class Composer extends React.Component {
     }
     let error_msg;
     if (this.state.errorOpen){
-     error_msg = (<Snackbar
-       autoHideDuration={3000}
-       bodyStyle={{lineHeight: '24px', height: 'auto', maxWidth: '150px', minWidth: '0'}}
-       style={{zIndex: 100000, marginLeft: '50px'}}
-       open={this.state.errorOpen}
-       message={'Too many requests'}
-       onRequestClose={this._hideErrMsg.bind(this)}
-     />)
+     error_msg = this.getErrorMsg()
     }
     return (
       <div id='content'>

@@ -24,9 +24,11 @@ import LayerStore from 'boundless-sdk/stores/LayerStore';
 import LayerListItem from './LayerListItem.jsx';
 import Label from 'boundless-sdk/components/Label';
 import AddActivationsModal from './AddActivationsModal.jsx';
+import DownloadLayersModal from './DownloadLayersModal.jsx';
 import RaisedButton from 'material-ui/RaisedButton';
 import Button from 'boundless-sdk/components/Button';
 import NoteAdd from 'material-ui/svg-icons/action/note-add';
+import FileCloudDownload from 'material-ui/svg-icons/file/cloud-download';
 import ContentSave from 'material-ui/svg-icons/content/save';
 import ContentCopy from 'material-ui/svg-icons/content/content-copy';
 import {List} from 'material-ui/List';
@@ -64,7 +66,12 @@ const messages = defineMessages({
     id: 'layerlist.savemapcopy',
     description: 'Text for save map copy',
     defaultMessage: 'Copy'
-  }
+  },
+  downloadtext: {
+    id: 'layerlist.download',
+    description: 'Download layers',
+    defaultMessage: 'Download'
+  },
 });
 
 /**
@@ -313,6 +320,9 @@ class ActivationsList extends React.Component {
     saved: true
    })
   }
+  _showDownload(data){
+    this.refs.downloadlayersmodal.getWrappedInstance().open();
+  }
   render() {
     const {formatMessage} = this.props.intl;
     const styles = this.getStyles();
@@ -335,27 +345,38 @@ class ActivationsList extends React.Component {
               style={{
                 margin: '5px'
               }}/>
+            {/*<RaisedButton
+                icon={<ContentSave />}
+                label={formatMessage(messages.savemaptext)}
+                onTouchTap={this._saveMap.bind(this, false)}
+                style={{
+                  margin: '5px'
+                }}/>
+              <RaisedButton
+                icon={<ContentCopy />}
+                label={formatMessage(messages.savemapcopytext)}
+                onTouchTap={this._saveMap.bind(this, true)}
+                style={{
+                  margin: '5px'
+                }}/>*/}
             <RaisedButton
-              icon={<ContentSave />}
-              label={formatMessage(messages.savemaptext)}
-              onTouchTap={this._saveMap.bind(this, false)}
-              style={{
-                margin: '5px'
-              }}/>
-            <RaisedButton
-              icon={<ContentCopy />}
-              label={formatMessage(messages.savemapcopytext)}
-              onTouchTap={this._saveMap.bind(this, true)}
-              style={{
-                margin: '5px'
-              }}/>
+                icon={<FileCloudDownload />}
+                label={formatMessage(messages.downloadtext)}
+                onTouchTap={this._showDownload.bind(this, false)}
+                style={{
+                  margin: '5px'
+                }}/>
             <AddActivationsModal
-              srsName={this.props.map.getView().getProjection().getCode()}
               sources={this.props.addLayer.sources}
               map={this.props.map}
               ref='addlayermodal'
               initial_config={this.state.initial_config}
               setSaved={this._setSaved.bind(this)}/>
+            <DownloadLayersModal
+              sources={this.props.addLayer.sources}
+              ref='downloadlayersmodal'
+              showError={this.props.showError}
+              />
           </article>
       );
     }
