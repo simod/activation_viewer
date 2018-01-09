@@ -1,9 +1,16 @@
 
-def getSldName(geom_type, map_type, data_type):
+def getSld(layer_name):
+    layer_data = layer_name.split('_')
+    geom_type, map_type, data_type = layer_data[-1], layer_data[3], layer_data[-2]
     if map_type == 'GRA':
-        return 'grading_%s' % geom_type
+        name = 'grading_%s' % geom_type
+        return name, styles[name]
+    if geom_type == 'a':
+        name = 'fill_poly_grading_%s' % geom_type
+        return name, styles[name]
     else:
-        return styles[geom_type]
+        name = 'grading_%s' % geom_type
+        return name, styles[name]
 
 styles = {
 'grading_l':

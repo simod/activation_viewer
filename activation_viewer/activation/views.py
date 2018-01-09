@@ -36,8 +36,8 @@ def activation_detail(request, activation_id, template="activation_detail.html")
     activation = _resolve_activation(request, activation_id)
     context_dict = {
         'activation': activation,
-        'act_lat': activation.bbox_y0 + abs(activation.bbox_y1  - activation.bbox_y0 )/2,
-        'act_lon': activation.bbox_x0 + abs(activation.bbox_x1  - activation.bbox_x0 )/2,
+        'act_lat': activation.bbox_y0 + abs(activation.bbox_y1 - activation.bbox_y0 )/2,
+        'act_lon': activation.bbox_x0 + abs(activation.bbox_x1 - activation.bbox_x0 )/2,
         'perms_list': get_perms(request.user, activation),
         'related_maps': Map.objects.filter(keywords__slug__in=Tag.objects.filter(name=activation.activation_id)),
         'external_layers': ExternalLayer.objects.filter(activation=activation)

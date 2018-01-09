@@ -3,6 +3,7 @@ import re
 import zipfile
 import os
 import pysftp
+import StringIO
 from itertools import islice
 from django.conf import settings
 from django.utils.text import slugify
@@ -19,7 +20,7 @@ from djmp.helpers import generate_confs
 from activation_viewer.activation.models import Activation, MapSet, DisasterType, MapSetLayer
 from activation_viewer.loader import seeder
 
-from .styles import getSldName, styles
+from .styles import getSld
 
 
 logger = get_task_logger(__name__)
@@ -114,19 +115,26 @@ def getChain(layer_name, filenames, dirpath, mapset, max_retries=3):
 
 @task(name='loader.zip_shp', queue='loader', max_retries=3)
 def zipShp(layer_name, files, dirpath, mapset):
+    style_name, style_body = getSld(layer_name)
     zipfile_path = os.path.join(settings.AW_ZIPFILE_LOCATION, layer_name.lower() + '.zip')
     the_zip = zipfile.ZipFile(zipfile_path, 'w')
     for item in files:
         the_zip.write(os.path.join(dirpath, item), item)
+    the_zip.writestr('%s.sld' % layer_name, style_body)
     the_zip.close()
     return {'zipfile_path': zipfile_path,
             'zip_name': layer_name,
-            'mapset': mapset}
+            'mapset': mapset,
+            'style_name': style_name,
+            'style_body': style_body}
 
 def createMapSetLayer(layer, zip_name):
     """Creates a MapSetLayer down from a GeoNode saved layer and the name of the zipfile"""
     layer_def = zip_name.split('_')
-    code, aoi, map_type, v = [layer_def.pop(0) for i in range(4)]
+    if 'MONIT' in zip_name:
+        code, aoi, map_type, monit, v = [layer_def.pop(0) for i in range(5)]
+    else:
+        code, aoi, map_type, v = [layer_def.pop(0) for i in range(4)]
     geom_type = layer_def.pop(-1)
     title = '%s %s' % (' '.join([i.capitalize() for i in layer_def]), map_type)
     msLayer, created = MapSetLayer.objects.get_or_create(
@@ -152,15 +160,12 @@ def saveToGeonode(payload):
 
     if any(s in payload['zip_name'] for s in ['_a', '_p', '_l']):
         gs_layer = gs_catalog.get_layer(name=uploaded_name)
-        layer_params = payload['zip_name'].split('_')
-        geom_type, map_type, data_type = layer_params[-1], layer_params[3], layer_params[-2]
-        style_name = getSldName(geom_type, map_type, data_type)
-        gs_style = gs_catalog.get_style(name=style_name)
+        gs_style = gs_catalog.get_style(name=payload['style_name'])
 
         if not gs_style:
             #let's make sure the style is there
-            gs_catalog.create_style(style_name, styles(style_name))
-            gs_style = gs_catalog.get_style(name=style_name)
+            gs_catalog.create_style(payload['style_name'], payload['style_body'])
+            gs_style = gs_catalog.get_style(name=payload['style_name'])
 
         gs_layer.default_style = gs_style
         gs_catalog.save(gs_layer)
