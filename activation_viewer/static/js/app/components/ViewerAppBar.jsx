@@ -26,7 +26,7 @@ export default class ViewerAppBar extends React.Component{
     );
     return (
       <AppBar className={'appBar'}
-          title='Copernicus EMS Mapping - Activation Viewer'
+          title='Activation Viewer'
           onTitleTouchTap={() => window.location = '/'}
           showMenuIconButton={false}
           children={appBarMenu} />

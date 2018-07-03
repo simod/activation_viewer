@@ -31,8 +31,8 @@ def listNotHiddenFolders(path):
 @task(name='loader.get_activation', queue='loader', max_retries=3)
 def getActivation(activation_code, disaster_type, region, download_only=False, load_only= False):
     if not load_only:
-        with pysftp.Connection(settings.AW_COPERNICUS_FTP['url'], username=settings.AW_COPERNICUS_FTP['user'],
-            password=settings.AW_COPERNICUS_FTP['password']) as sftp:
+        with pysftp.Connection(settings.AW___FTP['url'], username=settings.AW___FTP['user'],
+            password=settings.AW___FTP['password']) as sftp:
 
             def folderWalker(folder):
                 elements = sftp.listdir(folder)

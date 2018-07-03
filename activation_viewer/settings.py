@@ -124,13 +124,13 @@ CELERY_QUEUES = [
      Queue('loader', routing_key='loader')
 ]
 
-AW_COPERNICUS_FTP = {
-    'url': 'ftp://xxx.xxx.xxx.xxx',
+AW_FTP = {
+    'url': '',
     'user': '',
     'password': ''
 }
 
-AW_EMS_STYLES = {
+AW_STYLES = {
     'p': 'act_viewer_p',
     'l': 'act_viewer_l',
     'a': 'act_viewer_a'
@@ -143,10 +143,10 @@ AW_ZIPFILE_LOCATION = ''
 AW_ZIPFILE_URL = ''
 
 # list of folders to be excluded from download
-AW_FOLDERS_EXCLUDE_FROM_DOWNLOAD = ['RASTER', '00AEM']
+AW_FOLDERS_EXCLUDE_FROM_DOWNLOAD = []
 
 # list of folders to be excluded from download
-AW_FILES_EXCLUDE_FROM_DOWNLOAD = ['VECTOR.zip', 'source', 'sensor_metadata_a', 'area_of_interest']
+AW_FILES_EXCLUDE_FROM_DOWNLOAD = []
 
 OGC_SERVER['default']['datastore'] = 'datastore'
 
